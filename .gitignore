@@ -1,0 +1,14 @@
+# Model weights
+*.pth
+
+# Dataset and CSVs
+*.csv
+dataset/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Logs and outputs
+*.log
+*.png
