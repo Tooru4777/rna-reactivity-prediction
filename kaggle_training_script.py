@@ -21,15 +21,16 @@ except ImportError:
 # =====================================================================
 class RNAReactivityPredictor(nn.Module):
     # 將預設的 input_dim 從 4 (ACGU) 改為 7 (ACGU + 括號左, 括號右, 小數點)
-    def __init__(self, input_dim=7, cnn_out_dim=64, lstm_hidden_dim=128, 
+    def __init__(self, input_dim=7, cnn_out_dim=128, lstm_hidden_dim=128, 
                  transformer_nhead=8, transformer_layers=2, output_dim=2, dropout=0.3):
         super(RNAReactivityPredictor, self).__init__()
         
-        # 1. CNN: 擷取局部特徵
-        self.cnn = nn.Conv1d(in_channels=input_dim, 
-                             out_channels=cnn_out_dim, 
-                             kernel_size=5, 
-                             padding=2) 
+        # 1. CNN: 擷取局部特徵 (雙層 + BatchNorm)
+        self.cnn1 = nn.Conv1d(in_channels=input_dim, out_channels=cnn_out_dim // 2, kernel_size=5, padding=2)
+        self.bn1 = nn.BatchNorm1d(cnn_out_dim // 2)
+        self.cnn2 = nn.Conv1d(in_channels=cnn_out_dim // 2, out_channels=cnn_out_dim, kernel_size=5, padding=2)
+        self.bn2 = nn.BatchNorm1d(cnn_out_dim)
+        
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(dropout)
         
@@ -56,7 +57,9 @@ class RNAReactivityPredictor(nn.Module):
     def forward(self, x):
         # 1. CNN 處理
         x = x.transpose(1, 2)
-        x = self.relu(self.cnn(x))
+        x = self.relu(self.bn1(self.cnn1(x)))
+        x = self.dropout(x)
+        x = self.relu(self.bn2(self.cnn2(x)))
         x = self.dropout(x)
         x = x.transpose(1, 2)
         
@@ -226,9 +229,9 @@ def train_model():
     # 改用 L1Loss (MAE)，這對 Kaggle 競賽中的 Outliers 比較強健
     criterion = nn.L1Loss(reduction='none') 
     # 加入 Weight Decay (L2 正則化) 來防止過度擬合
-    optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-4)
+    optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
     # 加入 Learning Rate Scheduler，當 CV Loss 停滯時自動降低 LR
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2)
     
     num_epochs = 50 
     best_cv_loss = float('inf') 
@@ -245,7 +248,10 @@ def train_model():
             optimizer.zero_grad()
             predictions = model(sequences) 
             
-            loss_matrix = criterion(predictions, reactivities)
+            # 使用 Clipped MAE 對齊評測標準
+            preds_clipped = torch.clamp(predictions, 0.0, 1.0)
+            reacts_clipped = torch.clamp(reactivities, 0.0, 1.0)
+            loss_matrix = torch.abs(preds_clipped - reacts_clipped)
             masked_loss = loss_matrix * masks
             
             actual_nucleotides_count = masks.sum()
@@ -289,7 +295,7 @@ def train_model():
         if avg_cv_loss < best_cv_loss:
             best_cv_loss = avg_cv_loss
             epochs_no_improve = 0
-            torch.save(model.state_dict(), "rna_reactivity_model_weights.pth")
+            torch.save(model.state_dict(), "rna_reactivity_model_weights_v2.pth")
             print(f"  🌟 CV Loss 創下新低 ({best_cv_loss:.4f})！已儲存最佳權重。")
         else:
             epochs_no_improve += 1
@@ -301,10 +307,10 @@ def train_model():
         # 根據 CV Loss 更新 Scheduler，若連續多次沒有新低，則降低 Learning Rate
         scheduler.step(avg_cv_loss)
         
-    print("[SUCCESS] 訓練結束！最佳模型權重已儲存為 rna_reactivity_model_weights.pth")
+    print("[SUCCESS] 訓練結束！最佳模型權重已儲存為 rna_reactivity_model_weights_v2.pth")
     
     print("\n=== 正在進行 Test Set 最終評估 ===")
-    model.load_state_dict(torch.load("rna_reactivity_model_weights.pth"))
+    model.load_state_dict(torch.load("rna_reactivity_model_weights_v2.pth"))
     model.eval()
     total_test_loss = 0.0
     with torch.no_grad():
