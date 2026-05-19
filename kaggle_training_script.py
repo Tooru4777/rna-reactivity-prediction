@@ -67,9 +67,10 @@ class RNAReactivityPredictor(nn.Module):
         lstm_out, _ = self.lstm(x)
         lstm_out = self.dropout(lstm_out)
         
-        # 3. Transformer 處理
+        # 3. Transformer 處理 (加入 Residual Connection 穩定訓練)
         # transformer_out shape: (batch_size, seq_len, d_model)
         transformer_out = self.transformer(lstm_out)
+        transformer_out = transformer_out + lstm_out
         
         # 4. 預測輸出
         out = self.fc(transformer_out)
@@ -248,10 +249,11 @@ def train_model():
             optimizer.zero_grad()
             predictions = model(sequences) 
             
-            # 使用 Clipped MAE 對齊評測標準
-            preds_clipped = torch.clamp(predictions, 0.0, 1.0)
+            # 解決梯度消失 (Gradient Vanishing) 問題:
+            # 訓練時不能把 predictions 也 clamp，否則超出 [0, 1] 範圍的預測值梯度會變成 0，模型無法學習將其拉回。
+            # 正確作法：僅將目標值 (reactivities) clip 到 [0, 1]，然後計算與 predictions 的 L1 誤差，保留完整梯度。
             reacts_clipped = torch.clamp(reactivities, 0.0, 1.0)
-            loss_matrix = torch.abs(preds_clipped - reacts_clipped)
+            loss_matrix = criterion(predictions, reacts_clipped)
             masked_loss = loss_matrix * masks
             
             actual_nucleotides_count = masks.sum()
