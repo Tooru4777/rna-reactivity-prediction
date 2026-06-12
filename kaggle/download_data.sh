@@ -1,0 +1,44 @@
+#!/bin/bash
+# =============================================
+# Download Stanford Ribonanza RNA Folding data
+# =============================================
+#
+# Prerequisites:
+#   1. Accept the competition rules on Kaggle
+#   2. Place your kaggle.json in ~/.kaggle/
+#   3. Run: chmod 600 ~/.kaggle/kaggle.json
+#
+# Usage:
+#   bash download_data.sh
+
+set -e
+
+echo "Checking Kaggle API installation..."
+pip install kaggle kagglehub -q
+
+echo "Downloading dataset (this may take several minutes)..."
+
+# Use the KAGGLE_USERNAME and KAGGLE_KEY environment variables
+# or the ~/.kaggle/kaggle.json credentials file.
+# NEVER hardcode API tokens in scripts.
+python -c "
+import kagglehub
+import shutil
+import os
+
+print('Connecting to Kaggle API...')
+try:
+    path = kagglehub.competition_download('stanford-ribonanza-rna-folding')
+    print(f'Download complete. Cache path: {path}')
+
+    # Copy to project dataset directory
+    if os.path.exists('dataset'):
+        shutil.rmtree('dataset')
+    shutil.copytree(path, 'dataset')
+    print('Data copied to dataset/')
+except Exception as e:
+    print(f'Download failed: {e}')
+    print('Make sure your Kaggle credentials are configured.')
+"
+
+echo "Done!"

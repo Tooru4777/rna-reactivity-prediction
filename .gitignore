@@ -1,7 +1,7 @@
-# Model weights
+# Model weights (large binary files — share via Google Drive or Kaggle)
 *.pth
 
-# Dataset and CSVs
+# Dataset and CSVs (too large for Git — use kaggle/download_data.sh)
 *.csv
 dataset/
 
@@ -9,6 +9,12 @@ dataset/
 __pycache__/
 *.pyc
 
-# Logs and outputs
+# IDE settings
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
 *.log
-*.png
