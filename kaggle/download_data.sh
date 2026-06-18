@@ -25,6 +25,20 @@ python -c "
 import kagglehub
 import shutil
 import os
+import json
+
+# Fallback: load KGAT token from kaggle.json if not in environment or is empty
+if not os.environ.get('KAGGLE_API_TOKEN'):
+    json_path = os.path.expanduser('~/.kaggle/kaggle.json')
+    if os.path.exists(json_path):
+        try:
+            with open(json_path) as f:
+                cfg = json.load(f)
+            key = cfg.get('key', '')
+            if key.startswith('KGAT_'):
+                os.environ['KAGGLE_API_TOKEN'] = key
+        except Exception:
+            pass
 
 print('Connecting to Kaggle API...')
 try:
