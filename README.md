@@ -6,8 +6,6 @@
 
 Deep learning models for predicting RNA structure and reactivity. This project was developed as a learning journey and applied to the [Stanford Ribonanza RNA Folding Competition](https://www.kaggle.com/competitions/stanford-ribonanza-rna-folding).
 
-![RNA 3D Structure Prediction](results/predicted_rna_3d.png)
-
 ## Motivation
 
 RNA molecules fold into complex 3D structures that determine their biological function. Accurately predicting these structures from sequence alone remains an open challenge in computational biology. This project explores deep learning approaches to two related problems:
@@ -77,9 +75,7 @@ RNA_RL_bioresearch/
 │   └── 01_data_exploration.py ← EDA: distributions, reactivity patterns
 │
 ├── results/                   ← Output visualisations (generated)
-│   ├── training_curves.png    ← Loss vs. epoch for all variants
-│   ├── attention_heatmap.png  ← Transformer self-attention patterns
-│   └── predicted_rna_3d.png   ← 3D structure prediction example
+│   └── training_curves.png    ← Loss vs. epoch for all variants
 │
 └── docs/                      ← Development documentation
     └── learning_journal.md    ← Learning process and reflections
@@ -158,11 +154,7 @@ A systematic ablation study quantifies the contribution of each architectural co
 
 The CNN-only and CNN+LSTM variants converge smoothly from epoch 1, while the Transformer variants require several epochs to escape a high-loss initialisation phase. All variants show healthy train-CV convergence without significant overfitting gaps.
 
-### Attention Heatmap
 
-![Transformer self-attention weights across nucleotide positions](results/attention_heatmap.png)
-
-The 2D heatmap shows per-head attention patterns from the Transformer encoder. Each cell (i, j) represents how much nucleotide position i attends to position j. Different attention heads can specialise in different structural patterns (e.g., local context vs. long-range base-pairing).
 
 ## Learning Journey
 
