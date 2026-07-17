@@ -61,3 +61,16 @@
 - [ ] Add positional encoding explicitly instead of relying on LSTM
 - [ ] Try multi-task learning: predict reactivity + secondary structure jointly
 - [ ] Data augmentation: reverse complement sequences
+
+---
+
+### Experiment 4: Ablation Study & ViennaRNA Integration (v4)
+- **Date**: 2026-07-14
+- **Changes**:
+  - Extracted hyperparameter configuration to `configs/ablation_config.yaml`
+  - Added ViennaRNA package to supply 7-dimensional features for the full model
+  - Trained 4 model variants (CNN Only, CNN+Bi-LSTM, CNN+LSTM+Transformer, Full Model) under identically controlled settings
+- **Observations**:
+  - The CNN + Bi-LSTM model continues to attain the best CV score on this limited dataset (0.1186).
+  - The Transformer additions (2.3M params) show signs of overfitting compared to CNN+Bi-LSTM, raising CV loss to 0.1334.
+  - Adding the 7D structure features via ViennaRNA *improves* the Transformer variant's performance (CV loss reduced from 0.1334 to 0.1258). This demonstrates that structural representation provides a valuable inductive bias.

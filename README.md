@@ -1,6 +1,10 @@
 # RNA Structure Prediction with Deep Learning
 
-A deep learning project for predicting RNA chemical reactivity and 3D spatial structure, built for the [Stanford Ribonanza RNA Folding](https://www.kaggle.com/competitions/stanford-ribonanza-rna-folding) Kaggle competition.
+# RNA_RL_bioresearch
+
+*Note: In the context of this project, "RL" stands for **Representation Learning**, focusing on learning meaningful representations of RNA sequences, not Reinforcement Learning.*
+
+Deep learning models for predicting RNA structure and reactivity. This project was developed as a learning journey and applied to the [Stanford Ribonanza RNA Folding Competition](https://www.kaggle.com/competitions/stanford-ribonanza-rna-folding).
 
 ![RNA 3D Structure Prediction](results/predicted_rna_3d.png)
 
@@ -48,23 +52,33 @@ RNA_RL_bioresearch/
 ├── requirements.txt           ← Python dependencies
 ├── .gitignore
 │
-├── src/                       ← Core source code
-│   ├── data_pipeline_3d.py    ← PyTorch Dataset for 3D coordinate data
-│   ├── model_3d.py            ← CNN + Bi-LSTM model architecture
-│   ├── train_3d.py            ← Training pipeline with masked loss
+├── src/                       ← Core source code (modular, importable)
+│   ├── __init__.py
+│   ├── model_reactivity.py    ← Reactivity model variants (ablation)
+│   ├── data_pipeline_reactivity.py ← Dataset for reactivity prediction
+│   ├── model_3d.py            ← CNN + Bi-LSTM for 3D coordinates
+│   ├── data_pipeline_3d.py    ← Dataset for 3D coordinate data
+│   ├── train_3d.py            ← 3D training pipeline with masked loss
 │   └── inference_3d.py        ← Inference + 3D visualisation
 │
-├── kaggle/                    ← Kaggle competition code
-│   ├── kaggle_training_script.py  ← Self-contained training script (GPU)
+├── kaggle/                    ← Kaggle competition code (self-contained)
+│   ├── kaggle_training_script.py   ← Reactivity model (merged for Kaggle Notebook)
+│   ├── kaggle_3d_training_script.py ← 3D model (merged for Kaggle Notebook)
 │   └── download_data.sh       ← Dataset download helper
 │
+├── experiments/               ← Experiment scripts and logs
+│   ├── run_ablation.py        ← Ablation study (4 model variants)
+│   ├── plot_results.py        ← Training curves + attention heatmap
+│   ├── experiment_notes.md    ← Hyperparameter tuning log
+│   ├── ablation_results.csv   ← Per-epoch loss data (generated)
+│   └── ablation_summary.csv   ← Summary table (generated)
+│
 ├── notebooks/                 ← Exploratory analysis
-│   └── 01_data_exploration.py ← EDA: sequence distributions, reactivity patterns
+│   └── 01_data_exploration.py ← EDA: distributions, reactivity patterns
 │
-├── experiments/               ← Training logs and experiment records
-│   └── experiment_notes.md    ← Hyperparameter tuning log
-│
-├── results/                   ← Output visualisations
+├── results/                   ← Output visualisations (generated)
+│   ├── training_curves.png    ← Loss vs. epoch for all variants
+│   ├── attention_heatmap.png  ← Transformer self-attention patterns
 │   └── predicted_rna_3d.png   ← 3D structure prediction example
 │
 └── docs/                      ← Development documentation
@@ -115,32 +129,76 @@ loss = criterion(predictions, reacts_clipped)          # ← full gradient prese
 
 This distinction between training loss (unclamped predictions) and evaluation metric (clamped predictions) is a subtle but critical detail in competition ML.
 
-## Experiment Log
+## Ablation Study
 
-| Version | Architecture | Train Loss | CV Loss | Key Change |
-|---------|-------------|------------|---------|------------|
-| v1 | CNN + Bi-LSTM + Transformer | — | — | Baseline with 4-dim input |
-| v2 | + ViennaRNA 2D structure | — | — | 7-dim input, dual-CNN + BatchNorm |
-| v3 | + Residual connection | — | — | Fix gradient vanishing, Transformer residual |
+A systematic ablation study quantifies the contribution of each architectural component. All variants were trained under identical conditions (seed=42, 15 epochs, 1000 samples, L1 loss with target-only clamping).
 
-*See [experiments/experiment_notes.md](experiments/experiment_notes.md) for detailed training logs.*
+| Variant | Parameters | Best CV Loss (Clipped MAE) | Best Epoch | Training Time |
+|---------|-----------|---------------------------|------------|---------------|
+| CNN Only | 43,074 | 0.1281 | 15 | 19s |
+| CNN + Bi-LSTM | 702,786 | **0.1186** | 15 | 85s |
+| CNN + LSTM + Transformer | 2,282,306 | 0.1334 | 14 | 363s |
+| Full Model (+ ViennaRNA 7d) | 2,283,266 | 0.1258 | 15 | 363s |
+
+**Key findings**:
+1. **CNN + Bi-LSTM achieves the lowest CV loss** (0.1186), outperforming the more complex Transformer variants on this small dataset.
+2. Adding the Transformer (+1.6M parameters) **increases** CV loss from 0.1186 → 0.1334 — a clear sign of overfitting on 1000 samples.
+3. Adding the 7D structure features via ViennaRNA **improves** the Transformer variant's performance (CV loss reduced from 0.1334 to 0.1258). This demonstrates that structural representation provides a valuable inductive bias, though it is still outperformed by the simpler Bi-LSTM model on this dataset size.
+4. The Transformer variants show much higher initial loss (1.47 vs. 0.36), indicating slower convergence due to the self-attention warm-up period.
+
+**Interpretation**: Transformer self-attention is most effective when the dataset is large enough to learn meaningful long-range interaction patterns. With only 1000 samples, the Bi-LSTM's inductive bias (sequential processing) provides a stronger prior than the Transformer's more general attention mechanism. However, integrating explicitly computed secondary structures (ViennaRNA) provides a measurable benefit to complex models. This aligns with the observation that RNA folding is inherently sequential — the 5'→3' synthesis order constrains which structures can form.
+
+*To reproduce: `python experiments/run_ablation.py` (seed=42, ~14 min on CPU)*
+
+*See [experiments/experiment_notes.md](experiments/experiment_notes.md) for detailed hyperparameter tuning history.*
+
+### Training Curves
+
+![Training curves showing loss vs. epoch for all four model variants](results/training_curves.png)
+
+The CNN-only and CNN+LSTM variants converge smoothly from epoch 1, while the Transformer variants require several epochs to escape a high-loss initialisation phase. All variants show healthy train-CV convergence without significant overfitting gaps.
+
+### Attention Heatmap
+
+![Transformer self-attention weights across nucleotide positions](results/attention_heatmap.png)
+
+The 2D heatmap shows per-head attention patterns from the Transformer encoder. Each cell (i, j) represents how much nucleotide position i attends to position j. Different attention heads can specialise in different structural patterns (e.g., local context vs. long-range base-pairing).
 
 ## Learning Journey
 
 This project represents my first end-to-end deep learning project applied to a real bioinformatics problem. I started from foundational ML concepts and progressively built up to a competition-grade model. Key learning milestones:
 
 1. **Data Engineering**: Learned to handle variable-length biological sequences with padding and masking
-2. **Architecture Design**: Understood why hybrid architectures (CNN → LSTM → Transformer) outperform single-model approaches for sequence data
+2. **Architecture Design**: Understood why hybrid architectures (CNN → LSTM → Transformer) outperform single-model approaches for sequence data — and also learned that **more complex ≠ better** when data is limited
 3. **Debugging ML Models**: Discovered and fixed a gradient vanishing bug caused by incorrect loss clamping
-4. **Competition ML**: Learned the importance of aligning training loss with evaluation metrics
+4. **Systematic Evaluation**: Designed and executed an ablation study to quantify the contribution of each component
+5. **Competition ML**: Learned the importance of aligning training loss with evaluation metrics
 
 See [docs/learning_journal.md](docs/learning_journal.md) for a more detailed reflection.
 
+## Reproducibility
+
+All experiments use fixed random seeds for reproducible results:
+
+```python
+SEED = 42
+torch.manual_seed(SEED)
+np.random.seed(SEED)
+```
+
+To reproduce the full ablation study:
+```bash
+pip install -r requirements.txt
+python experiments/run_ablation.py    # Train all variants (~14 min, CPU)
+python experiments/plot_results.py    # Generate visualisations
+```
+
 ## Future Directions
 
-- [ ] Explore Graph Neural Networks (GNN) to directly model base-pairing interactions
-- [ ] Investigate SE(3)-equivariant architectures for physically consistent 3D predictions
-- [ ] Implement attention visualisation to interpret what the model learns about RNA structure
+- [ ] **Scale to full Kaggle dataset** (~50k samples) to test whether the Transformer advantage emerges at scale — the ablation study suggests it needs more data
+- [ ] Explore **Graph Neural Networks** (GNN) to directly model base-pairing interactions, following Joshi et al. (2023) on RNA structure prediction with GNNs
+- [ ] Investigate **SE(3)-equivariant architectures** for physically consistent 3D predictions, inspired by Townshend et al. (2021) geometric deep learning for RNA
+- [ ] **Multi-task learning**: jointly predict reactivity and secondary structure, testing the hypothesis that 2D structure as an auxiliary task provides useful inductive bias
 - [ ] Add data augmentation (reverse complement, noise injection) for better generalisation
 
 ## References
@@ -148,7 +206,10 @@ See [docs/learning_journal.md](docs/learning_journal.md) for a more detailed ref
 - Stanford Ribonanza RNA Folding Competition: https://www.kaggle.com/competitions/stanford-ribonanza-rna-folding
 - ViennaRNA Package: https://www.tbi.univie.ac.at/RNA/
 - Lorenz et al. (2011). "ViennaRNA Package 2.0." *Algorithms for Molecular Biology*, 6(1), 26.
+- Vaswani et al. (2017). "Attention Is All You Need." *NeurIPS*.
+- Townshend et al. (2021). "Geometric deep learning of RNA structure." *Science*, 373(6558), 1047-1051.
 
 ## License
 
 This project is for educational and research purposes.
+
