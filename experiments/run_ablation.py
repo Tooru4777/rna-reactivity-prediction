@@ -24,6 +24,7 @@ Usage:
 
 import sys
 import os
+import argparse
 
 # Add project root to path so we can import from src/
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,7 +33,7 @@ sys.path.insert(0, PROJECT_ROOT)
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader, Subset
 import numpy as np
 import pandas as pd
 import time
@@ -45,6 +46,7 @@ from src.model_reactivity import (
     RNAReactivityPredictor,
 )
 from src.data_pipeline_reactivity import RNAReactivityDataset
+from src.data_splitting import grouped_train_cv_test_split
 
 
 # =====================================================================
@@ -94,7 +96,8 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
     for epoch in range(num_epochs):
         # --- Training ---
         model.train()
-        total_train_loss = 0.0
+        total_train_error = 0.0
+        total_train_targets = 0.0
 
         for features, reactivities, masks in train_loader:
             features = features.to(device)
@@ -102,7 +105,8 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
             masks = masks.to(device)
 
             optimizer.zero_grad()
-            predictions = model(features)
+            padding_mask = features.abs().sum(dim=-1).eq(0)
+            predictions = model(features, padding_mask=padding_mask)
 
             # Only clamp targets — see README for gradient vanishing explanation
             reacts_clipped = torch.clamp(reactivities, 0.0, 1.0)
@@ -117,19 +121,22 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
 
             final_loss.backward()
             optimizer.step()
-            total_train_loss += final_loss.item()
+            total_train_error += masked_loss.detach().sum().item()
+            total_train_targets += nt_count.item()
 
-        avg_train = total_train_loss / max(len(train_loader), 1)
+        avg_train = total_train_error / max(total_train_targets, 1.0)
 
         # --- Cross-Validation (Clipped MAE — Kaggle metric) ---
         model.eval()
-        total_cv_loss = 0.0
+        total_cv_error = 0.0
+        total_cv_targets = 0.0
         with torch.no_grad():
             for features, reactivities, masks in cv_loader:
                 features = features.to(device)
                 reactivities = reactivities.to(device)
                 masks = masks.to(device)
-                predictions = model(features)
+                padding_mask = features.abs().sum(dim=-1).eq(0)
+                predictions = model(features, padding_mask=padding_mask)
 
                 preds_clipped = torch.clamp(predictions, 0.0, 1.0)
                 reacts_clipped = torch.clamp(reactivities, 0.0, 1.0)
@@ -138,12 +145,10 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
 
                 nt_count = masks.sum()
                 if nt_count > 0:
-                    cv_loss = masked_loss.sum() / nt_count
-                else:
-                    cv_loss = torch.tensor(0.0, device=device)
-                total_cv_loss += cv_loss.item()
+                    total_cv_error += masked_loss.sum().item()
+                    total_cv_targets += nt_count.item()
 
-        avg_cv = total_cv_loss / max(len(cv_loader), 1)
+        avg_cv = total_cv_error / max(total_cv_targets, 1.0)
 
         train_losses.append(avg_train)
         cv_losses.append(avg_cv)
@@ -174,6 +179,18 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
 # =====================================================================
 
 def main():
+    parser = argparse.ArgumentParser(description="Run the reactivity ablation study")
+    parser.add_argument(
+        "--data",
+        default=os.path.join(PROJECT_ROOT, "train_data_1000.csv"),
+        help="Path to the real Ribonanza training subset",
+    )
+    parser.add_argument(
+        "--smoke-test", action="store_true",
+        help="Use deterministic synthetic data only when the CSV is unavailable",
+    )
+    args = parser.parse_args()
+
     # Load config
     config_path = os.path.join(PROJECT_ROOT, "configs", "ablation_config.yaml")
     with open(config_path, "r") as f:
@@ -198,22 +215,17 @@ def main():
     print(f"Device: {device}")
 
     # --- Load data (4-dim: no ViennaRNA, for first 3 variants) ---
-    data_path = os.path.join(PROJECT_ROOT, "train_data_1000.csv")
-
     dataset_4dim = RNAReactivityDataset(
-        sequences_csv=data_path, max_length=206, use_structure=False
+        sequences_csv=args.data, max_length=206, use_structure=False,
+        allow_synthetic=args.smoke_test,
     )
 
-    # Split: 70% train / 15% CV / 15% test
-    n = len(dataset_4dim)
-    test_size = int(0.15 * n)
-    cv_size = int(0.15 * n)
-    train_size = n - cv_size - test_size
-
-    # Use same split for all variants
-    set_seed(seed)
-    train_set_4, cv_set_4, test_set_4 = random_split(
-        dataset_4dim, [train_size, cv_size, test_size]
+    # Split by sequence, not row, so paired experiments cannot leak.
+    splits_4 = grouped_train_cv_test_split(
+        dataset_4dim, dataset_4dim.sample_groups, seed=seed
+    )
+    train_set_4, cv_set_4, test_set_4 = (
+        splits_4.train, splits_4.cv, splits_4.test
     )
 
     train_loader_4 = DataLoader(train_set_4, batch_size=batch_size, shuffle=True)
@@ -223,11 +235,18 @@ def main():
     # For the full model, we try to use ViennaRNA features.
     # If ViennaRNA is not installed, the dataset falls back to 4-dim.
     dataset_7dim = RNAReactivityDataset(
-        sequences_csv=data_path, max_length=206, use_structure=True
+        sequences_csv=args.data, max_length=206, use_structure=True,
+        allow_synthetic=args.smoke_test,
     )
-    set_seed(seed)
-    train_set_7, cv_set_7, test_set_7 = random_split(
-        dataset_7dim, [train_size, cv_size, test_size]
+    if dataset_7dim.feature_dim != 7:
+        raise RuntimeError(
+            "ViennaRNA is required for the structural-feature ablation. "
+            "Install the dependencies before running this experiment."
+        )
+    train_set_7, cv_set_7, test_set_7 = (
+        Subset(dataset_7dim, train_set_4.indices),
+        Subset(dataset_7dim, cv_set_4.indices),
+        Subset(dataset_7dim, test_set_4.indices),
     )
     train_loader_7 = DataLoader(train_set_7, batch_size=batch_size, shuffle=True)
     cv_loader_7 = DataLoader(cv_set_7, batch_size=batch_size, shuffle=False)
@@ -235,7 +254,10 @@ def main():
     # Determine actual feature dim for full model
     full_model_dim = dataset_7dim.feature_dim
 
-    print(f"\nDataset: {n} total | Train: {train_size} | CV: {cv_size} | Test: {test_size}")
+    print(
+        f"\nDataset: {len(dataset_4dim)} total | Train: {len(train_set_4)} | "
+        f"CV: {len(cv_set_4)} | Test: {len(test_set_4)}"
+    )
 
     # --- Define variants ---
 

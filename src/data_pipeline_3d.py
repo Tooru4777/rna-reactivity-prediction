@@ -27,8 +27,10 @@ class RNA3DDataset(Dataset):
         - mask:    (max_length,)   tensor — 1.0 for real nucleotides, 0.0 for padding
     """
 
-    def __init__(self, sequences_csv, labels_csv=None, max_length=200):
+    def __init__(self, sequences_csv, labels_csv=None, max_length=200,
+                 allow_synthetic=False, synthetic_seed=42):
         self.max_length = max_length
+        self.synthetic_seed = synthetic_seed
         self.char_map = {'A': 0, 'C': 1, 'G': 2, 'U': 3}
 
         if os.path.exists(sequences_csv) and (labels_csv is None or os.path.exists(labels_csv)):
@@ -40,11 +42,16 @@ class RNA3DDataset(Dataset):
                 self.label_df = None
             self.mock_data = False
             self.num_samples = len(self.seq_df)
-        else:
-            print("[WARNING] Real CSV files not found.")
-            print("Generating 1000 synthetic RNA 3D samples for pipeline validation.")
+        elif allow_synthetic:
+            print("[SMOKE TEST] Real CSV files not found.")
+            print("Generating deterministic synthetic samples for pipeline validation.")
             self.mock_data = True
             self.num_samples = 1000
+        else:
+            raise FileNotFoundError(
+                "RNA 3D data files were not found. Synthetic data are disabled "
+                "for research runs. Pass allow_synthetic=True only for a smoke test."
+            )
 
     def __len__(self):
         return self.num_samples
@@ -52,9 +59,10 @@ class RNA3DDataset(Dataset):
     def __getitem__(self, idx):
         if self.mock_data:
             # Generate synthetic data for testing the pipeline end-to-end
-            length = np.random.randint(50, self.max_length)
-            seq_str = ''.join(np.random.choice(['A', 'C', 'G', 'U'], size=length))
-            coords = np.random.randn(length, 3).astype(np.float32)
+            rng = np.random.default_rng(self.synthetic_seed + idx)
+            length = rng.integers(50, self.max_length)
+            seq_str = ''.join(rng.choice(['A', 'C', 'G', 'U'], size=length))
+            coords = rng.normal(size=(length, 3)).astype(np.float32)
         else:
             # Load real sequence and coordinates from Kaggle CSV
             seq_str = self.seq_df.iloc[idx]['sequence']

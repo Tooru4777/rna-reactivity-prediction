@@ -5,6 +5,9 @@
 *.csv
 dataset/
 
+# Small experiment summaries are part of the reproducibility record
+!experiments/*.csv
+
 # Python caches
 __pycache__/
 *.pyc

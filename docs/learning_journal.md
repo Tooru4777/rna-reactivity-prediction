@@ -63,6 +63,25 @@ During training, this kills gradients for any prediction outside [0, 1]. But ear
 - Start with a simpler baseline and add complexity incrementally
 - Set up proper experiment tracking (e.g., Weights & Biases) from the beginning
 - Write unit tests for the data pipeline before training
+- Split by RNA sequence rather than by measurement row, so paired experiments
+  cannot leak across training and validation
+- Make synthetic data an explicit smoke-test mode instead of a silent fallback
+
+### A research-rigour lesson from the first ablation
+
+My first ablation was useful for learning the mechanics of controlled model
+comparison, but it was not yet a publication-quality benchmark. The local data
+subset and result tables were not versioned, and the row-wise split could place
+different measurements of an identical RNA sequence in separate partitions.
+I initially wrote conclusions that were more confident than the evidence
+allowed.
+
+I have since changed the pipeline to fail when real data are missing, split by
+sequence group, ignore padding inside recurrent and attention layers, and
+weight metrics by valid nucleotide targets. I keep the preliminary table in
+the README with a clear warning because showing how I corrected the workflow
+is a more honest account of my transition from wet-lab work to computational
+research than silently removing the early attempt.
 
 ### Skills developed
 - PyTorch: custom Datasets, masked loss, model checkpointing

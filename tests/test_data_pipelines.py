@@ -23,6 +23,7 @@ sys.path.insert(0, PROJECT_ROOT)
 
 from src.data_pipeline_reactivity import RNAReactivityDataset
 from src.data_pipeline_3d import RNA3DDataset
+from src.data_splitting import grouped_train_cv_test_split
 
 
 # =====================================================================
@@ -39,6 +40,7 @@ class TestReactivityDataset:
             sequences_csv="nonexistent.csv",
             max_length=206,
             use_structure=False,
+            allow_synthetic=True,
         )
 
     @pytest.fixture
@@ -48,6 +50,7 @@ class TestReactivityDataset:
             sequences_csv="nonexistent.csv",
             max_length=206,
             use_structure=True,
+            allow_synthetic=True,
         )
 
     @pytest.fixture
@@ -65,6 +68,15 @@ class TestReactivityDataset:
     def test_synthetic_fallback_length(self, dataset_4d):
         """Synthetic dataset should have 500 samples."""
         assert len(dataset_4d) == 500
+
+    def test_missing_data_fails_without_explicit_smoke_test(self):
+        """Research runs must never silently replace missing data."""
+        with pytest.raises(FileNotFoundError):
+            RNAReactivityDataset(
+                sequences_csv="nonexistent.csv",
+                max_length=206,
+                use_structure=False,
+            )
 
     def test_output_types(self, dataset_4d):
         """Each sample should return 3 tensors."""
@@ -148,11 +160,19 @@ class TestRNA3DDataset:
             sequences_csv="nonexistent.csv",
             labels_csv="nonexistent.csv",
             max_length=200,
+            allow_synthetic=True,
         )
 
     def test_synthetic_length(self, dataset):
         """Synthetic dataset should have 1000 samples."""
         assert len(dataset) == 1000
+
+    def test_missing_data_fails_without_explicit_smoke_test(self):
+        with pytest.raises(FileNotFoundError):
+            RNA3DDataset(
+                sequences_csv="nonexistent.csv",
+                labels_csv="nonexistent.csv",
+            )
 
     def test_output_types(self, dataset):
         """Each sample should return 3 tensors."""
@@ -202,3 +222,25 @@ class TestRNA3DDataset:
         assert one_hot.shape == (16, 200, 4)
         assert coords.shape == (16, 200, 3)
         assert mask.shape == (16, 200)
+
+
+def test_grouped_split_has_no_sequence_overlap():
+    """Repeated measurements of one sequence must stay in one partition."""
+    dataset = list(range(12))
+    groups = [
+        "seq_a", "seq_a", "seq_b", "seq_b", "seq_c", "seq_c",
+        "seq_d", "seq_d", "seq_e", "seq_e", "seq_f", "seq_f",
+    ]
+    splits = grouped_train_cv_test_split(
+        dataset, groups, seed=42, cv_fraction=0.2, test_fraction=0.2
+    )
+
+    def group_set(subset):
+        return {groups[i] for i in subset.indices}
+
+    train_groups = group_set(splits.train)
+    cv_groups = group_set(splits.cv)
+    test_groups = group_set(splits.test)
+    assert train_groups.isdisjoint(cv_groups)
+    assert train_groups.isdisjoint(test_groups)
+    assert cv_groups.isdisjoint(test_groups)

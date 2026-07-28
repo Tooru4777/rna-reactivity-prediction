@@ -37,7 +37,8 @@ def sequence_to_onehot(seq_str, max_length=200):
 
 
 def visualize_rna_3d(sequence, weights_path="rna_3d_model_weights.pth",
-                     save_path="../results/predicted_rna_3d.png"):
+                     save_path="../results/predicted_rna_3d.png",
+                     allow_random_demo=False):
     """Predict and visualise the 3D backbone of an RNA sequence."""
     print("=== RNA 3D Structure Inference ===")
     model = RNAPredictor3D()
@@ -48,8 +49,12 @@ def visualize_rna_3d(sequence, weights_path="rna_3d_model_weights.pth",
             torch.load(weights_path, map_location=torch.device('cpu'))
         )
     else:
-        print(f"[WARNING] Weights file '{weights_path}' not found.")
-        print("Running inference with randomly initialised parameters (demo mode).")
+        if not allow_random_demo:
+            raise FileNotFoundError(
+                f"Weights file not found: {weights_path}. "
+                "Use allow_random_demo=True only for a visualisation smoke test."
+            )
+        print("[SMOKE TEST] Using random parameters; this is not a prediction.")
 
     model.eval()
 
@@ -80,7 +85,12 @@ def visualize_rna_3d(sequence, weights_path="rna_3d_model_weights.pth",
     ax.scatter(x[-1], y[-1], z[-1], color='red', s=150,
                edgecolor='black', label="3' End (Stop)")
 
-    ax.set_title("AI Predicted RNA 3D Structure", fontsize=16, fontweight='bold')
+    title = (
+        "Random-output visualisation (smoke test)"
+        if allow_random_demo
+        else "Model-predicted RNA 3D coordinates"
+    )
+    ax.set_title(title, fontsize=16, fontweight='bold')
     ax.set_xlabel("X Coordinate (Å)")
     ax.set_ylabel("Y Coordinate (Å)")
     ax.set_zlabel("Z Coordinate (Å)")

@@ -37,11 +37,12 @@ sys.path.insert(0, PROJECT_ROOT)
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader
 import numpy as np
 
 from src.model_reactivity import RNAReactivityPredictor
 from src.data_pipeline_reactivity import RNAReactivityDataset
+from src.data_splitting import grouped_train_cv_test_split
 
 
 def set_seed(seed):
@@ -56,7 +57,8 @@ def set_seed(seed):
 def train_epoch(model, train_loader, optimizer, criterion, device):
     """Run one training epoch. Returns average training loss."""
     model.train()
-    total_loss = 0.0
+    total_absolute_error = 0.0
+    total_valid_targets = 0.0
 
     for features, reactivities, masks in train_loader:
         features = features.to(device)
@@ -64,7 +66,8 @@ def train_epoch(model, train_loader, optimizer, criterion, device):
         masks = masks.to(device)
 
         optimizer.zero_grad()
-        predictions = model(features)
+        padding_mask = features.abs().sum(dim=-1).eq(0)
+        predictions = model(features, padding_mask=padding_mask)
 
         # Only clamp targets — keep raw predictions for gradient flow
         # See README § "Debugging: Gradient Vanishing" for full explanation
@@ -80,15 +83,17 @@ def train_epoch(model, train_loader, optimizer, criterion, device):
 
         final_loss.backward()
         optimizer.step()
-        total_loss += final_loss.item()
+        total_absolute_error += masked_loss.detach().sum().item()
+        total_valid_targets += nt_count.item()
 
-    return total_loss / max(len(train_loader), 1)
+    return total_absolute_error / max(total_valid_targets, 1.0)
 
 
 def evaluate(model, data_loader, device):
     """Evaluate using Kaggle's Clipped MAE metric. Returns average CV loss."""
     model.eval()
-    total_loss = 0.0
+    total_absolute_error = 0.0
+    total_valid_targets = 0.0
 
     with torch.no_grad():
         for features, reactivities, masks in data_loader:
@@ -96,7 +101,8 @@ def evaluate(model, data_loader, device):
             reactivities = reactivities.to(device)
             masks = masks.to(device)
 
-            predictions = model(features)
+            padding_mask = features.abs().sum(dim=-1).eq(0)
+            predictions = model(features, padding_mask=padding_mask)
 
             # Clipped MAE: clamp BOTH predictions and targets to [0, 1]
             preds_clipped = torch.clamp(predictions, 0.0, 1.0)
@@ -106,12 +112,10 @@ def evaluate(model, data_loader, device):
 
             nt_count = masks.sum()
             if nt_count > 0:
-                cv_loss = masked_loss.sum() / nt_count
-            else:
-                cv_loss = torch.tensor(0.0, device=device)
-            total_loss += cv_loss.item()
+                total_absolute_error += masked_loss.sum().item()
+                total_valid_targets += nt_count.item()
 
-    return total_loss / max(len(data_loader), 1)
+    return total_absolute_error / max(total_valid_targets, 1.0)
 
 
 def main():
@@ -129,6 +133,10 @@ def main():
     parser.add_argument("--weight-decay", type=float, default=1e-5, help="L2 regularisation")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     parser.add_argument("--max-length", type=int, default=206, help="Max sequence length")
+    parser.add_argument(
+        "--smoke-test", action="store_true",
+        help="Use deterministic synthetic data only when the CSV is unavailable"
+    )
     parser.add_argument(
         "--save-path", type=str,
         default=os.path.join(PROJECT_ROOT, "rna_reactivity_model_weights.pth"),
@@ -151,21 +159,22 @@ def main():
         sequences_csv=args.data,
         max_length=args.max_length,
         use_structure=True,  # Use ViennaRNA features if available
+        allow_synthetic=args.smoke_test,
     )
 
-    # 70% train / 15% CV / 15% test
-    n = len(dataset)
-    test_size = int(0.15 * n)
-    cv_size = int(0.15 * n)
-    train_size = n - cv_size - test_size
-
-    set_seed(args.seed)
-    train_set, cv_set, test_set = random_split(dataset, [train_size, cv_size, test_size])
+    # Keep every measurement of the same RNA sequence in one partition.
+    splits = grouped_train_cv_test_split(
+        dataset, dataset.sample_groups, seed=args.seed
+    )
+    train_set, cv_set, test_set = splits.train, splits.cv, splits.test
 
     train_loader = DataLoader(train_set, batch_size=args.batch_size, shuffle=True)
     cv_loader = DataLoader(cv_set, batch_size=args.batch_size, shuffle=False)
 
-    print(f"\nDataset: {n} total | Train: {train_size} | CV: {cv_size} | Test: {test_size}")
+    print(
+        f"\nDataset: {len(dataset)} total | Train: {len(train_set)} | "
+        f"CV: {len(cv_set)} | Test: {len(test_set)}"
+    )
     print(f"Feature dim: {dataset.feature_dim}")
 
     # --- Model Setup ---

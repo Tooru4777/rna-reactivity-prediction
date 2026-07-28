@@ -40,9 +40,11 @@ class RNAReactivityDataset(Dataset):
                        If False, use sequence-only features (4-dim input).
     """
 
-    def __init__(self, sequences_csv, max_length=206, use_structure=True):
+    def __init__(self, sequences_csv, max_length=206, use_structure=True,
+                 allow_synthetic=False, synthetic_seed=42):
         self.max_length = max_length
         self.use_structure = use_structure and HAS_VIENNA
+        self.synthetic_seed = synthetic_seed
 
         # Feature dimension: 4 (seq only) or 7 (seq + structure)
         self.feature_dim = 7 if self.use_structure else 4
@@ -80,21 +82,36 @@ class RNAReactivityDataset(Dataset):
             print(f"Loaded {self.num_samples} samples, "
                   f"{len(self.reactivity_cols)} reactivity columns, "
                   f"feature_dim={self.feature_dim}")
-        else:
-            print(f"[WARNING] {sequences_csv} not found. Using synthetic data.")
+        elif allow_synthetic:
+            print(f"[SMOKE TEST] {sequences_csv} not found. Using synthetic data.")
             self.mock_data = True
             self.num_samples = 500
             self.reactivity_cols = []
+        else:
+            raise FileNotFoundError(
+                f"Training data not found: {sequences_csv}. "
+                "Synthetic data are disabled for research runs. "
+                "Pass allow_synthetic=True only for a pipeline smoke test."
+            )
+
+    @property
+    def sample_groups(self):
+        """Group labels used to keep identical sequences in one data split."""
+        if self.mock_data:
+            return np.array([f"synthetic_{i}" for i in range(self.num_samples)])
+        return self.seq_df["sequence"].fillna("").astype(str).to_numpy()
 
     def __len__(self):
         return self.num_samples
 
     def __getitem__(self, idx):
         if self.mock_data:
-            length = np.random.randint(50, self.max_length)
-            seq_str = ''.join(np.random.choice(['A', 'C', 'G', 'U'], size=length))
+            # Per-index RNG keeps smoke-test samples stable across epochs.
+            rng = np.random.default_rng(self.synthetic_seed + idx)
+            length = rng.integers(50, self.max_length)
+            seq_str = ''.join(rng.choice(['A', 'C', 'G', 'U'], size=length))
             struct_str = '.' * length
-            reactivities = np.random.randn(length, 2).astype(np.float32)
+            reactivities = rng.normal(size=(length, 2)).astype(np.float32)
             valid_mask = np.ones((length, 2), dtype=np.float32)
         else:
             seq_str = self.seq_df.iloc[idx].get('sequence', '')

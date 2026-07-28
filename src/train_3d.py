@@ -18,12 +18,18 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
+import argparse
+import os
+import sys
 
-from data_pipeline_3d import RNA3DDataset
-from model_3d import RNAPredictor3D
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, PROJECT_ROOT)
+
+from src.data_pipeline_3d import RNA3DDataset
+from src.model_3d import RNAPredictor3D
 
 
-def train_model():
+def train_model(args):
     print("=== RNA 3D Structure — Training Pipeline ===")
 
     # --- Data Loading ---
@@ -31,7 +37,8 @@ def train_model():
     dataset = RNA3DDataset(
         sequences_csv="dataset/train_sequences.csv",
         labels_csv="dataset/train_labels.csv",
-        max_length=200
+        max_length=200,
+        allow_synthetic=args.smoke_test,
     )
     dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
@@ -86,7 +93,21 @@ def train_model():
         print(f"Epoch [{epoch+1}/{num_epochs}], Training Loss: {avg_loss:.4f}")
 
     print("\n[SUCCESS] Training completed. Model demonstrates normal learning behaviour.")
+    if args.smoke_test:
+        print("[SMOKE TEST] Weights are not saved because targets were synthetic.")
+    else:
+        torch.save(model.state_dict(), args.save_path)
+        print(f"Weights saved to: {args.save_path}")
 
 
 if __name__ == "__main__":
-    train_model()
+    parser = argparse.ArgumentParser(description="Train the RNA 3D prototype")
+    parser.add_argument(
+        "--smoke-test", action="store_true",
+        help="Use deterministic synthetic data only to validate the pipeline",
+    )
+    parser.add_argument(
+        "--save-path", default="rna_3d_model_weights.pth",
+        help="Output path for weights trained on real data",
+    )
+    train_model(parser.parse_args())

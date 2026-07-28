@@ -146,6 +146,21 @@ class TestFullModelSpecifics:
             f"Parameter count {params:,} outside expected range [2.1M, 2.5M]"
         )
 
+    def test_padding_does_not_change_real_positions(self, full_model):
+        """Right-padding must not influence predictions for real nucleotides."""
+        model = full_model.eval()
+        real = torch.randn(1, 12, 7)
+        padded = torch.cat([real, torch.zeros(1, 8, 7)], dim=1)
+
+        with torch.no_grad():
+            short_out = model(real, padding_mask=torch.zeros(1, 12, dtype=torch.bool))
+            long_out = model(
+                padded,
+                padding_mask=torch.tensor([[False] * 12 + [True] * 8]),
+            )
+
+        assert torch.allclose(short_out, long_out[:, :12], atol=1e-5)
+
 
 # =====================================================================
 # 3D Model Tests

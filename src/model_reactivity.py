@@ -17,6 +17,30 @@ All variants share the same interface:
 
 import torch
 import torch.nn as nn
+from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
+
+
+def _run_packed_lstm(lstm, x, padding_mask):
+    """Run an LSTM without letting right-padding affect real nucleotides."""
+    if padding_mask is None:
+        return lstm(x)[0]
+
+    lengths = (~padding_mask).sum(dim=1).clamp(min=1).cpu()
+    packed = pack_padded_sequence(
+        x, lengths, batch_first=True, enforce_sorted=False
+    )
+    packed_out, _ = lstm(packed)
+    output, _ = pad_packed_sequence(
+        packed_out, batch_first=True, total_length=x.size(1)
+    )
+    return output
+
+
+def _zero_padded_cnn_positions(x, padding_mask):
+    """Prevent convolutional bias at padding positions leaking into neighbours."""
+    if padding_mask is None:
+        return x
+    return x.masked_fill(padding_mask.unsqueeze(1), 0.0)
 
 
 class RNAReactivityCNNOnly(nn.Module):
@@ -38,13 +62,15 @@ class RNAReactivityCNNOnly(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.fc = nn.Linear(cnn_out_dim, output_dim)
 
-    def forward(self, x):
+    def forward(self, x, padding_mask=None):
         # x: (batch, seq_len, input_dim)
         x = x.transpose(1, 2)
         x = self.relu(self.bn1(self.cnn1(x)))
         x = self.dropout(x)
+        x = _zero_padded_cnn_positions(x, padding_mask)
         x = self.relu(self.bn2(self.cnn2(x)))
         x = self.dropout(x)
+        x = _zero_padded_cnn_positions(x, padding_mask)
         x = x.transpose(1, 2)
         return self.fc(x)
 
@@ -79,15 +105,17 @@ class RNAReactivityCNN_LSTM(nn.Module):
         )
         self.fc = nn.Linear(lstm_hidden_dim * 2, output_dim)
 
-    def forward(self, x):
+    def forward(self, x, padding_mask=None):
         x = x.transpose(1, 2)
         x = self.relu(self.bn1(self.cnn1(x)))
         x = self.dropout(x)
+        x = _zero_padded_cnn_positions(x, padding_mask)
         x = self.relu(self.bn2(self.cnn2(x)))
         x = self.dropout(x)
+        x = _zero_padded_cnn_positions(x, padding_mask)
         x = x.transpose(1, 2)
 
-        lstm_out, _ = self.lstm(x)
+        lstm_out = _run_packed_lstm(self.lstm, x, padding_mask)
         lstm_out = self.dropout(lstm_out)
         return self.fc(lstm_out)
 
@@ -138,18 +166,22 @@ class RNAReactivityCNN_LSTM_Transformer(nn.Module):
         )
         self.fc = nn.Linear(d_model, output_dim)
 
-    def forward(self, x):
+    def forward(self, x, padding_mask=None):
         x = x.transpose(1, 2)
         x = self.relu(self.bn1(self.cnn1(x)))
         x = self.dropout(x)
+        x = _zero_padded_cnn_positions(x, padding_mask)
         x = self.relu(self.bn2(self.cnn2(x)))
         x = self.dropout(x)
+        x = _zero_padded_cnn_positions(x, padding_mask)
         x = x.transpose(1, 2)
 
-        lstm_out, _ = self.lstm(x)
+        lstm_out = _run_packed_lstm(self.lstm, x, padding_mask)
         lstm_out = self.dropout(lstm_out)
 
-        transformer_out = self.transformer(lstm_out)
+        transformer_out = self.transformer(
+            lstm_out, src_key_padding_mask=padding_mask
+        )
         transformer_out = transformer_out + lstm_out  # residual connection
         return self.fc(transformer_out)
 
@@ -212,19 +244,23 @@ class RNAReactivityPredictor(nn.Module):
 
         self.fc = nn.Linear(d_model, output_dim)
 
-    def forward(self, x):
+    def forward(self, x, padding_mask=None):
         # x: (batch, seq_len, 7)
         x = x.transpose(1, 2)
         x = self.relu(self.bn1(self.cnn1(x)))
         x = self.dropout(x)
+        x = _zero_padded_cnn_positions(x, padding_mask)
         x = self.relu(self.bn2(self.cnn2(x)))
         x = self.dropout(x)
+        x = _zero_padded_cnn_positions(x, padding_mask)
         x = x.transpose(1, 2)
 
-        lstm_out, _ = self.lstm(x)
+        lstm_out = _run_packed_lstm(self.lstm, x, padding_mask)
         lstm_out = self.dropout(lstm_out)
 
-        transformer_out = self.transformer(lstm_out)
+        transformer_out = self.transformer(
+            lstm_out, src_key_padding_mask=padding_mask
+        )
         transformer_out = transformer_out + lstm_out  # residual
         return self.fc(transformer_out)
 
