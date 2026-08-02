@@ -1,10 +1,12 @@
-# RNA Structure Prediction with Deep Learning
+# RNA Reactivity Prediction
 
-# RNA_RL_bioresearch
+An independent learning project based on public data from the completed
+[Stanford Ribonanza RNA Folding competition](https://www.kaggle.com/competitions/stanford-ribonanza-rna-folding).
 
-*Note: In the context of this project, "RL" stands for **Representation Learning**, focusing on learning meaningful representations of RNA sequences, not Reinforcement Learning.*
-
-Deep learning models for predicting RNA structure and reactivity. This project was developed as a learning journey and applied to the [Stanford Ribonanza RNA Folding Competition](https://www.kaggle.com/competitions/stanford-ribonanza-rna-folding).
+I developed this project to practise computational RNA analysis and deep-learning
+workflows while transitioning from experimental mRNA research to computational
+biology. It was not submitted to the original competition and is not presented as
+a competition result or publication-level study.
 
 ## Motivation
 
@@ -15,7 +17,7 @@ RNA molecules fold into complex 3D structures that determine their biological fu
 
 ## Architecture
 
-### Reactivity Model (Competition Entry)
+### Reactivity Model
 
 ```
 Input (7-dim)  →  CNN (2-layer + BatchNorm)  →  Bi-LSTM  →  Transformer Encoder  →  Output (2-dim)
@@ -51,7 +53,7 @@ what I still need to learn.
 ## Project Structure
 
 ```
-RNA_RL_bioresearch/
+rna-reactivity-prediction/
 ├── README.md                  ← This file
 ├── requirements.txt           ← Python dependencies
 ├── .gitignore
