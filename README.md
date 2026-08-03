@@ -144,7 +144,17 @@ A systematic ablation study quantifies the contribution of each architectural co
 
 **Interpretation**: Transformer self-attention is most effective when the dataset is large enough to learn meaningful long-range interaction patterns. With only 1000 samples, the Bi-LSTM's inductive bias (sequential processing) provides a stronger prior than the Transformer's more general attention mechanism. However, integrating explicitly computed secondary structures (ViennaRNA) provides a measurable benefit to complex models. This aligns with the observation that RNA folding is inherently sequential — the 5'→3' synthesis order constrains which structures can form.
 
-*To reproduce: `python experiments/run_ablation.py` (seed=42, ~14 min on CPU)*
+These historical scores used a row-level random split. The current training code
+uses a sequence-grouped split to prevent the same RNA sequence (for example under
+different experimental conditions) from appearing in both training and validation.
+The grouped scores must be regenerated before making a generalisation claim.
+
+*To reproduce: first run `bash kaggle/download_data.sh`, then
+`python experiments/run_ablation.py --max-samples 1000` (seed=42).*
+
+The reported ViennaRNA gain is a controlled comparison within the Transformer
+architecture (0.1334 → 0.1258 clipped MAE). It does not make the ViennaRNA model
+the overall winner: CNN + Bi-LSTM remains best in this historical run at 0.1186.
 
 *See [experiments/experiment_notes.md](experiments/experiment_notes.md) for detailed hyperparameter tuning history.*
 
@@ -204,4 +214,3 @@ python experiments/plot_results.py    # Generate visualisations
 ## License
 
 This project is for educational and research purposes.
-

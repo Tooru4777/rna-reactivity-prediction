@@ -24,6 +24,7 @@ Usage:
 
 import sys
 import os
+import argparse
 
 # Add project root to path so we can import from src/
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,7 +33,7 @@ sys.path.insert(0, PROJECT_ROOT)
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader, Subset
 import numpy as np
 import pandas as pd
 import time
@@ -45,6 +46,7 @@ from src.model_reactivity import (
     RNAReactivityPredictor,
 )
 from src.data_pipeline_reactivity import RNAReactivityDataset
+from src.splitting import grouped_split_indices
 
 
 # =====================================================================
@@ -173,7 +175,22 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
 # Main Ablation
 # =====================================================================
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Run the RNA reactivity ablation study")
+    parser.add_argument(
+        "--data",
+        default=os.path.join(PROJECT_ROOT, "dataset", "train_data.csv"),
+        help="Ribonanza train_data.csv path",
+    )
+    parser.add_argument(
+        "--max-samples", type=int, default=1000,
+        help="Rows to load for a quick ablation; use 0 for the full dataset",
+    )
+    return parser.parse_args()
+
+
 def main():
+    args = parse_args()
     # Load config
     config_path = os.path.join(PROJECT_ROOT, "configs", "ablation_config.yaml")
     with open(config_path, "r") as f:
@@ -198,23 +215,27 @@ def main():
     print(f"Device: {device}")
 
     # --- Load data (4-dim: no ViennaRNA, for first 3 variants) ---
-    data_path = os.path.join(PROJECT_ROOT, "train_data_1000.csv")
+    data_path = os.path.abspath(args.data)
+    max_samples = args.max_samples or None
 
     dataset_4dim = RNAReactivityDataset(
-        sequences_csv=data_path, max_length=206, use_structure=False
+        sequences_csv=data_path, max_length=206, use_structure=False,
+        max_samples=max_samples,
     )
 
-    # Split: 70% train / 15% CV / 15% test
+    # Split unique RNA sequences 70% / 15% / 15%. Rows for the same sequence
+    # (for example, different experiment types) always stay in one split.
     n = len(dataset_4dim)
-    test_size = int(0.15 * n)
-    cv_size = int(0.15 * n)
-    train_size = n - cv_size - test_size
-
-    # Use same split for all variants
-    set_seed(seed)
-    train_set_4, cv_set_4, test_set_4 = random_split(
-        dataset_4dim, [train_size, cv_size, test_size]
+    if dataset_4dim.mock_data:
+        raise FileNotFoundError(
+            f"Ribonanza data not found at {data_path}. Run kaggle/download_data.sh first."
+        )
+    train_idx, cv_idx, test_idx = grouped_split_indices(
+        dataset_4dim.seq_df, group_col="sequence", seed=seed
     )
+    train_set_4 = Subset(dataset_4dim, train_idx)
+    cv_set_4 = Subset(dataset_4dim, cv_idx)
+    test_set_4 = Subset(dataset_4dim, test_idx)
 
     train_loader_4 = DataLoader(train_set_4, batch_size=batch_size, shuffle=True)
     cv_loader_4 = DataLoader(cv_set_4, batch_size=batch_size, shuffle=False)
@@ -223,19 +244,21 @@ def main():
     # For the full model, we try to use ViennaRNA features.
     # If ViennaRNA is not installed, the dataset falls back to 4-dim.
     dataset_7dim = RNAReactivityDataset(
-        sequences_csv=data_path, max_length=206, use_structure=True
+        sequences_csv=data_path, max_length=206, use_structure=True,
+        max_samples=max_samples,
     )
-    set_seed(seed)
-    train_set_7, cv_set_7, test_set_7 = random_split(
-        dataset_7dim, [train_size, cv_size, test_size]
-    )
+    train_set_7 = Subset(dataset_7dim, train_idx)
+    cv_set_7 = Subset(dataset_7dim, cv_idx)
+    test_set_7 = Subset(dataset_7dim, test_idx)
     train_loader_7 = DataLoader(train_set_7, batch_size=batch_size, shuffle=True)
     cv_loader_7 = DataLoader(cv_set_7, batch_size=batch_size, shuffle=False)
 
     # Determine actual feature dim for full model
     full_model_dim = dataset_7dim.feature_dim
 
-    print(f"\nDataset: {n} total | Train: {train_size} | CV: {cv_size} | Test: {test_size}")
+    print(f"\nDataset: {n} rows | Train: {len(train_idx)} | "
+          f"CV: {len(cv_idx)} | Test: {len(test_idx)}")
+    print("Split: grouped by sequence (no sequence overlap)")
 
     # --- Define variants ---
 

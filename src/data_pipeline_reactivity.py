@@ -38,9 +38,11 @@ class RNAReactivityDataset(Dataset):
         max_length:    Pad/truncate all sequences to this length
         use_structure: If True, compute ViennaRNA 2D structure (7-dim input).
                        If False, use sequence-only features (4-dim input).
+        max_samples:   Optional maximum number of CSV rows to load.
     """
 
-    def __init__(self, sequences_csv, max_length=206, use_structure=True):
+    def __init__(self, sequences_csv, max_length=206, use_structure=True,
+                 max_samples=None):
         self.max_length = max_length
         self.use_structure = use_structure and HAS_VIENNA
 
@@ -52,7 +54,7 @@ class RNAReactivityDataset(Dataset):
 
         if os.path.exists(sequences_csv):
             print(f"Loading dataset: {sequences_csv}")
-            self.seq_df = pd.read_csv(sequences_csv)
+            self.seq_df = pd.read_csv(sequences_csv, nrows=max_samples)
 
             # Quality filter
             if 'SN_filter' in self.seq_df.columns:

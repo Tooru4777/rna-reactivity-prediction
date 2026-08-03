@@ -23,6 +23,7 @@ sys.path.insert(0, PROJECT_ROOT)
 
 from src.data_pipeline_reactivity import RNAReactivityDataset
 from src.data_pipeline_3d import RNA3DDataset
+from src.splitting import grouped_split_indices
 
 
 # =====================================================================
@@ -132,6 +133,22 @@ class TestReactivityDataset:
 
         f7, _, _ = dataset_7d[0]
         assert f7.shape[1] == dataset_7d.feature_dim
+
+
+def test_grouped_split_has_no_sequence_overlap():
+    import pandas as pd
+
+    frame = pd.DataFrame({
+        "sequence": [f"SEQ{i}" for i in range(20) for _ in range(2)],
+        "experiment_type": ["2A3_MaP", "DMS_MaP"] * 20,
+    })
+    train, cv, test = grouped_split_indices(frame, seed=42)
+    split_groups = [set(frame.iloc[idx]["sequence"]) for idx in (train, cv, test)]
+
+    assert split_groups[0].isdisjoint(split_groups[1])
+    assert split_groups[0].isdisjoint(split_groups[2])
+    assert split_groups[1].isdisjoint(split_groups[2])
+    assert sorted(train + cv + test) == list(range(len(frame)))
 
 
 # =====================================================================
