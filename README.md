@@ -158,6 +158,14 @@ the overall winner: CNN + Bi-LSTM remains best in this historical run at 0.1186.
 
 *See [experiments/experiment_notes.md](experiments/experiment_notes.md) for detailed hyperparameter tuning history.*
 
+### Kaggle GPU run
+
+After configuring `~/.kaggle/kaggle.json` and accepting the competition rules,
+submit the private GPU kernel with `bash kaggle/run_gpu_ablation.sh`. The kernel
+mounts the competition data and writes reproducibility metadata, grouped-split
+checks, per-epoch results, a summary, learning curves, and best model weights to
+its downloadable `results/` output directory.
+
 ### Training Curves
 
 ![Training curves showing loss vs. epoch for all four model variants](results/training_curves.png)

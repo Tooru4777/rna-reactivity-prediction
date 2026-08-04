@@ -25,6 +25,9 @@ Usage:
 import sys
 import os
 import argparse
+import json
+import platform
+import re
 
 # Add project root to path so we can import from src/
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,6 +41,7 @@ import numpy as np
 import pandas as pd
 import time
 import yaml
+import matplotlib.pyplot as plt
 
 from src.model_reactivity import (
     RNAReactivityCNNOnly,
@@ -67,7 +71,8 @@ def set_seed(seed):
 # =====================================================================
 
 def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
-                  lr=0.001, weight_decay=1e-5, patience=2, factor=0.5, variant_name="model"):
+                  lr=0.001, weight_decay=1e-5, patience=2, factor=0.5,
+                  variant_name="model", save_path=None):
     """
     Train a single model variant and return per-epoch loss history.
 
@@ -153,6 +158,8 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
         if avg_cv < best_cv_loss:
             best_cv_loss = avg_cv
             best_epoch = epoch + 1
+            if save_path:
+                torch.save(model.state_dict(), save_path)
 
         scheduler.step(avg_cv)
 
@@ -186,6 +193,15 @@ def parse_args():
         "--max-samples", type=int, default=1000,
         help="Rows to load for a quick ablation; use 0 for the full dataset",
     )
+    parser.add_argument("--epochs", type=int, help="Override config epoch count")
+    parser.add_argument(
+        "--output-dir", default=os.path.join(PROJECT_ROOT, "experiments"),
+        help="Directory for CSV, JSON, plots, and model weights",
+    )
+    parser.add_argument(
+        "--require-vienna", action="store_true",
+        help="Fail instead of silently using 4D inputs when ViennaRNA is unavailable",
+    )
     return parser.parse_args()
 
 
@@ -198,7 +214,7 @@ def main():
 
     seed = config.get("seed", 42)
     batch_size = config.get("batch_size", 64)
-    num_epochs = config.get("num_epochs", 15)
+    num_epochs = args.epochs or config.get("num_epochs", 15)
     lr = config.get("learning_rate", 0.001)
     weight_decay = float(config.get("weight_decay", 1e-5))
     patience = config.get("patience", 2)
@@ -247,6 +263,8 @@ def main():
         sequences_csv=data_path, max_length=206, use_structure=True,
         max_samples=max_samples,
     )
+    if args.require_vienna and dataset_7dim.feature_dim != 7:
+        raise RuntimeError("ViennaRNA is required, but the RNA Python package is unavailable")
     train_set_7 = Subset(dataset_7dim, train_idx)
     cv_set_7 = Subset(dataset_7dim, cv_idx)
     test_set_7 = Subset(dataset_7dim, test_idx)
@@ -259,6 +277,37 @@ def main():
     print(f"\nDataset: {n} rows | Train: {len(train_idx)} | "
           f"CV: {len(cv_idx)} | Test: {len(test_idx)}")
     print("Split: grouped by sequence (no sequence overlap)")
+
+    results_dir = os.path.abspath(args.output_dir)
+    os.makedirs(results_dir, exist_ok=True)
+
+    split_report = {
+        "split_method": "grouped_by_sequence",
+        "seed": seed,
+        "source": data_path,
+        "max_samples": max_samples,
+        "rows": {"total": n, "train": len(train_idx), "cv": len(cv_idx), "test": len(test_idx)},
+        "unique_sequences": {
+            "total": int(dataset_4dim.seq_df["sequence"].nunique()),
+            "train": int(dataset_4dim.seq_df.iloc[train_idx]["sequence"].nunique()),
+            "cv": int(dataset_4dim.seq_df.iloc[cv_idx]["sequence"].nunique()),
+            "test": int(dataset_4dim.seq_df.iloc[test_idx]["sequence"].nunique()),
+        },
+        "sequence_overlap": {"train_cv": 0, "train_test": 0, "cv_test": 0},
+    }
+    with open(os.path.join(results_dir, "split_report.json"), "w") as f:
+        json.dump(split_report, f, indent=2)
+
+    environment = {
+        "python": platform.python_version(),
+        "torch": torch.__version__,
+        "cuda_available": torch.cuda.is_available(),
+        "cuda_version": torch.version.cuda,
+        "device": str(device),
+        "vienna_features": dataset_7dim.feature_dim == 7,
+    }
+    with open(os.path.join(results_dir, "environment.json"), "w") as f:
+        json.dump(environment, f, indent=2)
 
     # --- Define variants ---
 
@@ -315,6 +364,10 @@ def main():
             patience=patience,
             factor=factor,
             variant_name=name,
+            save_path=os.path.join(
+                results_dir,
+                re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_") + "_best.pth",
+            ),
         )
         result['params'] = params
         all_results[name] = result
@@ -330,9 +383,6 @@ def main():
                 })
 
     # --- Save per-epoch results ---
-    results_dir = os.path.join(PROJECT_ROOT, "experiments")
-    os.makedirs(results_dir, exist_ok=True)
-
     epoch_df = pd.DataFrame(epoch_records)
     epoch_csv = os.path.join(results_dir, "ablation_results.csv")
     epoch_df.to_csv(epoch_csv, index=False)
@@ -353,6 +403,16 @@ def main():
     summary_df = pd.DataFrame(summary_records)
     summary_csv = os.path.join(results_dir, "ablation_summary.csv")
     summary_df.to_csv(summary_csv, index=False)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    for name, history in all_results.items():
+        ax.plot(range(1, len(history["cv_losses"]) + 1), history["cv_losses"], label=name)
+    ax.set(xlabel="Epoch", ylabel="Clipped MAE", title="Grouped-validation learning curves")
+    ax.grid(alpha=0.25)
+    ax.legend(fontsize=8)
+    fig.tight_layout()
+    fig.savefig(os.path.join(results_dir, "training_curves.png"), dpi=160)
+    plt.close(fig)
 
     # --- Print summary table ---
     print(f"\n{'=' * 70}")

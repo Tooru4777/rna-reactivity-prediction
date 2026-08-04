@@ -1,0 +1,15 @@
+{
+  "id": "tooru4777/rna-reactivity-grouped-ablation",
+  "title": "RNA Reactivity Grouped Ablation",
+  "code_file": "gpu_ablation.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "competition_sources": [
+    "stanford-ribonanza-rna-folding"
+  ],
+  "dataset_sources": [],
+  "kernel_sources": []
+}
