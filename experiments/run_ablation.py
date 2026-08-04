@@ -50,7 +50,12 @@ from src.model_reactivity import (
     RNAReactivityPredictor,
 )
 from src.data_pipeline_reactivity import RNAReactivityDataset
-from src.splitting import grouped_split_indices
+from src.data_loading import load_unique_sequence_subset
+from src.splitting import (
+    grouped_split_indices,
+    random_split_indices,
+    sequence_overlap_counts,
+)
 
 
 # =====================================================================
@@ -101,7 +106,8 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
     for epoch in range(num_epochs):
         # --- Training ---
         model.train()
-        total_train_loss = 0.0
+        total_train_abs = 0.0
+        total_train_nt = 0.0
 
         for features, reactivities, masks in train_loader:
             features = features.to(device)
@@ -124,13 +130,15 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
 
             final_loss.backward()
             optimizer.step()
-            total_train_loss += final_loss.item()
+            total_train_abs += masked_loss.sum().item()
+            total_train_nt += nt_count.item()
 
-        avg_train = total_train_loss / max(len(train_loader), 1)
+        avg_train = total_train_abs / max(total_train_nt, 1.0)
 
         # --- Cross-Validation (Clipped MAE — Kaggle metric) ---
         model.eval()
-        total_cv_loss = 0.0
+        total_cv_abs = 0.0
+        total_cv_nt = 0.0
         with torch.no_grad():
             for features, reactivities, masks in cv_loader:
                 features = features.to(device)
@@ -148,9 +156,10 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
                     cv_loss = masked_loss.sum() / nt_count
                 else:
                     cv_loss = torch.tensor(0.0, device=device)
-                total_cv_loss += cv_loss.item()
+                total_cv_abs += masked_loss.sum().item()
+                total_cv_nt += nt_count.item()
 
-        avg_cv = total_cv_loss / max(len(cv_loader), 1)
+        avg_cv = total_cv_abs / max(total_cv_nt, 1.0)
 
         train_losses.append(avg_train)
         cv_losses.append(avg_cv)
@@ -190,8 +199,8 @@ def parse_args():
         help="Ribonanza train_data.csv path",
     )
     parser.add_argument(
-        "--max-samples", type=int, default=1000,
-        help="Rows to load for a quick ablation; use 0 for the full dataset",
+        "--max-sequences", "--max-samples", dest="max_sequences", type=int, default=1000,
+        help="Unique sequences to load with all experiment rows; use 0 for the full dataset",
     )
     parser.add_argument("--epochs", type=int, help="Override config epoch count")
     parser.add_argument(
@@ -201,6 +210,10 @@ def parse_args():
     parser.add_argument(
         "--require-vienna", action="store_true",
         help="Fail instead of silently using 4D inputs when ViennaRNA is unavailable",
+    )
+    parser.add_argument(
+        "--split-method", choices=("grouped", "random", "both"), default="grouped",
+        help="Validation strategy; 'both' quantifies row-level leakage",
     )
     return parser.parse_args()
 
@@ -230,71 +243,59 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
 
-    # --- Load data (4-dim: no ViennaRNA, for first 3 variants) ---
+    # Select unique sequences first, then retain every experiment row for them.
     data_path = os.path.abspath(args.data)
-    max_samples = args.max_samples or None
-
-    dataset_4dim = RNAReactivityDataset(
-        sequences_csv=data_path, max_length=206, use_structure=False,
-        max_samples=max_samples,
-    )
-
-    # Split unique RNA sequences 70% / 15% / 15%. Rows for the same sequence
-    # (for example, different experiment types) always stay in one split.
-    n = len(dataset_4dim)
-    if dataset_4dim.mock_data:
+    if not os.path.isfile(data_path):
         raise FileNotFoundError(
             f"Ribonanza data not found at {data_path}. Run kaggle/download_data.sh first."
         )
-    train_idx, cv_idx, test_idx = grouped_split_indices(
-        dataset_4dim.seq_df, group_col="sequence", seed=seed
+    max_sequences = args.max_sequences or None
+    sequence_frame = load_unique_sequence_subset(
+        data_path, max_sequences=max_sequences, seed=seed
     )
-    train_set_4 = Subset(dataset_4dim, train_idx)
-    cv_set_4 = Subset(dataset_4dim, cv_idx)
-    test_set_4 = Subset(dataset_4dim, test_idx)
 
-    train_loader_4 = DataLoader(train_set_4, batch_size=batch_size, shuffle=True)
-    cv_loader_4 = DataLoader(cv_set_4, batch_size=batch_size, shuffle=False)
+    dataset_4dim = RNAReactivityDataset(
+        dataframe=sequence_frame, max_length=206, use_structure=False,
+    )
+    n = len(dataset_4dim)
 
-    # --- Load data (7-dim: with ViennaRNA fallback, for full model) ---
-    # For the full model, we try to use ViennaRNA features.
-    # If ViennaRNA is not installed, the dataset falls back to 4-dim.
     dataset_7dim = RNAReactivityDataset(
-        sequences_csv=data_path, max_length=206, use_structure=True,
-        max_samples=max_samples,
+        dataframe=sequence_frame, max_length=206, use_structure=True,
     )
     if args.require_vienna and dataset_7dim.feature_dim != 7:
         raise RuntimeError("ViennaRNA is required, but the RNA Python package is unavailable")
-    train_set_7 = Subset(dataset_7dim, train_idx)
-    cv_set_7 = Subset(dataset_7dim, cv_idx)
-    test_set_7 = Subset(dataset_7dim, test_idx)
-    train_loader_7 = DataLoader(train_set_7, batch_size=batch_size, shuffle=True)
-    cv_loader_7 = DataLoader(cv_set_7, batch_size=batch_size, shuffle=False)
-
-    # Determine actual feature dim for full model
     full_model_dim = dataset_7dim.feature_dim
 
-    print(f"\nDataset: {n} rows | Train: {len(train_idx)} | "
-          f"CV: {len(cv_idx)} | Test: {len(test_idx)}")
-    print("Split: grouped by sequence (no sequence overlap)")
+    split_indices = {}
+    if args.split_method in ("random", "both"):
+        split_indices["random"] = random_split_indices(n, seed=seed)
+    if args.split_method in ("grouped", "both"):
+        split_indices["grouped"] = grouped_split_indices(
+            dataset_4dim.seq_df, group_col="sequence", seed=seed
+        )
 
     results_dir = os.path.abspath(args.output_dir)
     os.makedirs(results_dir, exist_ok=True)
 
     split_report = {
-        "split_method": "grouped_by_sequence",
         "seed": seed,
         "source": data_path,
-        "max_samples": max_samples,
-        "rows": {"total": n, "train": len(train_idx), "cv": len(cv_idx), "test": len(test_idx)},
-        "unique_sequences": {
-            "total": int(dataset_4dim.seq_df["sequence"].nunique()),
-            "train": int(dataset_4dim.seq_df.iloc[train_idx]["sequence"].nunique()),
-            "cv": int(dataset_4dim.seq_df.iloc[cv_idx]["sequence"].nunique()),
-            "test": int(dataset_4dim.seq_df.iloc[test_idx]["sequence"].nunique()),
-        },
-        "sequence_overlap": {"train_cv": 0, "train_test": 0, "cv_test": 0},
+        "requested_unique_sequences": max_sequences,
+        "filtered_rows": n,
+        "filtered_unique_sequences": int(dataset_4dim.seq_df["sequence"].nunique()),
+        "splits": {},
     }
+    for method, indices in split_indices.items():
+        train_idx, cv_idx, test_idx = indices
+        split_report["splits"][method] = {
+            "rows": {"train": len(train_idx), "cv": len(cv_idx), "test": len(test_idx)},
+            "unique_sequences": {
+                "train": int(dataset_4dim.seq_df.iloc[train_idx]["sequence"].nunique()),
+                "cv": int(dataset_4dim.seq_df.iloc[cv_idx]["sequence"].nunique()),
+                "test": int(dataset_4dim.seq_df.iloc[test_idx]["sequence"].nunique()),
+            },
+            "sequence_overlap": sequence_overlap_counts(dataset_4dim.seq_df, indices),
+        }
     with open(os.path.join(results_dir, "split_report.json"), "w") as f:
         json.dump(split_report, f, indent=2)
 
@@ -309,77 +310,42 @@ def main():
     with open(os.path.join(results_dir, "environment.json"), "w") as f:
         json.dump(environment, f, indent=2)
 
-    # --- Define variants ---
-
-    variants = [
-        {
-            'name': 'CNN Only',
-            'model': RNAReactivityCNNOnly(input_dim=4),
-            'train_loader': train_loader_4,
-            'cv_loader': cv_loader_4,
-        },
-        {
-            'name': 'CNN + Bi-LSTM',
-            'model': RNAReactivityCNN_LSTM(input_dim=4),
-            'train_loader': train_loader_4,
-            'cv_loader': cv_loader_4,
-        },
-        {
-            'name': 'CNN + LSTM + Transformer',
-            'model': RNAReactivityCNN_LSTM_Transformer(input_dim=4),
-            'train_loader': train_loader_4,
-            'cv_loader': cv_loader_4,
-        },
-        {
-            'name': f'Full Model (+ViennaRNA {full_model_dim}d)',
-            'model': RNAReactivityPredictor(input_dim=full_model_dim),
-            'train_loader': train_loader_7,
-            'cv_loader': cv_loader_7,
-        },
-    ]
-
-    # --- Run ablation ---
     all_results = {}
     epoch_records = []
+    variant_specs = [
+        ("CNN Only", lambda: RNAReactivityCNNOnly(input_dim=4), dataset_4dim),
+        ("CNN + Bi-LSTM", lambda: RNAReactivityCNN_LSTM(input_dim=4), dataset_4dim),
+        ("CNN + LSTM + Transformer", lambda: RNAReactivityCNN_LSTM_Transformer(input_dim=4), dataset_4dim),
+        (f"Full Model (+ViennaRNA {full_model_dim}d)", lambda: RNAReactivityPredictor(input_dim=full_model_dim), dataset_7dim),
+    ]
 
-    for variant in variants:
-        name = variant['name']
-        model = variant['model']
-        params = sum(p.numel() for p in model.parameters())
-
-        print(f"\n{'─' * 60}")
-        print(f"  Training: {name}")
-        print(f"  Parameters: {params:,}")
-        print(f"{'─' * 60}")
-
-        set_seed(seed)
-        result = train_variant(
-            model=model,
-            train_loader=variant['train_loader'],
-            cv_loader=variant['cv_loader'],
-            device=device,
-            num_epochs=num_epochs,
-            lr=lr,
-            weight_decay=weight_decay,
-            patience=patience,
-            factor=factor,
-            variant_name=name,
-            save_path=os.path.join(
-                results_dir,
-                re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_") + "_best.pth",
-            ),
-        )
-        result['params'] = params
-        all_results[name] = result
-
-        # Record per-epoch data
-        for ep in range(num_epochs):
-            if ep < len(result['train_losses']):
+    for split_method, indices in split_indices.items():
+        train_idx, cv_idx, _ = indices
+        print(f"\nDataset: {n} rows | unique sequences: "
+              f"{dataset_4dim.seq_df['sequence'].nunique()} | split: {split_method}")
+        for name, model_factory, dataset in variant_specs:
+            train_loader = DataLoader(Subset(dataset, train_idx), batch_size=batch_size, shuffle=True)
+            cv_loader = DataLoader(Subset(dataset, cv_idx), batch_size=batch_size, shuffle=False)
+            set_seed(seed)
+            model = model_factory()
+            params = sum(p.numel() for p in model.parameters())
+            print(f"\n{'─' * 60}\n  Training: {name} [{split_method}]\n  Parameters: {params:,}\n{'─' * 60}")
+            slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
+            result = train_variant(
+                model=model, train_loader=train_loader, cv_loader=cv_loader,
+                device=device, num_epochs=num_epochs, lr=lr,
+                weight_decay=weight_decay, patience=patience, factor=factor,
+                variant_name=name,
+                save_path=os.path.join(results_dir, f"{split_method}_{slug}_best.pth"),
+            )
+            result["params"] = params
+            all_results[(split_method, name)] = result
+            for ep, (train_loss, cv_loss) in enumerate(
+                zip(result["train_losses"], result["cv_losses"]), start=1
+            ):
                 epoch_records.append({
-                    'variant': name,
-                    'epoch': ep + 1,
-                    'train_loss': result['train_losses'][ep],
-                    'cv_loss': result['cv_losses'][ep],
+                    "split_method": split_method, "variant": name, "epoch": ep,
+                    "train_loss": train_loss, "cv_loss": cv_loss,
                 })
 
     # --- Save per-epoch results ---
@@ -390,8 +356,9 @@ def main():
 
     # --- Save summary ---
     summary_records = []
-    for name, res in all_results.items():
+    for (split_method, name), res in all_results.items():
         summary_records.append({
+            'split_method': split_method,
             'variant': name,
             'params': res['params'],
             'best_cv_loss': res['best_cv_loss'],
@@ -404,10 +371,17 @@ def main():
     summary_csv = os.path.join(results_dir, "ablation_summary.csv")
     summary_df.to_csv(summary_csv, index=False)
 
+    if set(split_indices) == {"random", "grouped"}:
+        comparison = summary_df.pivot(index="variant", columns="split_method", values="best_cv_loss")
+        comparison["grouped_minus_random"] = comparison["grouped"] - comparison["random"]
+        comparison.reset_index().to_csv(
+            os.path.join(results_dir, "leakage_comparison.csv"), index=False
+        )
+
     fig, ax = plt.subplots(figsize=(10, 6))
-    for name, history in all_results.items():
-        ax.plot(range(1, len(history["cv_losses"]) + 1), history["cv_losses"], label=name)
-    ax.set(xlabel="Epoch", ylabel="Clipped MAE", title="Grouped-validation learning curves")
+    for (split_method, name), history in all_results.items():
+        ax.plot(range(1, len(history["cv_losses"]) + 1), history["cv_losses"], label=f"{name} [{split_method}]")
+    ax.set(xlabel="Epoch", ylabel="Clipped MAE", title="RNA reactivity validation curves")
     ax.grid(alpha=0.25)
     ax.legend(fontsize=8)
     fig.tight_layout()
@@ -418,10 +392,10 @@ def main():
     print(f"\n{'=' * 70}")
     print("  ABLATION STUDY RESULTS")
     print(f"{'=' * 70}")
-    print(f"{'Variant':<35} {'Params':>10} {'Best CV':>10} {'Epoch':>6} {'Time':>8}")
+    print(f"{'Split':<9} {'Variant':<35} {'Params':>10} {'Best CV':>10} {'Epoch':>6} {'Time':>8}")
     print(f"{'─' * 70}")
     for _, row in summary_df.iterrows():
-        print(f"{row['variant']:<35} {row['params']:>10,} "
+        print(f"{row['split_method']:<9} {row['variant']:<35} {row['params']:>10,} "
               f"{row['best_cv_loss']:>10.4f} {row['best_epoch']:>6} "
               f"{row['elapsed_sec']:>7.1f}s")
     print(f"{'─' * 70}")

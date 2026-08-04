@@ -23,7 +23,8 @@ sys.path.insert(0, PROJECT_ROOT)
 
 from src.data_pipeline_reactivity import RNAReactivityDataset
 from src.data_pipeline_3d import RNA3DDataset
-from src.splitting import grouped_split_indices
+from src.splitting import grouped_split_indices, random_split_indices, sequence_overlap_counts
+from src.data_loading import load_unique_sequence_subset
 
 
 # =====================================================================
@@ -149,6 +150,32 @@ def test_grouped_split_has_no_sequence_overlap():
     assert split_groups[0].isdisjoint(split_groups[2])
     assert split_groups[1].isdisjoint(split_groups[2])
     assert sorted(train + cv + test) == list(range(len(frame)))
+
+
+def test_unique_sequence_subset_keeps_all_experiment_rows(tmp_path):
+    import pandas as pd
+
+    csv_path = tmp_path / "train_data.csv"
+    frame = pd.DataFrame({
+        "sequence": ["AAA", "CCC", "GGG", "AAA", "CCC", "GGG"],
+        "experiment_type": ["2A3_MaP"] * 3 + ["DMS_MaP"] * 3,
+        "reactivity_0001": [0.1] * 6,
+    })
+    frame.to_csv(csv_path, index=False)
+
+    subset = load_unique_sequence_subset(csv_path, max_sequences=2, chunk_size=2)
+    assert subset["sequence"].nunique() == 2
+    assert len(subset) == 4
+    assert set(subset.groupby("sequence")["experiment_type"].nunique()) == {2}
+
+
+def test_random_split_detects_sequence_overlap():
+    import pandas as pd
+
+    frame = pd.DataFrame({"sequence": [f"SEQ{i}" for i in range(30)] * 2})
+    splits = random_split_indices(len(frame), seed=42)
+    overlap = sequence_overlap_counts(frame, splits)
+    assert sum(overlap.values()) > 0
 
 
 # =====================================================================

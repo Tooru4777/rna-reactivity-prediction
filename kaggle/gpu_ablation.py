@@ -10,7 +10,7 @@ REPOSITORY = "https://github.com/Tooru4777/rna-reactivity-prediction.git"
 BRANCH = "agent/grouped-ribonanza-validation"
 KAGGLE_INPUT_ROOT = Path("/kaggle/input")
 WORKING = Path("/kaggle/working")
-CHECKOUT = WORKING / "rna-reactivity-prediction"
+CHECKOUT = Path("/tmp/rna-reactivity-prediction")
 RESULTS = WORKING / "results"
 
 
@@ -40,19 +40,36 @@ def main():
     competition_input = find_competition_input()
     print(f"Using competition data: {competition_input}", flush=True)
 
+    # Kaggle may allocate a Tesla P100 (sm_60). Its current torch 2.10 image
+    # starts at sm_70, so pin the last CUDA 11.8 wheel family that supports it.
+    run(
+        sys.executable, "-m", "pip", "install", "--quiet", "--force-reinstall",
+        "torch==2.7.1", "--index-url", "https://download.pytorch.org/whl/cu118",
+    )
     run(sys.executable, "-m", "pip", "install", "--quiet", "viennarna>=2.5")
+    run(
+        sys.executable, "-c",
+        "import torch; "
+        "assert torch.cuda.is_available(); "
+        "cap=torch.cuda.get_device_capability(); "
+        "assert f'sm_{cap[0]}{cap[1]}' in torch.cuda.get_arch_list(), "
+        "(cap, torch.cuda.get_arch_list()); "
+        "print(torch.__version__, torch.cuda.get_device_name(), cap); "
+        "print((torch.ones(1, device='cuda') + 1).item())",
+    )
     run("git", "clone", "--depth", "1", "--branch", BRANCH, REPOSITORY, CHECKOUT)
 
-    max_samples = os.environ.get("RNA_MAX_SAMPLES", "1000")
+    max_sequences = os.environ.get("RNA_MAX_SEQUENCES", "1000")
     epochs = os.environ.get("RNA_EPOCHS", "15")
     run(
         sys.executable,
         "experiments/run_ablation.py",
         "--data", competition_input,
-        "--max-samples", max_samples,
+        "--max-sequences", max_sequences,
         "--epochs", epochs,
         "--output-dir", RESULTS,
         "--require-vienna",
+        "--split-method", "both",
         cwd=CHECKOUT,
     )
     print(f"Kaggle outputs are ready in {RESULTS}")

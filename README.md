@@ -164,7 +164,11 @@ After configuring `~/.kaggle/kaggle.json` and accepting the competition rules,
 submit the private GPU kernel with `bash kaggle/run_gpu_ablation.sh`. The kernel
 mounts the competition data and writes reproducibility metadata, grouped-split
 checks, per-epoch results, a summary, learning curves, and best model weights to
-its downloadable `results/` output directory.
+its downloadable `results/` output directory. It selects unique RNA sequences,
+keeps every experiment row for those sequences, and runs both row-random and
+sequence-grouped validation so `leakage_comparison.csv` measures optimism from
+sequence overlap. The kernel pins a CUDA 11.8 PyTorch build compatible with both
+Kaggle P100 (`sm_60`) and newer GPUs.
 
 ### Training Curves
 

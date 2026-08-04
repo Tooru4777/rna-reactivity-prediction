@@ -41,8 +41,8 @@ class RNAReactivityDataset(Dataset):
         max_samples:   Optional maximum number of CSV rows to load.
     """
 
-    def __init__(self, sequences_csv, max_length=206, use_structure=True,
-                 max_samples=None):
+    def __init__(self, sequences_csv=None, max_length=206, use_structure=True,
+                 max_samples=None, dataframe=None):
         self.max_length = max_length
         self.use_structure = use_structure and HAS_VIENNA
 
@@ -52,9 +52,13 @@ class RNAReactivityDataset(Dataset):
         self.seq_char_map = {'A': 0, 'C': 1, 'G': 2, 'U': 3}
         self.struct_char_map = {'(': 4, ')': 5, '.': 6}
 
-        if os.path.exists(sequences_csv):
-            print(f"Loading dataset: {sequences_csv}")
-            self.seq_df = pd.read_csv(sequences_csv, nrows=max_samples)
+        if dataframe is not None or (sequences_csv and os.path.exists(sequences_csv)):
+            if dataframe is not None:
+                print("Loading dataset from in-memory sequence subset")
+                self.seq_df = dataframe.copy()
+            else:
+                print(f"Loading dataset: {sequences_csv}")
+                self.seq_df = pd.read_csv(sequences_csv, nrows=max_samples)
 
             # Quality filter
             if 'SN_filter' in self.seq_df.columns:
