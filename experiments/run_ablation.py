@@ -215,6 +215,14 @@ def parse_args():
         "--split-method", choices=("grouped", "random", "both"), default="grouped",
         help="Validation strategy; 'both' quantifies row-level leakage",
     )
+    parser.add_argument(
+        "--seeds", nargs="+", type=int,
+        help="Validation seeds; defaults to the single seed in the config",
+    )
+    parser.add_argument(
+        "--sample-seed", type=int, default=42,
+        help="Seed used once to select the quality-filtered sequence cohort",
+    )
     return parser.parse_args()
 
 
@@ -225,7 +233,7 @@ def main():
     with open(config_path, "r") as f:
         config = yaml.safe_load(f)
 
-    seed = config.get("seed", 42)
+    seeds = args.seeds or [config.get("seed", 42)]
     batch_size = config.get("batch_size", 64)
     num_epochs = args.epochs or config.get("num_epochs", 15)
     lr = config.get("learning_rate", 0.001)
@@ -237,8 +245,8 @@ def main():
     print("  ABLATION STUDY — RNA Reactivity Prediction")
     print("=" * 60)
 
-    set_seed(seed)
-    print(f"\nRandom seed: {seed}")
+    set_seed(seeds[0])
+    print(f"\nValidation seeds: {seeds} | sample seed: {args.sample_seed}")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
@@ -251,7 +259,7 @@ def main():
         )
     max_sequences = args.max_sequences or None
     sequence_frame = load_unique_sequence_subset(
-        data_path, max_sequences=max_sequences, seed=seed
+        data_path, max_sequences=max_sequences, seed=args.sample_seed
     )
 
     dataset_4dim = RNAReactivityDataset(
@@ -266,36 +274,42 @@ def main():
         raise RuntimeError("ViennaRNA is required, but the RNA Python package is unavailable")
     full_model_dim = dataset_7dim.feature_dim
 
-    split_indices = {}
-    if args.split_method in ("random", "both"):
-        split_indices["random"] = random_split_indices(n, seed=seed)
-    if args.split_method in ("grouped", "both"):
-        split_indices["grouped"] = grouped_split_indices(
-            dataset_4dim.seq_df, group_col="sequence", seed=seed
-        )
+    splits_by_seed = {}
+    for seed in seeds:
+        split_indices = {}
+        if args.split_method in ("random", "both"):
+            split_indices["random"] = random_split_indices(n, seed=seed)
+        if args.split_method in ("grouped", "both"):
+            split_indices["grouped"] = grouped_split_indices(
+                dataset_4dim.seq_df, group_col="sequence", seed=seed
+            )
+        splits_by_seed[seed] = split_indices
 
     results_dir = os.path.abspath(args.output_dir)
     os.makedirs(results_dir, exist_ok=True)
 
     split_report = {
-        "seed": seed,
+        "sample_seed": args.sample_seed,
+        "validation_seeds": seeds,
         "source": data_path,
         "requested_unique_sequences": max_sequences,
         "filtered_rows": n,
         "filtered_unique_sequences": int(dataset_4dim.seq_df["sequence"].nunique()),
-        "splits": {},
+        "splits_by_seed": {},
     }
-    for method, indices in split_indices.items():
-        train_idx, cv_idx, test_idx = indices
-        split_report["splits"][method] = {
-            "rows": {"train": len(train_idx), "cv": len(cv_idx), "test": len(test_idx)},
-            "unique_sequences": {
-                "train": int(dataset_4dim.seq_df.iloc[train_idx]["sequence"].nunique()),
-                "cv": int(dataset_4dim.seq_df.iloc[cv_idx]["sequence"].nunique()),
-                "test": int(dataset_4dim.seq_df.iloc[test_idx]["sequence"].nunique()),
-            },
-            "sequence_overlap": sequence_overlap_counts(dataset_4dim.seq_df, indices),
-        }
+    for seed, split_indices in splits_by_seed.items():
+        split_report["splits_by_seed"][str(seed)] = {}
+        for method, indices in split_indices.items():
+            train_idx, cv_idx, test_idx = indices
+            split_report["splits_by_seed"][str(seed)][method] = {
+                "rows": {"train": len(train_idx), "cv": len(cv_idx), "test": len(test_idx)},
+                "unique_sequences": {
+                    "train": int(dataset_4dim.seq_df.iloc[train_idx]["sequence"].nunique()),
+                    "cv": int(dataset_4dim.seq_df.iloc[cv_idx]["sequence"].nunique()),
+                    "test": int(dataset_4dim.seq_df.iloc[test_idx]["sequence"].nunique()),
+                },
+                "sequence_overlap": sequence_overlap_counts(dataset_4dim.seq_df, indices),
+            }
     with open(os.path.join(results_dir, "split_report.json"), "w") as f:
         json.dump(split_report, f, indent=2)
 
@@ -319,34 +333,44 @@ def main():
         (f"Full Model (+ViennaRNA {full_model_dim}d)", lambda: RNAReactivityPredictor(input_dim=full_model_dim), dataset_7dim),
     ]
 
-    for split_method, indices in split_indices.items():
-        train_idx, cv_idx, _ = indices
-        print(f"\nDataset: {n} rows | unique sequences: "
-              f"{dataset_4dim.seq_df['sequence'].nunique()} | split: {split_method}")
-        for name, model_factory, dataset in variant_specs:
-            train_loader = DataLoader(Subset(dataset, train_idx), batch_size=batch_size, shuffle=True)
-            cv_loader = DataLoader(Subset(dataset, cv_idx), batch_size=batch_size, shuffle=False)
-            set_seed(seed)
-            model = model_factory()
-            params = sum(p.numel() for p in model.parameters())
-            print(f"\n{'─' * 60}\n  Training: {name} [{split_method}]\n  Parameters: {params:,}\n{'─' * 60}")
-            slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
-            result = train_variant(
-                model=model, train_loader=train_loader, cv_loader=cv_loader,
-                device=device, num_epochs=num_epochs, lr=lr,
-                weight_decay=weight_decay, patience=patience, factor=factor,
-                variant_name=name,
-                save_path=os.path.join(results_dir, f"{split_method}_{slug}_best.pth"),
-            )
-            result["params"] = params
-            all_results[(split_method, name)] = result
-            for ep, (train_loss, cv_loss) in enumerate(
-                zip(result["train_losses"], result["cv_losses"]), start=1
-            ):
-                epoch_records.append({
-                    "split_method": split_method, "variant": name, "epoch": ep,
-                    "train_loss": train_loss, "cv_loss": cv_loss,
-                })
+    for seed, split_indices in splits_by_seed.items():
+        for split_method, indices in split_indices.items():
+            train_idx, cv_idx, _ = indices
+            print(f"\nDataset: {n} rows | unique sequences: "
+                  f"{dataset_4dim.seq_df['sequence'].nunique()} | "
+                  f"seed: {seed} | split: {split_method}")
+            for name, model_factory, dataset in variant_specs:
+                train_loader = DataLoader(
+                    Subset(dataset, train_idx), batch_size=batch_size, shuffle=True
+                )
+                cv_loader = DataLoader(
+                    Subset(dataset, cv_idx), batch_size=batch_size, shuffle=False
+                )
+                set_seed(seed)
+                model = model_factory()
+                params = sum(p.numel() for p in model.parameters())
+                print(f"\n{'─' * 60}\n  Training: {name} "
+                      f"[{split_method}, seed={seed}]\n  Parameters: {params:,}\n{'─' * 60}")
+                slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
+                result = train_variant(
+                    model=model, train_loader=train_loader, cv_loader=cv_loader,
+                    device=device, num_epochs=num_epochs, lr=lr,
+                    weight_decay=weight_decay, patience=patience, factor=factor,
+                    variant_name=name,
+                    save_path=os.path.join(
+                        results_dir, f"seed_{seed}_{split_method}_{slug}_best.pth"
+                    ),
+                )
+                result["params"] = params
+                all_results[(seed, split_method, name)] = result
+                for ep, (train_loss, cv_loss) in enumerate(
+                    zip(result["train_losses"], result["cv_losses"]), start=1
+                ):
+                    epoch_records.append({
+                        "seed": seed, "split_method": split_method,
+                        "variant": name, "epoch": ep,
+                        "train_loss": train_loss, "cv_loss": cv_loss,
+                    })
 
     # --- Save per-epoch results ---
     epoch_df = pd.DataFrame(epoch_records)
@@ -356,8 +380,9 @@ def main():
 
     # --- Save summary ---
     summary_records = []
-    for (split_method, name), res in all_results.items():
+    for (seed, split_method, name), res in all_results.items():
         summary_records.append({
+            'seed': seed,
             'split_method': split_method,
             'variant': name,
             'params': res['params'],
@@ -371,16 +396,79 @@ def main():
     summary_csv = os.path.join(results_dir, "ablation_summary.csv")
     summary_df.to_csv(summary_csv, index=False)
 
-    if set(split_indices) == {"random", "grouped"}:
-        comparison = summary_df.pivot(index="variant", columns="split_method", values="best_cv_loss")
+    aggregate_df = (
+        summary_df.groupby(["split_method", "variant"], as_index=False)
+        .agg(
+            mean_cv_loss=("best_cv_loss", "mean"),
+            std_cv_loss=("best_cv_loss", "std"),
+            min_cv_loss=("best_cv_loss", "min"),
+            max_cv_loss=("best_cv_loss", "max"),
+            seeds=("seed", "nunique"),
+        )
+    )
+    aggregate_df.to_csv(os.path.join(results_dir, "ablation_aggregate.csv"), index=False)
+
+    split_methods = set(summary_df["split_method"])
+    if split_methods == {"random", "grouped"}:
+        comparison = summary_df.pivot(
+            index=["seed", "variant"], columns="split_method", values="best_cv_loss"
+        )
         comparison["grouped_minus_random"] = comparison["grouped"] - comparison["random"]
-        comparison.reset_index().to_csv(
-            os.path.join(results_dir, "leakage_comparison.csv"), index=False
+        comparison = comparison.reset_index()
+        comparison.to_csv(os.path.join(results_dir, "leakage_comparison.csv"), index=False)
+        leakage_aggregate = (
+            comparison.groupby("variant", as_index=False)
+            .agg(
+                mean_random=("random", "mean"),
+                mean_grouped=("grouped", "mean"),
+                mean_grouped_minus_random=("grouped_minus_random", "mean"),
+                std_grouped_minus_random=("grouped_minus_random", "std"),
+                seeds=("seed", "nunique"),
+            )
+        )
+        leakage_aggregate.to_csv(
+            os.path.join(results_dir, "leakage_aggregate.csv"), index=False
         )
 
+    transformer_name = "CNN + LSTM + Transformer"
+    full_name = f"Full Model (+ViennaRNA {full_model_dim}d)"
+    model_scores = summary_df.pivot(
+        index=["seed", "split_method"], columns="variant", values="best_cv_loss"
+    )
+    vienna_comparison = model_scores[[transformer_name, full_name]].copy()
+    vienna_comparison.columns = ["transformer", "with_vienna"]
+    vienna_comparison["absolute_improvement"] = (
+        vienna_comparison["transformer"] - vienna_comparison["with_vienna"]
+    )
+    vienna_comparison["relative_improvement"] = (
+        vienna_comparison["absolute_improvement"] / vienna_comparison["transformer"]
+    )
+    vienna_comparison = vienna_comparison.reset_index()
+    vienna_comparison.to_csv(
+        os.path.join(results_dir, "vienna_comparison.csv"), index=False
+    )
+    vienna_aggregate = (
+        vienna_comparison.groupby("split_method", as_index=False)
+        .agg(
+            mean_transformer=("transformer", "mean"),
+            mean_with_vienna=("with_vienna", "mean"),
+            mean_absolute_improvement=("absolute_improvement", "mean"),
+            std_absolute_improvement=("absolute_improvement", "std"),
+            mean_relative_improvement=("relative_improvement", "mean"),
+            seeds=("seed", "nunique"),
+        )
+    )
+    vienna_aggregate.to_csv(
+        os.path.join(results_dir, "vienna_aggregate.csv"), index=False
+    )
+
     fig, ax = plt.subplots(figsize=(10, 6))
-    for (split_method, name), history in all_results.items():
-        ax.plot(range(1, len(history["cv_losses"]) + 1), history["cv_losses"], label=f"{name} [{split_method}]")
+    mean_curves = (
+        epoch_df.groupby(["split_method", "variant", "epoch"], as_index=False)
+        .agg(mean_cv_loss=("cv_loss", "mean"))
+    )
+    for (split_method, name), curve in mean_curves.groupby(["split_method", "variant"]):
+        ax.plot(curve["epoch"], curve["mean_cv_loss"], label=f"{name} [{split_method}]")
     ax.set(xlabel="Epoch", ylabel="Clipped MAE", title="RNA reactivity validation curves")
     ax.grid(alpha=0.25)
     ax.legend(fontsize=8)
@@ -394,10 +482,10 @@ def main():
     print(f"{'=' * 70}")
     print(f"{'Split':<9} {'Variant':<35} {'Params':>10} {'Best CV':>10} {'Epoch':>6} {'Time':>8}")
     print(f"{'─' * 70}")
-    for _, row in summary_df.iterrows():
-        print(f"{row['split_method']:<9} {row['variant']:<35} {row['params']:>10,} "
-              f"{row['best_cv_loss']:>10.4f} {row['best_epoch']:>6} "
-              f"{row['elapsed_sec']:>7.1f}s")
+    for _, row in aggregate_df.iterrows():
+        print(f"{row['split_method']:<9} {row['variant']:<35} {'-':>10} "
+              f"{row['mean_cv_loss']:>7.4f}±{row['std_cv_loss']:.4f} "
+              f"{'-':>6} {'-':>8}")
     print(f"{'─' * 70}")
     print(f"\nSummary saved: {summary_csv}")
 

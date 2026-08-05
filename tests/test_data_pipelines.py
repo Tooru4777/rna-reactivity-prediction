@@ -159,6 +159,7 @@ def test_unique_sequence_subset_keeps_all_experiment_rows(tmp_path):
     frame = pd.DataFrame({
         "sequence": ["AAA", "CCC", "GGG", "AAA", "CCC", "GGG"],
         "experiment_type": ["2A3_MaP"] * 3 + ["DMS_MaP"] * 3,
+        "SN_filter": [1.0] * 6,
         "reactivity_0001": [0.1] * 6,
     })
     frame.to_csv(csv_path, index=False)
@@ -167,6 +168,22 @@ def test_unique_sequence_subset_keeps_all_experiment_rows(tmp_path):
     assert subset["sequence"].nunique() == 2
     assert len(subset) == 4
     assert set(subset.groupby("sequence")["experiment_type"].nunique()) == {2}
+
+
+def test_unique_sequence_subset_samples_only_quality_eligible_sequences(tmp_path):
+    import pandas as pd
+
+    csv_path = tmp_path / "train_data.csv"
+    frame = pd.DataFrame({
+        "sequence": ["LOW", "GOOD1", "GOOD2", "LOW", "GOOD1", "GOOD2"],
+        "experiment_type": ["2A3_MaP"] * 3 + ["DMS_MaP"] * 3,
+        "SN_filter": [0.0, 1.0, 1.0, 0.0, 1.0, 1.0],
+        "reactivity_0001": [0.1] * 6,
+    })
+    frame.to_csv(csv_path, index=False)
+
+    subset = load_unique_sequence_subset(csv_path, max_sequences=2, chunk_size=2)
+    assert set(subset["sequence"]) == {"GOOD1", "GOOD2"}
 
 
 def test_random_split_detects_sequence_overlap():

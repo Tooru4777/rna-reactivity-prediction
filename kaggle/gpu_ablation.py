@@ -61,6 +61,7 @@ def main():
 
     max_sequences = os.environ.get("RNA_MAX_SEQUENCES", "1000")
     epochs = os.environ.get("RNA_EPOCHS", "15")
+    validation_seeds = os.environ.get("RNA_VALIDATION_SEEDS", "42 123 2026").split()
     run(
         sys.executable,
         "experiments/run_ablation.py",
@@ -70,6 +71,8 @@ def main():
         "--output-dir", RESULTS,
         "--require-vienna",
         "--split-method", "both",
+        "--seeds", *validation_seeds,
+        "--sample-seed", "42",
         cwd=CHECKOUT,
     )
     print(f"Kaggle outputs are ready in {RESULTS}")

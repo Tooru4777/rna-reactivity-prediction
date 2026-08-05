@@ -167,8 +167,12 @@ checks, per-epoch results, a summary, learning curves, and best model weights to
 its downloadable `results/` output directory. It selects unique RNA sequences,
 keeps every experiment row for those sequences, and runs both row-random and
 sequence-grouped validation so `leakage_comparison.csv` measures optimism from
-sequence overlap. The kernel pins a CUDA 11.8 PyTorch build compatible with both
-Kaggle P100 (`sm_60`) and newer GPUs.
+sequence overlap. Sequence sampling occurs after `SN_filter=1` eligibility is
+established, and three validation seeds (42, 123, 2026) produce aggregate mean
+and standard-deviation reports for model ranking, leakage, and ViennaRNA effect.
+The kernel pins a CUDA 11.8 PyTorch build compatible with both Kaggle P100
+(`sm_60`) and newer GPUs. The submission helper enforces a 2,400-second runtime
+limit by default to protect Kaggle GPU quota.
 
 ### Training Curves
 
