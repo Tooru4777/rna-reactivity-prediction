@@ -51,10 +51,10 @@ def main():
         sys.executable, "-c",
         "import torch; "
         "assert torch.cuda.is_available(); "
-        "cap=torch.cuda.get_device_capability(); "
-        "assert f'sm_{cap[0]}{cap[1]}' in torch.cuda.get_arch_list(), "
-        "(cap, torch.cuda.get_arch_list()); "
-        "print(torch.__version__, torch.cuda.get_device_name(), cap); "
+        "caps=[torch.cuda.get_device_capability(i) for i in range(torch.cuda.device_count())]; "
+        "assert all(f'sm_{c[0]}{c[1]}' in torch.cuda.get_arch_list() for c in caps), "
+        "(caps, torch.cuda.get_arch_list()); "
+        "print(torch.__version__, [torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())], caps); "
         "print((torch.ones(1, device='cuda') + 1).item())",
     )
     run("git", "clone", "--depth", "1", "--branch", BRANCH, REPOSITORY, CHECKOUT)

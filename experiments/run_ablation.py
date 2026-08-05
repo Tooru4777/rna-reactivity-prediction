@@ -90,6 +90,9 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
         dict with keys: train_losses, cv_losses, best_cv_loss, best_epoch, elapsed_sec
     """
     model = model.to(device)
+    if device.type == "cuda" and torch.cuda.device_count() > 1:
+        print(f"  Using DataParallel across {torch.cuda.device_count()} GPUs")
+        model = nn.DataParallel(model)
     criterion = nn.L1Loss(reduction='none')
     optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
@@ -168,7 +171,8 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
             best_cv_loss = avg_cv
             best_epoch = epoch + 1
             if save_path:
-                torch.save(model.state_dict(), save_path)
+                model_to_save = model.module if isinstance(model, nn.DataParallel) else model
+                torch.save(model_to_save.state_dict(), save_path)
 
         scheduler.step(avg_cv)
 
@@ -319,6 +323,11 @@ def main():
         "cuda_available": torch.cuda.is_available(),
         "cuda_version": torch.version.cuda,
         "device": str(device),
+        "gpu_count": torch.cuda.device_count() if torch.cuda.is_available() else 0,
+        "gpu_names": [
+            torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())
+        ] if torch.cuda.is_available() else [],
+        "data_parallel": torch.cuda.is_available() and torch.cuda.device_count() > 1,
         "vienna_features": dataset_7dim.feature_dim == 7,
     }
     with open(os.path.join(results_dir, "environment.json"), "w") as f:

@@ -171,8 +171,11 @@ sequence overlap. Sequence sampling occurs after `SN_filter=1` eligibility is
 established, and three validation seeds (42, 123, 2026) produce aggregate mean
 and standard-deviation reports for model ranking, leakage, and ViennaRNA effect.
 The kernel pins a CUDA 11.8 PyTorch build compatible with both Kaggle P100
-(`sm_60`) and newer GPUs. The submission helper enforces a 2,400-second runtime
-limit by default to protect Kaggle GPU quota.
+(`sm_60`) and newer GPUs. When Kaggle exposes two GPUs (for example T4 ×2), the
+training pipeline automatically enables PyTorch `DataParallel` and saves
+unwrapped checkpoints that remain loadable on a single GPU or CPU. The CLI
+submission helper does not set a timeout because Kaggle counts queue time toward
+that limit; runtime remains bounded by the finite seed/model/epoch loops.
 
 ### Training Curves
 
