@@ -14,9 +14,11 @@ Usage:
 import sys
 import os
 import pytest
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_ROOT)
@@ -28,6 +30,7 @@ from src.model_reactivity import (
     RNAReactivityPredictor,
 )
 from src.model_3d import RNAPredictor3D
+from experiments.run_ablation import evaluate_checkpoint
 
 
 # =====================================================================
@@ -55,7 +58,7 @@ class TestReactivityTraining:
         optimizer = optim.Adam(model.parameters(), lr=1e-3)
         criterion = nn.L1Loss(reduction='none')
 
-        # Synthetic batch
+        # Test-only tensor fixture; never used for reportable model fitting.
         batch_size, seq_len = 4, 50
         features = torch.randn(batch_size, seq_len, in_dim)
         targets = torch.rand(batch_size, seq_len, 2)  # [0, 1]
@@ -135,6 +138,38 @@ class TestReactivityTraining:
             # Clipped MAE should be in [0, 1]
             assert clipped_mae.min() >= 0.0
             assert clipped_mae.max() <= 1.0
+
+    def test_held_out_evaluation_emits_error_records(self, tmp_path):
+        """A saved checkpoint must produce aggregate and stratified test records."""
+        factory = lambda: RNAReactivityCNNOnly(input_dim=4, cnn_out_dim=8)
+        checkpoint = tmp_path / "model.pth"
+        torch.save(factory().state_dict(), checkpoint)
+
+        features = torch.zeros(2, 8, 4)
+        features[0, :4, 0] = 1.0
+        features[1, :6, 1] = 1.0
+        targets = torch.full((2, 8, 2), 0.5)
+        masks = torch.zeros(2, 8, 2)
+        masks[0, :4, 0] = 1.0
+        masks[1, :6, 1] = 1.0
+        loader = DataLoader(TensorDataset(features, targets, masks), batch_size=2)
+        frame = pd.DataFrame({
+            "sequence_id": ["a", "b"],
+            "sequence": ["AAAA", "CCCCCC"],
+            "experiment_type": ["2A3_MaP", "DMS_MaP"],
+            "structure": ["(())", "......"],
+        })
+
+        mae, rows, structure_rows = evaluate_checkpoint(
+            factory, checkpoint, loader, torch.device("cpu"), frame, [0, 1], 8
+        )
+
+        assert 0.0 <= mae <= 1.0
+        assert len(rows) == 2
+        assert {row["experiment_type"] for row in rows} == {"2A3_MaP", "DMS_MaP"}
+        assert {row["structure_class"] for row in structure_rows} == {
+            "paired", "unpaired"
+        }
 
 
 # =====================================================================

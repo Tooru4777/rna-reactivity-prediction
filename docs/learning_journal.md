@@ -2,7 +2,10 @@
 
 ## Background
 
-I started this project as my first hands-on deep learning project applied to a real bioinformatics problem. My prior knowledge included foundational machine learning concepts from online courses, but I had never built a production-scale model or worked with biological sequence data before.
+I started this project as my first hands-on deep learning project applied to a
+real bioinformatics problem. My prior knowledge included foundational machine
+learning concepts from online courses, but I had not previously built an
+end-to-end research pipeline or worked with biological sequence data.
 
 ## Week 1: Understanding the Problem (May 2026)
 

@@ -1,5 +1,11 @@
 # Experiment Notes
 
+> Historical development log. Early observations below came from exploratory
+> single-split runs and are not treated as final evidence. The current
+> padding-safe, grouped, multi-seed protocol and its versioned result artifacts
+> supersede these notes for model selection and external reporting. BatchNorm
+> was later replaced by per-position LayerNorm after a padding-statistics audit.
+
 ## Hyperparameter Tuning Log
 
 ### Experiment 1: Baseline Architecture (v1)

@@ -5,7 +5,7 @@ Tests for RNAReactivityDataset and RNA3DDataset:
   - Correct tensor shapes and dtypes
   - Mask validity (binary, correct padding pattern)
   - Feature dimension handling (4-dim vs 7-dim)
-  - Synthetic fallback mode
+  - Explicit small measured-data fixtures and missing-data failure
   - DataLoader batch collation
 
 Usage:
@@ -14,6 +14,7 @@ Usage:
 
 import sys
 import os
+import pandas as pd
 import pytest
 import torch
 from torch.utils.data import DataLoader
@@ -23,7 +24,12 @@ sys.path.insert(0, PROJECT_ROOT)
 
 from src.data_pipeline_reactivity import RNAReactivityDataset
 from src.data_pipeline_3d import RNA3DDataset
-from src.splitting import grouped_split_indices, random_split_indices, sequence_overlap_counts
+from src.splitting import (
+    grouped_split_indices,
+    random_split_indices,
+    sequence_overlap_counts,
+    validate_split_integrity,
+)
 from src.data_loading import load_unique_sequence_subset
 
 
@@ -35,19 +41,33 @@ class TestReactivityDataset:
     """Tests for the RNA reactivity prediction dataset."""
 
     @pytest.fixture
-    def dataset_4d(self):
-        """4-dim dataset (sequence only, synthetic fallback)."""
+    def reactivity_frame(self):
+        """Small explicit fixture representing measured reactivity profiles."""
+        return pd.DataFrame({
+            "sequence_id": ["rna1", "rna2"],
+            "sequence": ["ACGU", "UGCA"],
+            "experiment_type": ["2A3_MaP", "DMS_MaP"],
+            "SN_filter": [1.0, 1.0],
+            "reactivity_0001": [0.1, 0.2],
+            "reactivity_0002": [0.2, 0.3],
+            "reactivity_0003": [0.3, 0.4],
+            "reactivity_0004": [0.4, 0.5],
+        })
+
+    @pytest.fixture
+    def dataset_4d(self, reactivity_frame):
+        """4-dim dataset from an explicit measured-data fixture."""
         return RNAReactivityDataset(
-            sequences_csv="nonexistent.csv",
+            dataframe=reactivity_frame,
             max_length=206,
             use_structure=False,
         )
 
     @pytest.fixture
-    def dataset_7d(self):
-        """7-dim dataset (with structure, synthetic fallback)."""
+    def dataset_7d(self, reactivity_frame):
+        """Structure-feature dataset from the same explicit fixture."""
         return RNAReactivityDataset(
-            sequences_csv="nonexistent.csv",
+            dataframe=reactivity_frame,
             max_length=206,
             use_structure=True,
         )
@@ -64,9 +84,34 @@ class TestReactivityDataset:
             use_structure=False,
         )
 
-    def test_synthetic_fallback_length(self, dataset_4d):
-        """Synthetic dataset should have 500 samples."""
-        assert len(dataset_4d) == 500
+    def test_fixture_length(self, dataset_4d):
+        assert len(dataset_4d) == 2
+
+    def test_missing_reactivity_data_fails_fast(self):
+        with pytest.raises(FileNotFoundError, match="real measured reactivity"):
+            RNAReactivityDataset(
+                sequences_csv="nonexistent.csv", use_structure=False
+            )
+
+    @pytest.mark.parametrize(
+        "column,value,message",
+        [
+            ("experiment_type", "unknown", "Unexpected experiment_type"),
+            ("sequence", "ACGN", "only A, C, G, and U"),
+        ],
+    )
+    def test_research_data_domain_validation(self, column, value, message):
+        frame = pd.DataFrame({
+            "sequence": ["ACGU"],
+            "experiment_type": ["2A3_MaP"],
+            "SN_filter": [1.0],
+            "reactivity_0001": [0.2],
+        })
+        frame.loc[0, column] = value
+        with pytest.raises(ValueError, match=message):
+            RNAReactivityDataset(
+                dataframe=frame, use_structure=False
+            )
 
     def test_output_types(self, dataset_4d):
         """Each sample should return 3 tensors."""
@@ -116,9 +161,9 @@ class TestReactivityDataset:
         loader = DataLoader(dataset_4d, batch_size=8, shuffle=False)
         features, targets, mask = next(iter(loader))
 
-        assert features.shape == (8, 206, 4)
-        assert targets.shape == (8, 206, 2)
-        assert mask.shape == (8, 206, 2)
+        assert features.shape == (len(dataset_4d), 206, 4)
+        assert targets.shape == (len(dataset_4d), 206, 2)
+        assert mask.shape == (len(dataset_4d), 206, 2)
 
     def test_real_data_shapes(self, dataset_real):
         """Verify shapes on real data (if available)."""
@@ -195,6 +240,13 @@ def test_random_split_detects_sequence_overlap():
     assert sum(overlap.values()) > 0
 
 
+def test_split_integrity_rejects_duplicate_or_missing_rows():
+    with pytest.raises(ValueError, match="duplicate row indices"):
+        validate_split_integrity(4, ([0, 1], [1], [2]))
+    with pytest.raises(ValueError, match="does not match dataset rows"):
+        validate_split_integrity(4, ([0], [1], [2]))
+
+
 # =====================================================================
 # 3D Dataset Tests
 # =====================================================================
@@ -203,17 +255,39 @@ class TestRNA3DDataset:
     """Tests for the RNA 3D coordinate prediction dataset."""
 
     @pytest.fixture
-    def dataset(self):
-        """3D dataset (synthetic fallback)."""
+    def dataset(self, tmp_path):
+        """3D dataset backed by explicit sequence and coordinate fixtures."""
+        sequences_csv = tmp_path / "sequences.csv"
+        labels_csv = tmp_path / "labels.csv"
+        pd.DataFrame({
+            "target_id": ["rna1", "rna2"],
+            "sequence": ["ACGU", "UGCA"],
+        }).to_csv(sequences_csv, index=False)
+        label_rows = []
+        for target_id in ("rna1", "rna2"):
+            for position in range(4):
+                label_rows.append({
+                    "ID": f"{target_id}_{position}",
+                    "x": float(position),
+                    "y": float(position + 1),
+                    "z": float(position + 2),
+                })
+        pd.DataFrame(label_rows).to_csv(labels_csv, index=False)
         return RNA3DDataset(
-            sequences_csv="nonexistent.csv",
-            labels_csv="nonexistent.csv",
+            sequences_csv=sequences_csv,
+            labels_csv=labels_csv,
             max_length=200,
         )
 
-    def test_synthetic_length(self, dataset):
-        """Synthetic dataset should have 1000 samples."""
-        assert len(dataset) == 1000
+    def test_fixture_length(self, dataset):
+        assert len(dataset) == 2
+
+    def test_missing_3d_labels_fail_fast(self, tmp_path):
+        with pytest.raises(FileNotFoundError, match="real sequence"):
+            RNA3DDataset(
+                sequences_csv=tmp_path / "missing_sequences.csv",
+                labels_csv=tmp_path / "missing_labels.csv",
+            )
 
     def test_output_types(self, dataset):
         """Each sample should return 3 tensors."""
@@ -260,6 +334,6 @@ class TestRNA3DDataset:
         loader = DataLoader(dataset, batch_size=16, shuffle=False)
         one_hot, coords, mask = next(iter(loader))
 
-        assert one_hot.shape == (16, 200, 4)
-        assert coords.shape == (16, 200, 3)
-        assert mask.shape == (16, 200)
+        assert one_hot.shape == (len(dataset), 200, 4)
+        assert coords.shape == (len(dataset), 200, 3)
+        assert mask.shape == (len(dataset), 200)

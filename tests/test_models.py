@@ -119,6 +119,51 @@ class TestReactivityModels:
                 f"{name}: parameter '{param_name}' has all-zero gradients"
             )
 
+    def test_right_padding_does_not_change_real_positions(
+        self, reactivity_model_spec, device
+    ):
+        """Explicit masking must make predictions invariant to right-padding."""
+        name, cls, kwargs, in_dim = reactivity_model_spec
+        model = cls(**kwargs).to(device).eval()
+        real = torch.randn(1, 12, in_dim, device=device)
+        padded = torch.cat([real, torch.zeros(1, 8, in_dim, device=device)], dim=1)
+
+        with torch.no_grad():
+            short_out = model(
+                real, padding_mask=torch.zeros(1, 12, dtype=torch.bool, device=device)
+            )
+            long_out = model(
+                padded,
+                padding_mask=torch.tensor(
+                    [[False] * 12 + [True] * 8], device=device
+                ),
+            )
+
+        assert torch.allclose(short_out, long_out[:, :12], atol=1e-5), name
+
+    def test_training_mode_is_padding_invariant_without_dropout(
+        self, reactivity_model_spec, device
+    ):
+        """Normalization statistics must not depend on the amount of padding."""
+        name, cls, kwargs, in_dim = reactivity_model_spec
+        short_model = cls(**kwargs, dropout=0.0).to(device).train()
+        padded_model = cls(**kwargs, dropout=0.0).to(device).train()
+        padded_model.load_state_dict(short_model.state_dict())
+        real = torch.randn(2, 12, in_dim, device=device)
+        padded = torch.cat([real, torch.zeros(2, 8, in_dim, device=device)], dim=1)
+
+        short_out = short_model(
+            real, padding_mask=torch.zeros(2, 12, dtype=torch.bool, device=device)
+        )
+        padded_out = padded_model(
+            padded,
+            padding_mask=torch.tensor(
+                [[False] * 12 + [True] * 8] * 2, device=device
+            ),
+        )
+
+        assert torch.allclose(short_out, padded_out[:, :12], atol=1e-5), name
+
 
 class TestFullModelSpecifics:
     """Additional tests specific to the full RNAReactivityPredictor."""

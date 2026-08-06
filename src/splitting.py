@@ -66,3 +66,16 @@ def sequence_overlap_counts(dataframe, splits, group_col="sequence"):
         "train_test": len(groups[0] & groups[2]),
         "cv_test": len(groups[1] & groups[2]),
     }
+
+
+def validate_split_integrity(n_rows, splits):
+    """Raise if partitions overlap, omit rows, or contain out-of-range indices."""
+    flattened = [int(index) for split in splits for index in split]
+    if len(flattened) != n_rows:
+        raise ValueError(
+            f"Split row count {len(flattened)} does not match dataset rows {n_rows}"
+        )
+    if len(set(flattened)) != n_rows:
+        raise ValueError("Split partitions contain duplicate row indices")
+    if set(flattened) != set(range(n_rows)):
+        raise ValueError("Split partitions do not cover exactly the dataset row indices")
