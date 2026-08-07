@@ -1,0 +1,22 @@
+{
+  "git_commit": "bff599f5bfa59ccf6a2d202a35231a76384b843a",
+  "data_file": "train_data.csv",
+  "cohort_sha256": "94fdb9d6195604243b5fbb290b7c1d38ceb3fee810f959fc3e06514783ae366a",
+  "filtered_rows": 1820,
+  "filtered_unique_sequences": 1000,
+  "sample_seed": 42,
+  "validation_seeds": [
+    42,
+    123,
+    2026
+  ],
+  "split_method": "both",
+  "epochs": 15,
+  "batch_size": 64,
+  "learning_rate": 0.001,
+  "weight_decay": 1e-05,
+  "scheduler_patience": 2,
+  "scheduler_factor": 0.5,
+  "metric": "nucleotide-weighted MAE after clipping predictions and targets to [0, 1]",
+  "determinism": "fixed seeds and deterministic algorithms with warn_only=True"
+}

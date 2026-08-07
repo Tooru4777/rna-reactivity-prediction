@@ -3,7 +3,7 @@ Training Script — RNA Reactivity Prediction
 =============================================
 Standalone training pipeline for the full RNAReactivityPredictor model.
 
-This script trains the competition-entry model (CNN + Bi-LSTM + Transformer)
+This script trains the full ablation model (CNN + Bi-LSTM + Transformer)
 with ViennaRNA secondary structure features (7-dim input).
 
 Training strategy:
@@ -33,15 +33,25 @@ import time
 # Add project root to path when run as script
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_ROOT)
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader, Subset
 import numpy as np
 
 from src.model_reactivity import RNAReactivityPredictor
 from src.data_pipeline_reactivity import RNAReactivityDataset
+from src.splitting import (
+    grouped_split_indices,
+    sequence_overlap_counts,
+    validate_split_integrity,
+)
+
+
+def padding_mask_from_features(features):
+    return features[..., :4].sum(dim=-1).eq(0)
 
 
 def set_seed(seed):
@@ -51,12 +61,14 @@ def set_seed(seed):
     np.random.seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
+    torch.use_deterministic_algorithms(True, warn_only=True)
 
 
 def train_epoch(model, train_loader, optimizer, criterion, device):
     """Run one training epoch. Returns average training loss."""
     model.train()
-    total_loss = 0.0
+    total_abs = 0.0
+    total_valid = 0.0
 
     for features, reactivities, masks in train_loader:
         features = features.to(device)
@@ -64,7 +76,7 @@ def train_epoch(model, train_loader, optimizer, criterion, device):
         masks = masks.to(device)
 
         optimizer.zero_grad()
-        predictions = model(features)
+        predictions = model(features, padding_mask=padding_mask_from_features(features))
 
         # Only clamp targets — keep raw predictions for gradient flow
         # See README § "Debugging: Gradient Vanishing" for full explanation
@@ -80,15 +92,17 @@ def train_epoch(model, train_loader, optimizer, criterion, device):
 
         final_loss.backward()
         optimizer.step()
-        total_loss += final_loss.item()
+        total_abs += masked_loss.sum().item()
+        total_valid += nt_count.item()
 
-    return total_loss / max(len(train_loader), 1)
+    return total_abs / max(total_valid, 1.0)
 
 
 def evaluate(model, data_loader, device):
     """Evaluate using Kaggle's Clipped MAE metric. Returns average CV loss."""
     model.eval()
-    total_loss = 0.0
+    total_abs = 0.0
+    total_valid = 0.0
 
     with torch.no_grad():
         for features, reactivities, masks in data_loader:
@@ -96,7 +110,9 @@ def evaluate(model, data_loader, device):
             reactivities = reactivities.to(device)
             masks = masks.to(device)
 
-            predictions = model(features)
+            predictions = model(
+                features, padding_mask=padding_mask_from_features(features)
+            )
 
             # Clipped MAE: clamp BOTH predictions and targets to [0, 1]
             preds_clipped = torch.clamp(predictions, 0.0, 1.0)
@@ -109,9 +125,10 @@ def evaluate(model, data_loader, device):
                 cv_loss = masked_loss.sum() / nt_count
             else:
                 cv_loss = torch.tensor(0.0, device=device)
-            total_loss += cv_loss.item()
+            total_abs += masked_loss.sum().item()
+            total_valid += nt_count.item()
 
-    return total_loss / max(len(data_loader), 1)
+    return total_abs / max(total_valid, 1.0)
 
 
 def main():
@@ -153,19 +170,22 @@ def main():
         use_structure=True,  # Use ViennaRNA features if available
     )
 
-    # 70% train / 15% CV / 15% test
+    # Leakage-safe 70% train / 15% CV / 15% test by unique sequence.
     n = len(dataset)
-    test_size = int(0.15 * n)
-    cv_size = int(0.15 * n)
-    train_size = n - cv_size - test_size
-
-    set_seed(args.seed)
-    train_set, cv_set, test_set = random_split(dataset, [train_size, cv_size, test_size])
+    train_idx, cv_idx, test_idx = grouped_split_indices(
+        dataset.seq_df, group_col="sequence", seed=args.seed
+    )
+    validate_split_integrity(n, (train_idx, cv_idx, test_idx))
+    train_set, cv_set, test_set = (
+        Subset(dataset, train_idx), Subset(dataset, cv_idx), Subset(dataset, test_idx)
+    )
 
     train_loader = DataLoader(train_set, batch_size=args.batch_size, shuffle=True)
     cv_loader = DataLoader(cv_set, batch_size=args.batch_size, shuffle=False)
 
-    print(f"\nDataset: {n} total | Train: {train_size} | CV: {cv_size} | Test: {test_size}")
+    print(f"\nDataset: {n} total | Train: {len(train_idx)} | "
+          f"CV: {len(cv_idx)} | Test: {len(test_idx)}")
+    print(f"Sequence overlap: {sequence_overlap_counts(dataset.seq_df, (train_idx, cv_idx, test_idx))}")
     print(f"Feature dim: {dataset.feature_dim}")
 
     # --- Model Setup ---

@@ -5,6 +5,20 @@
 *.csv
 dataset/
 
+# Keep small, curated experiment summaries under version control.
+!results/**/ablation_aggregate.csv
+!results/**/ablation_results.csv
+!results/**/ablation_summary.csv
+!results/**/test_results.csv
+!results/**/leakage_aggregate.csv
+!results/**/leakage_comparison.csv
+!results/**/vienna_aggregate.csv
+!results/**/vienna_comparison.csv
+!results/**/error_by_length.csv
+!results/**/error_by_experiment.csv
+!results/**/error_by_structure.csv
+!results/**/error_analysis_per_sequence.csv
+
 # Python caches
 __pycache__/
 *.pyc

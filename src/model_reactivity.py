@@ -17,6 +17,29 @@ All variants share the same interface:
 
 import torch
 import torch.nn as nn
+from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
+
+
+def _run_packed_lstm(lstm, x, padding_mask):
+    """Run an LSTM without allowing right-padding to affect real positions."""
+    if padding_mask is None:
+        return lstm(x)[0]
+    lengths = (~padding_mask).sum(dim=1).clamp(min=1).cpu()
+    packed = pack_padded_sequence(x, lengths, batch_first=True, enforce_sorted=False)
+    packed_out, _ = lstm(packed)
+    output, _ = pad_packed_sequence(
+        packed_out, batch_first=True, total_length=x.size(1)
+    )
+    return output
+
+
+def _apply_conv_block(conv, norm, activation, dropout, x, padding_mask):
+    """Apply convolution and per-position normalization without padding leakage."""
+    x = conv(x).transpose(1, 2)
+    x = dropout(activation(norm(x)))
+    if padding_mask is not None:
+        x = x.masked_fill(padding_mask.unsqueeze(-1), 0.0)
+    return x.transpose(1, 2)
 
 
 class RNAReactivityCNNOnly(nn.Module):
@@ -31,20 +54,22 @@ class RNAReactivityCNNOnly(nn.Module):
     def __init__(self, input_dim=7, cnn_out_dim=128, output_dim=2, dropout=0.3):
         super().__init__()
         self.cnn1 = nn.Conv1d(input_dim, cnn_out_dim // 2, kernel_size=5, padding=2)
-        self.bn1 = nn.BatchNorm1d(cnn_out_dim // 2)
+        self.norm1 = nn.LayerNorm(cnn_out_dim // 2)
         self.cnn2 = nn.Conv1d(cnn_out_dim // 2, cnn_out_dim, kernel_size=5, padding=2)
-        self.bn2 = nn.BatchNorm1d(cnn_out_dim)
+        self.norm2 = nn.LayerNorm(cnn_out_dim)
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(dropout)
         self.fc = nn.Linear(cnn_out_dim, output_dim)
 
-    def forward(self, x):
+    def forward(self, x, padding_mask=None):
         # x: (batch, seq_len, input_dim)
         x = x.transpose(1, 2)
-        x = self.relu(self.bn1(self.cnn1(x)))
-        x = self.dropout(x)
-        x = self.relu(self.bn2(self.cnn2(x)))
-        x = self.dropout(x)
+        x = _apply_conv_block(
+            self.cnn1, self.norm1, self.relu, self.dropout, x, padding_mask
+        )
+        x = _apply_conv_block(
+            self.cnn2, self.norm2, self.relu, self.dropout, x, padding_mask
+        )
         x = x.transpose(1, 2)
         return self.fc(x)
 
@@ -63,9 +88,9 @@ class RNAReactivityCNN_LSTM(nn.Module):
                  output_dim=2, dropout=0.3):
         super().__init__()
         self.cnn1 = nn.Conv1d(input_dim, cnn_out_dim // 2, kernel_size=5, padding=2)
-        self.bn1 = nn.BatchNorm1d(cnn_out_dim // 2)
+        self.norm1 = nn.LayerNorm(cnn_out_dim // 2)
         self.cnn2 = nn.Conv1d(cnn_out_dim // 2, cnn_out_dim, kernel_size=5, padding=2)
-        self.bn2 = nn.BatchNorm1d(cnn_out_dim)
+        self.norm2 = nn.LayerNorm(cnn_out_dim)
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(dropout)
 
@@ -79,15 +104,17 @@ class RNAReactivityCNN_LSTM(nn.Module):
         )
         self.fc = nn.Linear(lstm_hidden_dim * 2, output_dim)
 
-    def forward(self, x):
+    def forward(self, x, padding_mask=None):
         x = x.transpose(1, 2)
-        x = self.relu(self.bn1(self.cnn1(x)))
-        x = self.dropout(x)
-        x = self.relu(self.bn2(self.cnn2(x)))
-        x = self.dropout(x)
+        x = _apply_conv_block(
+            self.cnn1, self.norm1, self.relu, self.dropout, x, padding_mask
+        )
+        x = _apply_conv_block(
+            self.cnn2, self.norm2, self.relu, self.dropout, x, padding_mask
+        )
         x = x.transpose(1, 2)
 
-        lstm_out, _ = self.lstm(x)
+        lstm_out = _run_packed_lstm(self.lstm, x, padding_mask)
         lstm_out = self.dropout(lstm_out)
         return self.fc(lstm_out)
 
@@ -110,9 +137,9 @@ class RNAReactivityCNN_LSTM_Transformer(nn.Module):
                  dropout=0.3):
         super().__init__()
         self.cnn1 = nn.Conv1d(input_dim, cnn_out_dim // 2, kernel_size=5, padding=2)
-        self.bn1 = nn.BatchNorm1d(cnn_out_dim // 2)
+        self.norm1 = nn.LayerNorm(cnn_out_dim // 2)
         self.cnn2 = nn.Conv1d(cnn_out_dim // 2, cnn_out_dim, kernel_size=5, padding=2)
-        self.bn2 = nn.BatchNorm1d(cnn_out_dim)
+        self.norm2 = nn.LayerNorm(cnn_out_dim)
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(dropout)
 
@@ -134,22 +161,26 @@ class RNAReactivityCNN_LSTM_Transformer(nn.Module):
             batch_first=True
         )
         self.transformer = nn.TransformerEncoder(
-            encoder_layer, num_layers=transformer_layers
+            encoder_layer, num_layers=transformer_layers, enable_nested_tensor=False
         )
         self.fc = nn.Linear(d_model, output_dim)
 
-    def forward(self, x):
+    def forward(self, x, padding_mask=None):
         x = x.transpose(1, 2)
-        x = self.relu(self.bn1(self.cnn1(x)))
-        x = self.dropout(x)
-        x = self.relu(self.bn2(self.cnn2(x)))
-        x = self.dropout(x)
+        x = _apply_conv_block(
+            self.cnn1, self.norm1, self.relu, self.dropout, x, padding_mask
+        )
+        x = _apply_conv_block(
+            self.cnn2, self.norm2, self.relu, self.dropout, x, padding_mask
+        )
         x = x.transpose(1, 2)
 
-        lstm_out, _ = self.lstm(x)
+        lstm_out = _run_packed_lstm(self.lstm, x, padding_mask)
         lstm_out = self.dropout(lstm_out)
 
-        transformer_out = self.transformer(lstm_out)
+        transformer_out = self.transformer(
+            lstm_out, src_key_padding_mask=padding_mask
+        )
         transformer_out = transformer_out + lstm_out  # residual connection
         return self.fc(transformer_out)
 
@@ -158,7 +189,7 @@ class RNAReactivityPredictor(nn.Module):
     """
     Full model: CNN + Bi-LSTM + Transformer with ViennaRNA 2D structure input.
 
-    This is the complete architecture used for the competition entry.
+    This is the complete architecture used for the controlled feature ablation.
     It takes 7-dimensional input per nucleotide:
       - 4 dims: one-hot sequence (A, C, G, U)
       - 3 dims: one-hot secondary structure from ViennaRNA MFE ('(', ')', '.')
@@ -168,7 +199,7 @@ class RNAReactivityPredictor(nn.Module):
     This tests whether domain knowledge (2D structure) improves predictions.
 
     Architecture:
-      1. Dual CNN + BatchNorm:    Local motif extraction
+      1. Dual CNN + LayerNorm:    Padding-safe local motif extraction
       2. Bi-LSTM (2-layer):       Sequential context (both directions)
       3. Transformer Encoder:     Global self-attention + residual from LSTM
       4. Linear output:           Per-nucleotide reactivity (2A3_MaP, DMS_MaP)
@@ -179,11 +210,11 @@ class RNAReactivityPredictor(nn.Module):
                  dropout=0.3):
         super().__init__()
 
-        # Dual-layer CNN with BatchNorm
+        # Dual-layer CNN with per-position LayerNorm (padding-safe in training)
         self.cnn1 = nn.Conv1d(input_dim, cnn_out_dim // 2, kernel_size=5, padding=2)
-        self.bn1 = nn.BatchNorm1d(cnn_out_dim // 2)
+        self.norm1 = nn.LayerNorm(cnn_out_dim // 2)
         self.cnn2 = nn.Conv1d(cnn_out_dim // 2, cnn_out_dim, kernel_size=5, padding=2)
-        self.bn2 = nn.BatchNorm1d(cnn_out_dim)
+        self.norm2 = nn.LayerNorm(cnn_out_dim)
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(dropout)
 
@@ -207,24 +238,28 @@ class RNAReactivityPredictor(nn.Module):
             batch_first=True
         )
         self.transformer = nn.TransformerEncoder(
-            encoder_layer, num_layers=transformer_layers
+            encoder_layer, num_layers=transformer_layers, enable_nested_tensor=False
         )
 
         self.fc = nn.Linear(d_model, output_dim)
 
-    def forward(self, x):
+    def forward(self, x, padding_mask=None):
         # x: (batch, seq_len, 7)
         x = x.transpose(1, 2)
-        x = self.relu(self.bn1(self.cnn1(x)))
-        x = self.dropout(x)
-        x = self.relu(self.bn2(self.cnn2(x)))
-        x = self.dropout(x)
+        x = _apply_conv_block(
+            self.cnn1, self.norm1, self.relu, self.dropout, x, padding_mask
+        )
+        x = _apply_conv_block(
+            self.cnn2, self.norm2, self.relu, self.dropout, x, padding_mask
+        )
         x = x.transpose(1, 2)
 
-        lstm_out, _ = self.lstm(x)
+        lstm_out = _run_packed_lstm(self.lstm, x, padding_mask)
         lstm_out = self.dropout(lstm_out)
 
-        transformer_out = self.transformer(lstm_out)
+        transformer_out = self.transformer(
+            lstm_out, src_key_padding_mask=padding_mask
+        )
         transformer_out = transformer_out + lstm_out  # residual
         return self.fc(transformer_out)
 

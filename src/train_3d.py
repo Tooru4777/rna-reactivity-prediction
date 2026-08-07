@@ -27,7 +27,7 @@ def train_model():
     print("=== RNA 3D Structure — Training Pipeline ===")
 
     # --- Data Loading ---
-    # Falls back to synthetic data if Kaggle CSVs are not found locally.
+    # Missing real sequence/coordinate inputs fail immediately.
     dataset = RNA3DDataset(
         sequences_csv="dataset/train_sequences.csv",
         labels_csv="dataset/train_labels.csv",

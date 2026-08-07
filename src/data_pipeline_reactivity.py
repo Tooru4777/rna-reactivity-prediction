@@ -7,7 +7,7 @@ Supports two input modes:
   - 4-dim: Sequence-only one-hot (A, C, G, U) — for architecture ablation
   - 7-dim: Sequence + ViennaRNA 2D structure — for full model
 
-Falls back to synthetic data if CSVs are not found (for pipeline testing).
+Missing inputs fail fast; this pipeline requires measured targets.
 """
 
 import torch
@@ -38,9 +38,11 @@ class RNAReactivityDataset(Dataset):
         max_length:    Pad/truncate all sequences to this length
         use_structure: If True, compute ViennaRNA 2D structure (7-dim input).
                        If False, use sequence-only features (4-dim input).
+        max_samples:   Optional maximum number of CSV rows to load.
     """
 
-    def __init__(self, sequences_csv, max_length=206, use_structure=True):
+    def __init__(self, sequences_csv=None, max_length=206, use_structure=True,
+                 max_samples=None, dataframe=None):
         self.max_length = max_length
         self.use_structure = use_structure and HAS_VIENNA
 
@@ -50,9 +52,13 @@ class RNAReactivityDataset(Dataset):
         self.seq_char_map = {'A': 0, 'C': 1, 'G': 2, 'U': 3}
         self.struct_char_map = {'(': 4, ')': 5, '.': 6}
 
-        if os.path.exists(sequences_csv):
-            print(f"Loading dataset: {sequences_csv}")
-            self.seq_df = pd.read_csv(sequences_csv)
+        if dataframe is not None or (sequences_csv and os.path.exists(sequences_csv)):
+            if dataframe is not None:
+                print("Loading dataset from in-memory sequence subset")
+                self.seq_df = dataframe.copy()
+            else:
+                print(f"Loading dataset: {sequences_csv}")
+                self.seq_df = pd.read_csv(sequences_csv, nrows=max_samples)
 
             # Quality filter
             if 'SN_filter' in self.seq_df.columns:
@@ -61,7 +67,7 @@ class RNAReactivityDataset(Dataset):
                 print(f"Quality filter (SN_filter=1.0): {initial} -> {len(self.seq_df)}")
 
             self.seq_df = self.seq_df.reset_index(drop=True)
-            self.mock_data = False
+            self._validate_research_frame()
             self.num_samples = len(self.seq_df)
 
             # Compute secondary structures if requested
@@ -81,53 +87,68 @@ class RNAReactivityDataset(Dataset):
                   f"{len(self.reactivity_cols)} reactivity columns, "
                   f"feature_dim={self.feature_dim}")
         else:
-            print(f"[WARNING] {sequences_csv} not found. Using synthetic data.")
-            self.mock_data = True
-            self.num_samples = 500
-            self.reactivity_cols = []
+            raise FileNotFoundError(
+                f"Training data not found: {sequences_csv}. This pipeline requires "
+                "real measured reactivity targets."
+            )
+
+    def _validate_research_frame(self):
+        """Fail fast on schema/domain problems that could corrupt labels."""
+        required = {"sequence", "experiment_type"}
+        missing = sorted(required - set(self.seq_df.columns))
+        if missing:
+            raise ValueError(f"Missing required columns: {missing}")
+        if self.seq_df.empty:
+            raise ValueError("No quality-eligible RNA rows remain after filtering")
+        sequences = self.seq_df["sequence"]
+        if sequences.isna().any() or sequences.astype(str).str.len().eq(0).any():
+            raise ValueError("RNA sequences must be non-empty and non-null")
+        invalid_sequence = ~sequences.astype(str).str.fullmatch(r"[ACGU]+")
+        if invalid_sequence.any():
+            raise ValueError("RNA sequences may contain only A, C, G, and U")
+        allowed_experiments = {"2A3_MaP", "DMS_MaP"}
+        observed = set(self.seq_df["experiment_type"].dropna().astype(str))
+        unexpected = sorted(observed - allowed_experiments)
+        if unexpected or self.seq_df["experiment_type"].isna().any():
+            raise ValueError(f"Unexpected experiment_type values: {unexpected}")
+
+        reactivity_cols = [
+            c for c in self.seq_df.columns
+            if c.startswith("reactivity_") and "error" not in c
+        ]
+        if not reactivity_cols:
+            raise ValueError("No reactivity target columns were found")
+        if self.seq_df[reactivity_cols].notna().sum(axis=1).eq(0).any():
+            raise ValueError("Each retained experiment row must contain a reactivity target")
 
     def __len__(self):
         return self.num_samples
 
     def __getitem__(self, idx):
-        if self.mock_data:
-            length = np.random.randint(50, self.max_length)
-            seq_str = ''.join(np.random.choice(['A', 'C', 'G', 'U'], size=length))
-            struct_str = '.' * length
-            reactivities = np.random.randn(length, 2).astype(np.float32)
-            valid_mask = np.ones((length, 2), dtype=np.float32)
+        seq_str = self.seq_df.iloc[idx].get('sequence', '')
+        length = len(seq_str)
+
+        # Get structure string
+        if self.use_structure:
+            struct_str = self.seq_df.iloc[idx].get(
+                'structure', '.' * length
+            )[:self.max_length]
         else:
-            seq_str = self.seq_df.iloc[idx].get('sequence', '')
-            if pd.isna(seq_str) or len(seq_str) == 0:
-                seq_str = 'A' * 50
-            length = len(seq_str)
+            struct_str = '.' * length
 
-            # Get structure string
-            if self.use_structure:
-                struct_str = self.seq_df.iloc[idx].get(
-                    'structure', '.' * length
-                )[:self.max_length]
-            else:
-                struct_str = '.' * length
+        row_vals = self.seq_df.iloc[idx][self.reactivity_cols].values
+        actual_len = min(length, len(row_vals))
+        reactivities = np.zeros((length, 2), dtype=np.float32)
+        valid_mask = np.zeros((length, 2), dtype=np.float32)
 
-            # Extract reactivity values
-            if len(self.reactivity_cols) > 0:
-                row_vals = self.seq_df.iloc[idx][self.reactivity_cols].values
-                actual_len = min(length, len(row_vals))
-                reactivities = np.zeros((length, 2), dtype=np.float32)
-                valid_mask = np.zeros((length, 2), dtype=np.float32)
+        experiment_type = self.seq_df.iloc[idx]['experiment_type']
+        exp_idx = 0 if experiment_type == '2A3_MaP' else 1
 
-                experiment_type = self.seq_df.iloc[idx].get('experiment_type', '2A3_MaP')
-                exp_idx = 0 if experiment_type == '2A3_MaP' else 1
-
-                for i in range(actual_len):
-                    val = row_vals[i]
-                    if not pd.isna(val):
-                        reactivities[i, exp_idx] = float(val)
-                        valid_mask[i, exp_idx] = 1.0
-            else:
-                reactivities = np.zeros((length, 2), dtype=np.float32)
-                valid_mask = np.zeros((length, 2), dtype=np.float32)
+        for i in range(actual_len):
+            val = row_vals[i]
+            if not pd.isna(val):
+                reactivities[i, exp_idx] = float(val)
+                valid_mask[i, exp_idx] = 1.0
 
         # Truncate
         seq_str = seq_str[:self.max_length]

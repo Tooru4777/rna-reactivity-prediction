@@ -27,45 +27,38 @@ class RNA3DDataset(Dataset):
         - mask:    (max_length,)   tensor — 1.0 for real nucleotides, 0.0 for padding
     """
 
-    def __init__(self, sequences_csv, labels_csv=None, max_length=200):
+    def __init__(self, sequences_csv, labels_csv, max_length=200):
         self.max_length = max_length
         self.char_map = {'A': 0, 'C': 1, 'G': 2, 'U': 3}
 
-        if os.path.exists(sequences_csv) and (labels_csv is None or os.path.exists(labels_csv)):
-            print(f"Loading data from: {sequences_csv}")
-            self.seq_df = pd.read_csv(sequences_csv)
-            if labels_csv:
-                self.label_df = pd.read_csv(labels_csv)
-            else:
-                self.label_df = None
-            self.mock_data = False
-            self.num_samples = len(self.seq_df)
-        else:
-            print("[WARNING] Real CSV files not found.")
-            print("Generating 1000 synthetic RNA 3D samples for pipeline validation.")
-            self.mock_data = True
-            self.num_samples = 1000
+        if not os.path.isfile(sequences_csv) or not os.path.isfile(labels_csv):
+            raise FileNotFoundError(
+                "RNA 3D training requires real sequence and coordinate-label CSV files"
+            )
+        print(f"Loading data from: {sequences_csv}")
+        self.seq_df = pd.read_csv(sequences_csv)
+        self.label_df = pd.read_csv(labels_csv)
+        required_sequence = {"target_id", "sequence"}
+        required_labels = {"ID", "x", "y", "z"}
+        if not required_sequence.issubset(self.seq_df.columns):
+            raise ValueError(f"Sequence CSV requires columns: {sorted(required_sequence)}")
+        if not required_labels.issubset(self.label_df.columns):
+            raise ValueError(f"Label CSV requires columns: {sorted(required_labels)}")
+        self.num_samples = len(self.seq_df)
 
     def __len__(self):
         return self.num_samples
 
     def __getitem__(self, idx):
-        if self.mock_data:
-            # Generate synthetic data for testing the pipeline end-to-end
-            length = np.random.randint(50, self.max_length)
-            seq_str = ''.join(np.random.choice(['A', 'C', 'G', 'U'], size=length))
-            coords = np.random.randn(length, 3).astype(np.float32)
-        else:
-            # Load real sequence and coordinates from Kaggle CSV
-            seq_str = self.seq_df.iloc[idx]['sequence']
-            length = len(seq_str)
-
-            if self.label_df is not None:
-                target_id = self.seq_df.iloc[idx]['target_id']
-                target_labels = self.label_df[self.label_df['ID'].str.startswith(target_id)]
-                coords = target_labels[['x', 'y', 'z']].values.astype(np.float32)
-            else:
-                coords = np.zeros((length, 3), dtype=np.float32)
+        seq_str = self.seq_df.iloc[idx]['sequence']
+        length = len(seq_str)
+        target_id = str(self.seq_df.iloc[idx]['target_id'])
+        target_labels = self.label_df[
+            self.label_df['ID'].astype(str).str.startswith(target_id)
+        ]
+        coords = target_labels[['x', 'y', 'z']].values.astype(np.float32)
+        if len(coords) < min(length, self.max_length):
+            raise ValueError(f"Insufficient coordinate labels for target {target_id}")
 
         # Truncate to max_length
         seq_str = seq_str[:self.max_length]

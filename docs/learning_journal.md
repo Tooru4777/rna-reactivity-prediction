@@ -2,7 +2,10 @@
 
 ## Background
 
-I started this project as my first hands-on deep learning project applied to a real bioinformatics problem. My prior knowledge included foundational machine learning concepts from online courses, but I had never built a production-scale model or worked with biological sequence data before.
+I started this project as my first hands-on deep learning project applied to a
+real bioinformatics problem. My prior knowledge included foundational machine
+learning concepts from online courses, but I had not previously built an
+end-to-end research pipeline or worked with biological sequence data.
 
 ## Week 1: Understanding the Problem (May 2026)
 
@@ -12,7 +15,9 @@ I started this project as my first hands-on deep learning project applied to a r
 - Understood the difference between 2A3_MaP and DMS_MaP chemical probing experiments
 
 ### Key insight
-RNA chemical reactivity is a proxy for 3D structure: nucleotides that are more "exposed" (unpaired, in loops) tend to have higher reactivity. This means predicting reactivity is related to predicting structure, but is more tractable because we have direct experimental measurements.
+RNA chemical reactivity reports local chemical accessibility and is influenced
+by structural context. It is informative about folding but is not a direct 3D
+structure label.
 
 ### Challenge
 The competition dataset is massive (~1.6 GB). I needed to learn how to handle data that doesn't fit in memory, which led me to understand PyTorch's `Dataset` and `DataLoader` abstraction.
@@ -30,7 +35,10 @@ The competition dataset is massive (~1.6 GB). I needed to learn how to handle da
 3. **Why Transformer on top?** Self-attention can directly model position-to-position interactions without the sequential bottleneck of LSTM.
 
 ### What didn't work
-- I initially tried a pure Transformer model, but it performed poorly. I think this is because RNA is inherently sequential, and the positional encoding wasn't sufficient. Using LSTM as an implicit positional encoder solved this.
+- A pure Transformer performed poorly in an early exploratory run. Adding an
+  LSTM improved that run, but the experiment did not isolate whether positional
+  information, optimization, parameterization, or sample size caused the
+  difference.
 
 ## Week 3: Training and Debugging
 
@@ -50,7 +58,8 @@ During training, this kills gradients for any prediction outside [0, 1]. But ear
 ### What I learned
 - Always check gradient flow when training stalls
 - Training loss and evaluation metric don't have to be identical
-- `torch.clamp` is not differentiable at the clamp boundaries
+- `torch.clamp` supplies zero gradient outside the retained interval, which can
+  prevent an out-of-range prediction from moving back toward the target
 
 ## Reflections
 

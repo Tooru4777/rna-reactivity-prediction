@@ -26,6 +26,8 @@ import kagglehub
 import shutil
 import os
 import json
+import sys
+import zipfile
 
 # Fallback: load KGAT token from kaggle.json if not in environment or is empty
 if not os.environ.get('KAGGLE_API_TOKEN'):
@@ -45,14 +47,24 @@ try:
     path = kagglehub.competition_download('stanford-ribonanza-rna-folding')
     print(f'Download complete. Cache path: {path}')
 
-    # Copy to project dataset directory
-    if os.path.exists('dataset'):
-        shutil.rmtree('dataset')
-    shutil.copytree(path, 'dataset')
-    print('Data copied to dataset/')
+    # Materialise the Kaggle cache into the repository's ignored dataset/ dir.
+    os.makedirs('dataset', exist_ok=True)
+    if os.path.isdir(path):
+        shutil.copytree(path, 'dataset', dirs_exist_ok=True)
+    elif zipfile.is_zipfile(path):
+        with zipfile.ZipFile(path) as archive:
+            archive.extractall('dataset')
+    else:
+        raise RuntimeError(f'Unexpected Kaggle download format: {path}')
+
+    train_csv = os.path.join('dataset', 'train_data.csv')
+    if not os.path.isfile(train_csv):
+        raise FileNotFoundError(f'Expected file was not downloaded: {train_csv}')
+    print(f'Dataset ready: {train_csv}')
 except Exception as e:
     print(f'Download failed: {e}')
     print('Make sure your Kaggle credentials are configured.')
+    sys.exit(1)
 "
 
 echo "Done!"
