@@ -38,6 +38,10 @@ REQUIRED_FILES = {
     "training_curves.png",
     "error_by_length.png",
 }
+SCHEMA_V2_FILES = {
+    "sequence_length_distribution.csv",
+    "sequence_length_histogram.png",
+}
 FORBIDDEN_NAMES = {
     "train_data.csv",
     "error_analysis_per_profile.csv",
@@ -110,6 +114,77 @@ def reconcile_error_file(
     return max_difference
 
 
+def validate_sequence_length_distribution(
+    path: Path, manifest: dict, quality: dict
+) -> None:
+    records = load_csv(path)
+    require(records, f"{path.name}: no length rows")
+    required_columns = {
+        "sequence_length",
+        "unique_sequences",
+        "experiment_profiles",
+        "share_of_sequences",
+        "cumulative_unique_sequences",
+    }
+    require(
+        required_columns.issubset(records[0]),
+        f"{path.name}: missing columns {sorted(required_columns - set(records[0]))}",
+    )
+
+    lengths = [int(row["sequence_length"]) for row in records]
+    unique_counts = [int(row["unique_sequences"]) for row in records]
+    profile_counts = [int(row["experiment_profiles"]) for row in records]
+    require(
+        lengths == list(range(lengths[0], lengths[-1] + 1)),
+        f"{path.name}: lengths must cover a continuous 1-nt range",
+    )
+    require(
+        all(value >= 0 for value in unique_counts),
+        f"{path.name}: negative sequence count",
+    )
+    require(
+        all(value >= 0 for value in profile_counts),
+        f"{path.name}: negative profile count",
+    )
+    require(
+        sum(unique_counts) == manifest["filtered_unique_sequences"],
+        f"{path.name}: unique-sequence total disagrees with manifest",
+    )
+    require(
+        sum(profile_counts) == manifest["filtered_rows"],
+        f"{path.name}: experiment-profile total disagrees with manifest",
+    )
+
+    cumulative = 0
+    expanded_lengths: list[int] = []
+    for row, length, count in zip(records, lengths, unique_counts):
+        cumulative += count
+        assert_close(
+            float(row["share_of_sequences"]),
+            count / manifest["filtered_unique_sequences"],
+            f"{path.name}: sequence share at {length}",
+        )
+        require(
+            int(row["cumulative_unique_sequences"]) == cumulative,
+            f"{path.name}: cumulative count mismatch at {length}",
+        )
+        expanded_lengths.extend([length] * count)
+
+    require(
+        lengths[0] == quality["sequence_length"]["min"],
+        f"{path.name}: minimum length mismatch",
+    )
+    require(
+        lengths[-1] == quality["sequence_length"]["max"],
+        f"{path.name}: maximum length mismatch",
+    )
+    assert_close(
+        statistics.median(expanded_lengths),
+        quality["sequence_length"]["median"],
+        f"{path.name}: median length",
+    )
+
+
 def validate_archive(archive: str | Path) -> dict[str, object]:
     archive = Path(archive)
     require(archive.is_dir(), f"Archive directory does not exist: {archive}")
@@ -126,11 +201,19 @@ def validate_archive(archive: str | Path) -> dict[str, object]:
         and (path.name in FORBIDDEN_NAMES or path.suffix in {".pth", ".log"})
     )
     require(not forbidden, f"Non-compact artifacts must not be committed: {forbidden}")
-    for image_name in ("training_curves.png", "error_by_length.png"):
+    manifest = load_json(archive / "run_manifest.json")
+    schema_version = int(manifest.get("artifact_schema_version", 1))
+    if schema_version >= 2:
+        missing_v2 = SCHEMA_V2_FILES - present
+        require(not missing_v2, f"Missing schema v2 artifacts: {sorted(missing_v2)}")
+
+    image_names = ["training_curves.png", "error_by_length.png"]
+    if schema_version >= 2:
+        image_names.append("sequence_length_histogram.png")
+    for image_name in image_names:
         with (archive / image_name).open("rb") as handle:
             require(handle.read(8) == b"\x89PNG\r\n\x1a\n", f"Invalid PNG file: {image_name}")
 
-    manifest = load_json(archive / "run_manifest.json")
     commit = str(manifest["git_commit"])
     require(bool(re.fullmatch(r"[0-9a-f]{40}", commit)), "Manifest git_commit must be a full SHA")
     archive_suffix = archive.name.rsplit("-", maxsplit=1)[-1]
@@ -158,6 +241,10 @@ def validate_archive(archive: str | Path) -> dict[str, object]:
     )
     require(quality["duplicate_full_rows"] == 0, "Exact duplicate rows are present")
     require(quality["valid_reactivity_targets"] > 0, "No measured reactivity targets were recorded")
+    if schema_version >= 2:
+        validate_sequence_length_distribution(
+            archive / "sequence_length_distribution.csv", manifest, quality
+        )
 
     summary = load_csv(archive / "ablation_summary.csv")
     tests = load_csv(archive / "test_results.csv")

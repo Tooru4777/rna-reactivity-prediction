@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 REPOSITORY = "https://github.com/Tooru4777/rna-reactivity-prediction.git"
-BRANCH = "codex/cv-ready-rna-reactivity"
+BRANCH = "codex/exact-length-results"
 KAGGLE_INPUT_ROOT = Path("/kaggle/input")
 WORKING = Path("/kaggle/working")
 CHECKOUT = Path("/tmp/rna-reactivity-prediction")

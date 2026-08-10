@@ -18,6 +18,8 @@ Output:
   - ablation_summary.csv       — CV-selected checkpoint and held-out test MAE
   - model_selection.json       — explicit CV selection rule and final test result
   - error_analysis_*.csv       — per-sequence and stratified test errors
+  - sequence_length_distribution.csv — exact-length cohort counts
+  - sequence_length_histogram.png    — 1-nt unique-sequence histogram
   - data_quality_report.json   — cohort schema, coverage, and target checks
   - split_report.json          — sequence overlap audit
   - run_manifest.json          — code/data cohort fingerprint and hyperparameters
@@ -49,6 +51,7 @@ import pandas as pd
 import time
 import yaml
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 
 from src.model_reactivity import (
     RNAReactivityCNNOnly,
@@ -97,6 +100,89 @@ def forward_padding_safe(model, features):
 def format_mean_std(mean, std):
     """Format repeated-run estimates without printing NaN for one-seed smoke tests."""
     return f"{mean:.4f}" if pd.isna(std) else f"{mean:.4f}±{std:.4f}"
+
+
+def write_sequence_length_artifacts(frame, results_dir):
+    """Write exact-length counts and a 1-nt histogram for the retained cohort.
+
+    Sequence counts are computed after deduplicating the experiment-profile
+    rows by exact sequence. The CSV includes every integer length from the
+    cohort minimum through maximum so absent lengths are explicit zeros.
+    """
+    if frame.empty:
+        raise ValueError("Cannot summarize sequence lengths for an empty cohort")
+    if "sequence" not in frame or frame["sequence"].isna().any():
+        raise ValueError("Every cohort row must contain an RNA sequence")
+
+    sequences = frame[["sequence"]].drop_duplicates().copy()
+    sequences["sequence_length"] = sequences["sequence"].astype(str).str.len()
+    profile_lengths = frame["sequence"].astype(str).str.len()
+    minimum = int(sequences["sequence_length"].min())
+    maximum = int(sequences["sequence_length"].max())
+    lengths = pd.Index(range(minimum, maximum + 1), name="sequence_length")
+
+    unique_counts = sequences["sequence_length"].value_counts().reindex(lengths, fill_value=0)
+    profile_counts = profile_lengths.value_counts().reindex(lengths, fill_value=0)
+    distribution = pd.DataFrame({
+        "sequence_length": lengths.astype(int),
+        "unique_sequences": unique_counts.astype(int).to_numpy(),
+        "experiment_profiles": profile_counts.astype(int).to_numpy(),
+    })
+    total_sequences = int(distribution["unique_sequences"].sum())
+    distribution["share_of_sequences"] = (
+        distribution["unique_sequences"] / total_sequences
+    )
+    distribution["cumulative_unique_sequences"] = (
+        distribution["unique_sequences"].cumsum()
+    )
+
+    os.makedirs(results_dir, exist_ok=True)
+    distribution.to_csv(
+        os.path.join(results_dir, "sequence_length_distribution.csv"), index=False
+    )
+
+    fig, ax = plt.subplots(figsize=(10, 5.5))
+    bars = ax.bar(
+        distribution["sequence_length"],
+        distribution["unique_sequences"],
+        width=0.9,
+        color="#3973ac",
+        edgecolor="#244a70",
+        linewidth=0.6,
+    )
+    ax.set_title("RNA sequence length distribution", loc="left", fontsize=15, pad=28)
+    ax.text(
+        0.0, 1.015,
+        f"Quality-filtered cohort • unique sequences (n={total_sequences:,}) • exact 1-nt bins",
+        transform=ax.transAxes, color="#4a5560", fontsize=10, va="bottom",
+    )
+    ax.set_xlabel("Sequence length (nt)")
+    ax.set_ylabel("Unique sequences")
+    ax.set_xlim(minimum - 1, maximum + 1)
+    ax.set_ylim(bottom=0)
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True, nbins=12))
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.grid(axis="y", alpha=0.25)
+    ax.set_axisbelow(True)
+
+    observed = distribution["unique_sequences"] > 0
+    if int(observed.sum()) <= 20:
+        for bar, count in zip(bars, distribution["unique_sequences"]):
+            if count:
+                ax.annotate(
+                    f"{int(count):,}",
+                    xy=(bar.get_x() + bar.get_width() / 2, bar.get_height()),
+                    xytext=(0, 4), textcoords="offset points",
+                    ha="center", va="bottom", fontsize=9, color="#24313d",
+                )
+
+    fig.tight_layout()
+    fig.savefig(
+        os.path.join(results_dir, "sequence_length_histogram.png"), dpi=160
+    )
+    plt.close(fig)
+    return distribution
+
 
 def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
                   lr=0.001, weight_decay=1e-5, patience=2, factor=0.5,
@@ -387,6 +473,9 @@ def main():
     quality_frame = dataset_4dim.seq_df
     reactivity_cols = dataset_4dim.reactivity_cols
     target_values = quality_frame[reactivity_cols]
+    cohort_lengths = (
+        quality_frame["sequence"].astype(str).drop_duplicates().str.len()
+    )
     experiments_per_sequence = quality_frame.groupby("sequence")[
         "experiment_type"
     ].nunique()
@@ -410,9 +499,10 @@ def main():
         "reactivity_targets_below_zero": int((target_values < 0).sum().sum()),
         "reactivity_targets_above_one": int((target_values > 1).sum().sum()),
         "sequence_length": {
-            "min": int(quality_frame["sequence"].str.len().min()),
-            "median": float(quality_frame["sequence"].str.len().median()),
-            "max": int(quality_frame["sequence"].str.len().max()),
+            "grain": "unique exact sequence",
+            "min": int(cohort_lengths.min()),
+            "median": float(cohort_lengths.median()),
+            "max": int(cohort_lengths.max()),
         },
         "notes": [
             "Out-of-range targets are retained in source data and clipped only for the competition MAE.",
@@ -433,6 +523,7 @@ def main():
 
     results_dir = os.path.abspath(args.output_dir)
     os.makedirs(results_dir, exist_ok=True)
+    write_sequence_length_artifacts(quality_frame, results_dir)
     with open(os.path.join(results_dir, "data_quality_report.json"), "w") as f:
         json.dump(data_quality_report, f, indent=2)
 
@@ -489,6 +580,7 @@ def main():
         git_commit = None
     cohort_sequences = sorted(dataset_4dim.seq_df["sequence"].astype(str).unique())
     run_manifest = {
+        "artifact_schema_version": 2,
         "git_commit": git_commit,
         "data_file": os.path.basename(data_path),
         "cohort_sha256": hashlib.sha256(

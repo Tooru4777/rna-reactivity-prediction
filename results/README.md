@@ -27,6 +27,16 @@ Required files for a final run:
 - `error_analysis_per_sequence.csv` (profile-level raw output remains on Kaggle)
 - `training_curves.png` and `error_by_length.png`
 
+Artifact schema v2 runs additionally contain:
+
+- `sequence_length_distribution.csv`: every integer length from the cohort
+  minimum to maximum, with exact unique-sequence and experiment-profile counts
+- `sequence_length_histogram.png`: 1-nt histogram over unique sequences
+
+The archived Version 9 run predates schema v2, so these two cohort-distribution
+artifacts will first appear in the next Kaggle run rather than being reconstructed
+from incomplete held-out subsets.
+
 Validate the archive with:
 
 ```bash

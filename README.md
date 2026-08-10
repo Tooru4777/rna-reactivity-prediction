@@ -73,6 +73,12 @@ The final cohort contains:
 - 178,937 measured nucleotide targets; and
 - sequence lengths from 115 to 206 nt (median 177 nt).
 
+New Kaggle runs save the complete exact-length cohort table as
+`sequence_length_distribution.csv` and a 1-nt unique-sequence histogram as
+`sequence_length_histogram.png`. Counts are computed after deduplicating
+experiment-profile rows by exact sequence, and zero-count lengths between the
+minimum and maximum remain explicit in the CSV.
+
 There are no exact duplicate rows. The quality report records 129 repeated
 sequence/experiment keys rather than silently removing them because the source
 can contain distinct experimental profiles for one key. Grouping by sequence
