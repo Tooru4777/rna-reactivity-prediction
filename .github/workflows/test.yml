@@ -22,8 +22,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install torch --index-url https://download.pytorch.org/whl/cpu
-          pip install pandas numpy matplotlib pyyaml scipy pytest
+          pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+
+      - name: Verify ViennaRNA feature dependency
+        run: python -c "import RNA; assert RNA.__version__ == '2.7.2', RNA.__version__"
 
       - name: Compile source
         run: python -m compileall -q src experiments kaggle tests

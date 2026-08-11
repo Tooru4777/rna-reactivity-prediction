@@ -7,7 +7,8 @@ from pathlib import Path
 
 
 REPOSITORY = "https://github.com/Tooru4777/rna-reactivity-prediction.git"
-BRANCH = "codex/exact-length-results"
+DEFAULT_REPOSITORY_REF = "main"
+REPOSITORY_REF = os.environ.get("RNA_REPOSITORY_REF", DEFAULT_REPOSITORY_REF)
 KAGGLE_INPUT_ROOT = Path("/kaggle/input")
 WORKING = Path("/kaggle/working")
 CHECKOUT = Path("/tmp/rna-reactivity-prediction")
@@ -46,7 +47,11 @@ def main():
         sys.executable, "-m", "pip", "install", "--quiet", "--force-reinstall",
         "torch==2.7.1", "--index-url", "https://download.pytorch.org/whl/cu118",
     )
-    run(sys.executable, "-m", "pip", "install", "--quiet", "viennarna>=2.5")
+    run(
+        sys.executable, "-m", "pip", "install", "--quiet",
+        "pandas==2.3.3", "numpy==2.2.5", "matplotlib==3.10.9",
+        "PyYAML==6.0.3", "ViennaRNA==2.7.2",
+    )
     run(
         sys.executable, "-c",
         "import torch; "
@@ -57,7 +62,11 @@ def main():
         "print(torch.__version__, [torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())], caps); "
         "print((torch.ones(1, device='cuda') + 1).item())",
     )
-    run("git", "clone", "--depth", "1", "--branch", BRANCH, REPOSITORY, CHECKOUT)
+    print(f"Cloning repository ref: {REPOSITORY_REF}", flush=True)
+    run(
+        "git", "clone", "--depth", "1", "--branch", REPOSITORY_REF,
+        REPOSITORY, CHECKOUT,
+    )
 
     max_sequences = os.environ.get("RNA_MAX_SEQUENCES", "1000")
     epochs = os.environ.get("RNA_EPOCHS", "15")
@@ -69,7 +78,6 @@ def main():
         "--max-sequences", max_sequences,
         "--epochs", epochs,
         "--output-dir", RESULTS,
-        "--require-vienna",
         "--split-method", "both",
         "--seeds", *validation_seeds,
         "--sample-seed", "42",

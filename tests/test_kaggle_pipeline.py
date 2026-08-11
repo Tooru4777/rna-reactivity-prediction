@@ -12,6 +12,12 @@ SPEC.loader.exec_module(gpu_ablation)
 find_competition_input = gpu_ablation.find_competition_input
 
 
+def test_runner_defaults_to_main_and_pins_vienna():
+    source = MODULE_PATH.read_text(encoding="utf-8")
+    assert gpu_ablation.DEFAULT_REPOSITORY_REF == "main"
+    assert '"ViennaRNA==2.7.2"' in source
+
+
 def test_finds_train_data_nested_under_old(tmp_path):
     expected = (
         tmp_path

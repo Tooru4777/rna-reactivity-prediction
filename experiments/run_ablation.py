@@ -17,12 +17,14 @@ Output:
   - ablation_results.csv       — per-epoch train/CV loss for all variants
   - ablation_summary.csv       — CV-selected checkpoint and held-out test MAE
   - model_selection.json       — explicit CV selection rule and final test result
+  - baseline_results.csv       — train-only experiment-mean reference scores
   - error_analysis_*.csv       — per-sequence and stratified test errors
   - sequence_length_distribution.csv — exact-length cohort counts
   - sequence_length_histogram.png    — 1-nt unique-sequence histogram
   - data_quality_report.json   — cohort schema, coverage, and target checks
   - split_report.json          — sequence overlap audit
   - run_manifest.json          — code/data cohort fingerprint and hyperparameters
+  - artifact_checksums.sha256  — SHA-256 checksums for compact report artifacts
 
 Usage:
     python experiments/run_ablation.py
@@ -32,6 +34,7 @@ import sys
 import os
 import argparse
 import hashlib
+import importlib.metadata
 import json
 import platform
 import re
@@ -60,7 +63,7 @@ from src.model_reactivity import (
     RNAReactivityPredictor,
 )
 from src.data_pipeline_reactivity import RNAReactivityDataset
-from src.data_loading import load_unique_sequence_subset
+from src.data_loading import load_unique_sequence_subset, resolve_ribonanza_train_data
 from src.splitting import (
     grouped_split_indices,
     random_split_indices,
@@ -100,6 +103,111 @@ def forward_padding_safe(model, features):
 def format_mean_std(mean, std):
     """Format repeated-run estimates without printing NaN for one-seed smoke tests."""
     return f"{mean:.4f}" if pd.isna(std) else f"{mean:.4f}±{std:.4f}"
+
+
+def sha256_file(path, chunk_size=8 * 1024 * 1024):
+    """Return a streaming SHA-256 digest without loading a large CSV in memory."""
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(chunk_size), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def sha256_frame(frame, columns):
+    """Hash selected cohort values using a deterministic CSV serialization."""
+    serialized = frame.loc[:, columns].to_csv(
+        index=False,
+        na_rep="<NA>",
+        float_format="%.17g",
+        lineterminator="\n",
+    )
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def dependency_versions():
+    """Capture exact package versions needed to reproduce the run."""
+    versions = {}
+    for distribution in (
+        "torch", "pandas", "numpy", "matplotlib", "PyYAML", "ViennaRNA"
+    ):
+        try:
+            versions[distribution] = importlib.metadata.version(distribution)
+        except importlib.metadata.PackageNotFoundError:
+            versions[distribution] = None
+    return versions
+
+
+def write_artifact_checksums(results_dir):
+    """Checksum compact CSV/JSON/PNG outputs that are safe to archive in Git."""
+    results_dir = os.path.abspath(results_dir)
+    excluded = {"artifact_checksums.sha256", "error_analysis_per_profile.csv"}
+    paths = sorted(
+        path for path in (
+            os.path.join(results_dir, name) for name in os.listdir(results_dir)
+        )
+        if os.path.isfile(path)
+        and os.path.basename(path) not in excluded
+        and os.path.splitext(path)[1].lower() in {".csv", ".json", ".png"}
+    )
+    checksum_path = os.path.join(results_dir, "artifact_checksums.sha256")
+    with open(checksum_path, "w", encoding="utf-8", newline="\n") as handle:
+        for path in paths:
+            handle.write(f"{sha256_file(path)}  {os.path.basename(path)}\n")
+    return checksum_path
+
+
+def fit_experiment_mean_baseline(
+    frame, train_indices, reactivity_cols, max_length=206
+):
+    """Fit one clipped constant per experiment using training targets only."""
+    train_frame = frame.iloc[list(train_indices)]
+    values_by_experiment = {"2A3_MaP": [], "DMS_MaP": []}
+    for _, row in train_frame.iterrows():
+        usable_length = min(
+            len(str(row["sequence"])), max_length, len(reactivity_cols)
+        )
+        values = row[list(reactivity_cols[:usable_length])].to_numpy(dtype=float)
+        values = np.clip(values[np.isfinite(values)], 0.0, 1.0)
+        values_by_experiment[str(row["experiment_type"])].append(values)
+    finite_parts = [
+        values for experiment_values in values_by_experiment.values()
+        for values in experiment_values if values.size
+    ]
+    all_values = np.concatenate(finite_parts) if finite_parts else np.array([])
+    if all_values.size == 0:
+        raise ValueError("Cannot fit a baseline without finite training targets")
+    global_mean = float(all_values.mean())
+    means = {}
+    for experiment_type in ("2A3_MaP", "DMS_MaP"):
+        parts = [values for values in values_by_experiment[experiment_type] if values.size]
+        values = np.concatenate(parts) if parts else np.array([])
+        means[experiment_type] = (
+            float(values.mean()) if values.size else global_mean
+        )
+    return means
+
+
+def evaluate_experiment_mean_baseline(
+    frame, row_indices, reactivity_cols, means, max_length=206
+):
+    """Evaluate a fitted constant baseline with the nucleotide-weighted metric."""
+    absolute_error_sum = 0.0
+    valid_positions = 0
+    for row_index in row_indices:
+        row = frame.iloc[int(row_index)]
+        usable_length = min(
+            len(str(row["sequence"])), max_length, len(reactivity_cols)
+        )
+        values = row[list(reactivity_cols[:usable_length])].to_numpy(dtype=float)
+        values = np.clip(values[np.isfinite(values)], 0.0, 1.0)
+        if values.size:
+            prediction = means[str(row["experiment_type"])]
+            absolute_error_sum += float(np.abs(values - prediction).sum())
+            valid_positions += int(values.size)
+    if not valid_positions:
+        raise ValueError("Cannot evaluate a baseline without finite targets")
+    return absolute_error_sum / valid_positions, valid_positions
 
 
 def write_sequence_length_artifacts(frame, results_dir):
@@ -182,6 +290,113 @@ def write_sequence_length_artifacts(frame, results_dir):
     )
     plt.close(fig)
     return distribution
+
+
+def write_training_curves_figure(epoch_df, output_path):
+    """Plot mean validation curves with seed-to-seed sample SD bands."""
+    if epoch_df.empty:
+        raise ValueError("Cannot plot empty per-epoch results")
+    mean_curves = (
+        epoch_df.groupby(["split_method", "variant", "epoch"], as_index=False)
+        .agg(
+            mean_cv_loss=("cv_loss", "mean"),
+            std_cv_loss=("cv_loss", "std"),
+            seeds=("seed", "nunique"),
+        )
+    )
+    fig, ax = plt.subplots(figsize=(10, 6))
+    for (split_method, name), curve in mean_curves.groupby(
+        ["split_method", "variant"]
+    ):
+        line, = ax.plot(
+            curve["epoch"], curve["mean_cv_loss"],
+            label=f"{name} [{split_method}]",
+        )
+        spread = curve["std_cv_loss"].fillna(0.0)
+        ax.fill_between(
+            curve["epoch"].to_numpy(dtype=float),
+            (curve["mean_cv_loss"] - spread).to_numpy(dtype=float),
+            (curve["mean_cv_loss"] + spread).to_numpy(dtype=float),
+            color=line.get_color(), alpha=0.10, linewidth=0,
+        )
+    seed_count = int(epoch_df["seed"].nunique())
+    ax.set(
+        xlabel="Epoch",
+        ylabel="Validation clipped MAE (mean ± SD)",
+        title=f"RNA reactivity validation curves across {seed_count} seeds",
+    )
+    ax.grid(alpha=0.25)
+    ax.legend(fontsize=8)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=160)
+    plt.close(fig)
+    return mean_curves
+
+
+def write_length_error_figure(error_by_length, model_selection, output_path):
+    """Plot selected-model repeated-holdout MAE with SD and per-seed counts."""
+    selected_errors = error_by_length[
+        (error_by_length["split_method"] == model_selection["selected_split_method"])
+        & (error_by_length["variant"] == model_selection["selected_variant"])
+    ]
+    if selected_errors.empty:
+        raise ValueError("No length-stratified errors match the selected model")
+    length_plot = selected_errors.groupby(
+        "length_bin", observed=True, as_index=False
+    ).agg(
+        mean_mae=("weighted_mae", "mean"),
+        std_mae=("weighted_mae", "std"),
+        seeds=("seed", "nunique"),
+        min_sequences_per_seed=("sequences", "min"),
+        max_sequences_per_seed=("sequences", "max"),
+    )
+    fig, ax = plt.subplots(figsize=(7, 4.5))
+    spread = length_plot["std_mae"].fillna(0.0)
+    bars = ax.bar(
+        length_plot["length_bin"].astype(str),
+        length_plot["mean_mae"],
+        yerr=spread,
+        capsize=4,
+        color="#3973ac",
+    )
+    for bar, row in zip(bars, length_plot.to_dict("records")):
+        minimum = int(row["min_sequences_per_seed"])
+        maximum = int(row["max_sequences_per_seed"])
+        sample_text = (
+            f"n={minimum}/seed" if minimum == maximum
+            else f"n={minimum}–{maximum}/seed"
+        )
+        error_spread = 0.0 if pd.isna(row["std_mae"]) else float(row["std_mae"])
+        ax.annotate(
+            sample_text,
+            (
+                bar.get_x() + bar.get_width() / 2,
+                float(row["mean_mae"]) + error_spread,
+            ),
+            xytext=(0, 8), textcoords="offset points",
+            ha="center", va="bottom", fontsize=8, color="#24313d",
+        )
+    seed_count = int(selected_errors["seed"].nunique())
+    upper = float((length_plot["mean_mae"] + spread).max())
+    ax.set_ylim(0.0, upper * 1.25 if upper else 1.0)
+    ax.set(
+        xlabel="Sequence length (nt)",
+        ylabel="Held-out clipped MAE (mean ± SD)",
+    )
+    ax.set_title(
+        f"Held-out error by length across {seed_count} seeds",
+        loc="left", pad=28,
+    )
+    ax.text(
+        0.0, 1.01,
+        f"{model_selection['selected_variant']} • repeated grouped holdouts",
+        transform=ax.transAxes, color="#4a5560", fontsize=9, va="bottom",
+    )
+    ax.grid(axis="y", alpha=0.25)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=160)
+    plt.close(fig)
+    return length_plot
 
 
 def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
@@ -391,8 +606,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Run the RNA reactivity ablation study")
     parser.add_argument(
         "--data",
-        default=os.path.join(PROJECT_ROOT, "dataset", "train_data.csv"),
-        help="Ribonanza train_data.csv path",
+        default=os.path.join(PROJECT_ROOT, "dataset"),
+        help="Ribonanza train_data.csv path or extracted dataset directory",
     )
     parser.add_argument(
         "--max-sequences", "--max-samples", dest="max_sequences", type=int, default=1000,
@@ -400,12 +615,8 @@ def parse_args():
     )
     parser.add_argument("--epochs", type=int, help="Override config epoch count")
     parser.add_argument(
-        "--output-dir", default=os.path.join(PROJECT_ROOT, "experiments"),
+        "--output-dir", default=os.path.join(PROJECT_ROOT, "outputs"),
         help="Directory for CSV, JSON, plots, and model weights",
-    )
-    parser.add_argument(
-        "--require-vienna", action="store_true",
-        help="Fail instead of silently using 4D inputs when ViennaRNA is unavailable",
     )
     parser.add_argument(
         "--split-method", choices=("grouped", "random", "both"), default="grouped",
@@ -448,11 +659,12 @@ def main():
     print(f"Device: {device}")
 
     # Select unique sequences first, then retain every experiment row for them.
-    data_path = os.path.abspath(args.data)
-    if not os.path.isfile(data_path):
-        raise FileNotFoundError(
-            f"Ribonanza data not found at {data_path}. Run kaggle/download_data.sh first."
-        )
+    data_path = str(resolve_ribonanza_train_data(args.data))
+    source_file_size = os.path.getsize(data_path)
+    print(f"Resolved source data: {data_path}")
+    print(f"Hashing source CSV ({source_file_size:,} bytes)...")
+    source_file_sha256 = sha256_file(data_path)
+    print(f"Source SHA-256: {source_file_sha256}")
     max_sequences = args.max_sequences or None
     sequence_frame = load_unique_sequence_subset(
         data_path, max_sequences=max_sequences, seed=args.sample_seed
@@ -466,9 +678,9 @@ def main():
     dataset_7dim = RNAReactivityDataset(
         dataframe=sequence_frame, max_length=206, use_structure=True,
     )
-    if args.require_vienna and dataset_7dim.feature_dim != 7:
-        raise RuntimeError("ViennaRNA is required, but the RNA Python package is unavailable")
     full_model_dim = dataset_7dim.feature_dim
+    if full_model_dim != 7:
+        raise RuntimeError("The ViennaRNA feature dataset must contain exactly 7 channels")
 
     quality_frame = dataset_4dim.seq_df
     reactivity_cols = dataset_4dim.reactivity_cols
@@ -488,6 +700,17 @@ def main():
             str(key): int(value) for key, value in
             quality_frame["experiment_type"].value_counts().sort_index().items()
         },
+        "dataset_name_rows": (
+            {
+                str(key): int(value) for key, value in
+                quality_frame["dataset_name"].value_counts(dropna=False).items()
+            }
+            if "dataset_name" in quality_frame else None
+        ),
+        "unique_dataset_names": (
+            int(quality_frame["dataset_name"].nunique(dropna=True))
+            if "dataset_name" in quality_frame else None
+        ),
         "sequences_with_both_experiments": int((experiments_per_sequence == 2).sum()),
         "sequences_with_one_experiment": int((experiments_per_sequence == 1).sum()),
         "duplicate_full_rows": int(quality_frame.duplicated().sum()),
@@ -568,6 +791,7 @@ def main():
         ] if torch.cuda.is_available() else [],
         "data_parallel": torch.cuda.is_available() and torch.cuda.device_count() > 1,
         "vienna_features": dataset_7dim.feature_dim == 7,
+        "dependencies": dependency_versions(),
     }
     with open(os.path.join(results_dir, "environment.json"), "w") as f:
         json.dump(environment, f, indent=2)
@@ -579,13 +803,28 @@ def main():
     except (OSError, subprocess.CalledProcessError):
         git_commit = None
     cohort_sequences = sorted(dataset_4dim.seq_df["sequence"].astype(str).unique())
+    cohort_hash_columns = [
+        column for column in (
+            "sequence_id", "dataset_name", "sequence", "experiment_type",
+            "reads", "signal_to_noise", "SN_filter",
+        )
+        if column in quality_frame.columns
+    ] + list(reactivity_cols)
     run_manifest = {
-        "artifact_schema_version": 2,
+        "artifact_schema_version": 3,
         "git_commit": git_commit,
         "data_file": os.path.basename(data_path),
+        "source_file_size_bytes": source_file_size,
+        "source_file_sha256": source_file_sha256,
         "cohort_sha256": hashlib.sha256(
             "\n".join(cohort_sequences).encode("utf-8")
         ).hexdigest(),
+        "cohort_sha256_definition": "sorted unique RNA sequence strings joined with newline",
+        "cohort_data_sha256": sha256_frame(quality_frame, cohort_hash_columns),
+        "cohort_data_sha256_columns": cohort_hash_columns,
+        "cohort_data_sha256_definition": (
+            "quality-filtered rows in source order serialized as deterministic CSV"
+        ),
         "filtered_rows": n,
         "filtered_unique_sequences": len(cohort_sequences),
         "sample_seed": args.sample_seed,
@@ -602,6 +841,35 @@ def main():
     }
     with open(os.path.join(results_dir, "run_manifest.json"), "w") as f:
         json.dump(run_manifest, f, indent=2)
+
+    baseline_records = []
+    for seed, split_indices in splits_by_seed.items():
+        for split_method, (train_idx, cv_idx, test_idx) in split_indices.items():
+            baseline_means = fit_experiment_mean_baseline(
+                quality_frame, train_idx, reactivity_cols,
+                max_length=dataset_4dim.max_length,
+            )
+            cv_mae, cv_valid_positions = evaluate_experiment_mean_baseline(
+                quality_frame, cv_idx, reactivity_cols, baseline_means,
+                max_length=dataset_4dim.max_length,
+            )
+            test_mae, test_valid_positions = evaluate_experiment_mean_baseline(
+                quality_frame, test_idx, reactivity_cols, baseline_means,
+                max_length=dataset_4dim.max_length,
+            )
+            baseline_records.append({
+                "seed": seed,
+                "split_method": split_method,
+                "baseline": "Train-only experiment mean",
+                "cv_mae": cv_mae,
+                "test_mae": test_mae,
+                "mean_2A3_MaP": baseline_means["2A3_MaP"],
+                "mean_DMS_MaP": baseline_means["DMS_MaP"],
+                "cv_valid_positions": cv_valid_positions,
+                "test_valid_positions": test_valid_positions,
+            })
+    baseline_df = pd.DataFrame(baseline_records)
+    baseline_df.to_csv(os.path.join(results_dir, "baseline_results.csv"), index=False)
 
     all_results = {}
     epoch_records = []
@@ -870,41 +1138,16 @@ def main():
         os.path.join(results_dir, "vienna_aggregate.csv"), index=False
     )
 
-    fig, ax = plt.subplots(figsize=(10, 6))
-    mean_curves = (
-        epoch_df.groupby(["split_method", "variant", "epoch"], as_index=False)
-        .agg(mean_cv_loss=("cv_loss", "mean"))
+    write_training_curves_figure(
+        epoch_df, os.path.join(results_dir, "training_curves.png")
     )
-    for (split_method, name), curve in mean_curves.groupby(["split_method", "variant"]):
-        ax.plot(curve["epoch"], curve["mean_cv_loss"], label=f"{name} [{split_method}]")
-    ax.set(xlabel="Epoch", ylabel="Clipped MAE", title="RNA reactivity validation curves")
-    ax.grid(alpha=0.25)
-    ax.legend(fontsize=8)
-    fig.tight_layout()
-    fig.savefig(os.path.join(results_dir, "training_curves.png"), dpi=160)
-    plt.close(fig)
+    write_length_error_figure(
+        error_by_length,
+        model_selection,
+        os.path.join(results_dir, "error_by_length.png"),
+    )
 
-    selected_errors = error_by_length[
-        (error_by_length["split_method"] == model_selection["selected_split_method"])
-        & (error_by_length["variant"] == model_selection["selected_variant"])
-    ]
-    length_plot = selected_errors.groupby("length_bin", observed=True, as_index=False).agg(
-        valid_positions=("valid_positions", "sum"),
-        absolute_error_sum=("absolute_error_sum", "sum"),
-    )
-    length_plot["mae"] = (
-        length_plot["absolute_error_sum"] / length_plot["valid_positions"]
-    )
-    fig, ax = plt.subplots(figsize=(7, 4.5))
-    ax.bar(length_plot["length_bin"].astype(str), length_plot["mae"], color="#3973ac")
-    ax.set(
-        xlabel="Sequence length (nt)", ylabel="Held-out clipped MAE",
-        title=f"Error by sequence length: {model_selection['selected_variant']}",
-    )
-    ax.grid(axis="y", alpha=0.25)
-    fig.tight_layout()
-    fig.savefig(os.path.join(results_dir, "error_by_length.png"), dpi=160)
-    plt.close(fig)
+    checksum_path = write_artifact_checksums(results_dir)
 
     # --- Print summary table ---
     print(f"\n{'=' * 70}")
@@ -918,12 +1161,25 @@ def main():
               f"{format_mean_std(row['mean_test_mae'], row['std_test_mae']):>14}")
     print(f"{'─' * 70}")
     print(f"\nSummary saved: {summary_csv}")
+    baseline_summary = baseline_df.groupby("split_method", as_index=False).agg(
+        mean_cv_mae=("cv_mae", "mean"),
+        std_cv_mae=("cv_mae", "std"),
+        mean_test_mae=("test_mae", "mean"),
+        std_test_mae=("test_mae", "std"),
+    )
+    for row in baseline_summary.to_dict("records"):
+        print(
+            f"Baseline [{row['split_method']}]: CV "
+            f"{format_mean_std(row['mean_cv_mae'], row['std_cv_mae'])} | test "
+            f"{format_mean_std(row['mean_test_mae'], row['std_test_mae'])}"
+        )
     test_std = model_selection["std_held_out_test_mae"]
     test_display = f"{model_selection['mean_held_out_test_mae']:.4f}"
     if test_std is not None:
         test_display += f"±{test_std:.4f}"
     print(f"Selected model: {model_selection['selected_variant']} | "
           f"held-out test MAE: {test_display}")
+    print(f"Artifact checksums saved: {checksum_path}")
 
 
 if __name__ == "__main__":

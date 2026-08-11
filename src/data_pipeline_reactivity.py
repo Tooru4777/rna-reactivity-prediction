@@ -15,8 +15,9 @@ from torch.utils.data import Dataset
 import pandas as pd
 import numpy as np
 import os
+import re
 
-# ViennaRNA is optional — falls back to dummy structure if not installed
+# Sequence-only ablations do not need ViennaRNA; structure-feature runs do.
 try:
     import RNA
     HAS_VIENNA = True
@@ -44,7 +45,12 @@ class RNAReactivityDataset(Dataset):
     def __init__(self, sequences_csv=None, max_length=206, use_structure=True,
                  max_samples=None, dataframe=None):
         self.max_length = max_length
-        self.use_structure = use_structure and HAS_VIENNA
+        self.use_structure = bool(use_structure)
+        if self.use_structure and not HAS_VIENNA:
+            raise RuntimeError(
+                "ViennaRNA is required when use_structure=True; install the "
+                "ViennaRNA Python package or use sequence-only features explicitly"
+            )
 
         # Feature dimension: 4 (seq only) or 7 (seq + structure)
         self.feature_dim = 7 if self.use_structure else 4
@@ -79,10 +85,7 @@ class RNAReactivityDataset(Dataset):
                 print("Structure computation complete.")
 
             # Identify reactivity columns
-            self.reactivity_cols = [
-                c for c in self.seq_df.columns
-                if c.startswith('reactivity_') and 'error' not in c
-            ]
+            self.reactivity_cols = self._reactivity_columns()
             print(f"Loaded {self.num_samples} samples, "
                   f"{len(self.reactivity_cols)} reactivity columns, "
                   f"feature_dim={self.feature_dim}")
@@ -112,14 +115,26 @@ class RNAReactivityDataset(Dataset):
         if unexpected or self.seq_df["experiment_type"].isna().any():
             raise ValueError(f"Unexpected experiment_type values: {unexpected}")
 
-        reactivity_cols = [
-            c for c in self.seq_df.columns
-            if c.startswith("reactivity_") and "error" not in c
-        ]
+        reactivity_cols = self._reactivity_columns()
         if not reactivity_cols:
             raise ValueError("No reactivity target columns were found")
+        observed_positions = [int(column.rsplit("_", 1)[-1]) for column in reactivity_cols]
+        expected_positions = list(range(1, len(reactivity_cols) + 1))
+        if observed_positions != expected_positions:
+            raise ValueError(
+                "Reactivity columns must cover continuous positions starting at 0001"
+            )
         if self.seq_df[reactivity_cols].notna().sum(axis=1).eq(0).any():
             raise ValueError("Each retained experiment row must contain a reactivity target")
+
+    def _reactivity_columns(self):
+        """Return target columns in numeric nucleotide order."""
+        indexed = []
+        for column in self.seq_df.columns:
+            match = re.fullmatch(r"reactivity_(\d+)", str(column))
+            if match:
+                indexed.append((int(match.group(1)), str(column)))
+        return [column for _, column in sorted(indexed)]
 
     def __len__(self):
         return self.num_samples

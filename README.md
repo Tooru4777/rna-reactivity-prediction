@@ -12,7 +12,7 @@ data and model checkpoints are not redistributed.
 
 ## Validated result
 
-Kaggle Version 9 trained four controlled model variants on a quality-filtered
+Kaggle Version 10 trained four controlled model variants on a quality-filtered
 cohort of 1,000 unique RNA sequences (1,820 experimental profiles). Three
 70/15/15 repeated holdouts used seeds 42, 123, and 2026. Model selection used
 mean sequence-grouped CV MAE; each selected checkpoint was then evaluated on
@@ -37,10 +37,12 @@ run; this supersedes the model ranking from the earlier single-split exploratory
 experiment.
 
 The complete compact evidence package is in
-[`results/kaggle-v9-bff599f`](results/kaggle-v9-bff599f/README.md). It records the
+[`results/kaggle-v10-fec86dc`](results/kaggle-v10-fec86dc/README.md). It records the
 training commit, cohort fingerprint, environment, split audits, per-seed scores,
-aggregates, and error analysis. The archived headline metrics were independently
-recomputed from saved error numerators and denominators to within `7.5e-9`.
+aggregates, exact-length counts, and error analysis. The archived headline
+metrics were independently recomputed from saved error numerators and
+denominators to within `7.5e-9`; a SHA-256 inventory protects every compact
+CSV, JSON, and PNG artifact.
 
 ## Research question
 
@@ -138,6 +140,10 @@ contains error summaries by:
 - chemical-probing experiment (`2A3_MaP` versus `DMS_MaP`); and
 - ViennaRNA paired versus unpaired position.
 
+Schema v3 runs also fit one constant reactivity value per experiment type using
+training targets only, then score that trivial baseline on CV and test. It is a
+sanity reference and is never included in neural-model selection.
+
 The short 101–150 nt stratum contains few unique sequences in each grouped test
 split, so the length figure is descriptive and is not used for a strong subgroup
 claim.
@@ -150,7 +156,7 @@ claim.
 python -m pip install -r requirements.txt
 python -m compileall -q src experiments kaggle tests
 python -m pytest -q
-python experiments/validate_archive.py results/kaggle-v9-bff599f
+python experiments/validate_archive.py results/kaggle-v10-fec86dc
 ```
 
 ### Kaggle GPU run
@@ -161,9 +167,12 @@ python experiments/validate_archive.py results/kaggle-v9-bff599f
 3. Configure `~/.kaggle/kaggle.json`.
 4. Run `bash kaggle/run_gpu_ablation.sh`, or push `kaggle/` with the Kaggle CLI.
 
-The reportable run used Python 3.12.13, PyTorch 2.7.1 + CUDA 11.8, ViennaRNA,
-and one Tesla P100 16 GB. The runner fails if measured competition data or
-ViennaRNA is unavailable; it has no generated-data fallback.
+The reportable run used Python 3.12.13, PyTorch 2.7.1 + CUDA 11.8, ViennaRNA
+features, and one Tesla P100 16 GB. New runs pin ViennaRNA 2.7.2, record exact
+dependency versions, hash both the full source CSV and the selected cohort
+including measured targets, and emit a train-only experiment-mean baseline.
+The runner fails if measured competition data or ViennaRNA is unavailable; it
+has no generated-data fallback.
 
 ## Repository layout
 
@@ -172,14 +181,10 @@ src/                         models, data pipelines, splitting, training
 experiments/run_ablation.py  repeated ablation and held-out evaluation
 experiments/validate_archive.py independent compact-result validator
 kaggle/                      private Kaggle GPU entrypoint and metadata
-results/kaggle-v9-bff599f/   versioned reportable artifacts
+results/kaggle-v10-fec86dc/  versioned reportable artifacts
 tests/                       data, model, padding, training, and archive tests
 docs/                        development journal
 ```
-
-The repository also contains an early 3D-coordinate prototype. It accepts real
-sequence and coordinate CSVs only, but it has not undergone geometry-aware
-benchmarking and is outside the reportable reactivity result.
 
 ## Limitations
 

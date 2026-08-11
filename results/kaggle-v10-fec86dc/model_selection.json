@@ -1,0 +1,11 @@
+{
+  "selection_rule": "lowest mean CV MAE across validation seeds",
+  "selected_split_method": "grouped",
+  "selected_variant": "Full Model (+ViennaRNA 7d)",
+  "mean_cv_mae": 0.19474309749647412,
+  "std_cv_mae": 0.00549851724608925,
+  "mean_held_out_test_mae": 0.1918813357394533,
+  "std_held_out_test_mae": 0.0026253329077829965,
+  "seeds": 3,
+  "caveat": "Each seed defines a different held-out partition; test values are a repeated holdout estimate, not a Kaggle leaderboard score."
+}

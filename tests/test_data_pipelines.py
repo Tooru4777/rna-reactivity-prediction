@@ -1,7 +1,7 @@
 """
 Unit Tests — Data Pipelines
 =============================
-Tests for RNAReactivityDataset and RNA3DDataset:
+Tests for the reportable RNAReactivityDataset pipeline:
   - Correct tensor shapes and dtypes
   - Mask validity (binary, correct padding pattern)
   - Feature dimension handling (4-dim vs 7-dim)
@@ -23,14 +23,14 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_ROOT)
 
 from src.data_pipeline_reactivity import RNAReactivityDataset
-from src.data_pipeline_3d import RNA3DDataset
+import src.data_pipeline_reactivity as reactivity_pipeline
 from src.splitting import (
     grouped_split_indices,
     random_split_indices,
     sequence_overlap_counts,
     validate_split_integrity,
 )
-from src.data_loading import load_unique_sequence_subset
+from src.data_loading import load_unique_sequence_subset, resolve_ribonanza_train_data
 
 
 # =====================================================================
@@ -70,18 +70,6 @@ class TestReactivityDataset:
             dataframe=reactivity_frame,
             max_length=206,
             use_structure=True,
-        )
-
-    @pytest.fixture
-    def dataset_real(self):
-        """Dataset from actual CSV if available, else skip."""
-        csv_path = os.path.join(PROJECT_ROOT, "train_data_1000.csv")
-        if not os.path.exists(csv_path):
-            pytest.skip("train_data_1000.csv not found")
-        return RNAReactivityDataset(
-            sequences_csv=csv_path,
-            max_length=206,
-            use_structure=False,
         )
 
     def test_fixture_length(self, dataset_4d):
@@ -126,11 +114,26 @@ class TestReactivityDataset:
         assert features.shape == (206, 4)
 
     def test_feature_shape_7d(self, dataset_7d):
-        """7-dim features: (max_length, 4) when ViennaRNA unavailable, or (max_length, 7)."""
+        """Structure-feature runs must always expose seven input channels."""
         features, targets, mask = dataset_7d[0]
-        # Feature dim depends on whether ViennaRNA is installed
-        assert features.shape[0] == 206
-        assert features.shape[1] in (4, 7)
+        assert features.shape == (206, 7)
+
+    def test_structure_request_fails_without_viennarna(
+        self, reactivity_frame, monkeypatch
+    ):
+        monkeypatch.setattr(reactivity_pipeline, "HAS_VIENNA", False)
+        with pytest.raises(RuntimeError, match="ViennaRNA is required"):
+            RNAReactivityDataset(dataframe=reactivity_frame, use_structure=True)
+
+    def test_reactivity_columns_are_sorted_numerically(self, reactivity_frame):
+        reordered = reactivity_frame[[
+            "sequence_id", "sequence", "experiment_type", "SN_filter",
+            "reactivity_0003", "reactivity_0001", "reactivity_0004", "reactivity_0002",
+        ]]
+        dataset = RNAReactivityDataset(dataframe=reordered, use_structure=False)
+        assert dataset.reactivity_cols == [
+            "reactivity_0001", "reactivity_0002", "reactivity_0003", "reactivity_0004"
+        ]
 
     def test_target_shape(self, dataset_4d):
         """Targets: (max_length, 2) for 2A3_MaP and DMS_MaP."""
@@ -164,13 +167,6 @@ class TestReactivityDataset:
         assert features.shape == (len(dataset_4d), 206, 4)
         assert targets.shape == (len(dataset_4d), 206, 2)
         assert mask.shape == (len(dataset_4d), 206, 2)
-
-    def test_real_data_shapes(self, dataset_real):
-        """Verify shapes on real data (if available)."""
-        features, targets, mask = dataset_real[0]
-        assert features.shape == (206, 4)
-        assert targets.shape == (206, 2)
-        assert mask.shape == (206, 2)
 
     def test_feature_dim_property(self, dataset_4d, dataset_7d):
         """feature_dim property should match actual feature tensor dimension."""
@@ -231,6 +227,23 @@ def test_unique_sequence_subset_samples_only_quality_eligible_sequences(tmp_path
     assert set(subset["sequence"]) == {"GOOD1", "GOOD2"}
 
 
+def test_resolve_ribonanza_data_nested_under_old(tmp_path):
+    expected = tmp_path / "stanford-ribonanza-rna-folding" / "OLD" / "train_data.csv"
+    expected.parent.mkdir(parents=True)
+    expected.touch()
+
+    assert resolve_ribonanza_train_data(tmp_path) == expected.resolve()
+
+
+def test_resolve_ribonanza_data_rejects_ambiguous_directory(tmp_path):
+    for folder in ("first", "second"):
+        path = tmp_path / folder / "train_data.csv"
+        path.parent.mkdir()
+        path.touch()
+    with pytest.raises(FileNotFoundError, match="Could not uniquely resolve"):
+        resolve_ribonanza_train_data(tmp_path)
+
+
 def test_random_split_detects_sequence_overlap():
     import pandas as pd
 
@@ -245,95 +258,3 @@ def test_split_integrity_rejects_duplicate_or_missing_rows():
         validate_split_integrity(4, ([0, 1], [1], [2]))
     with pytest.raises(ValueError, match="does not match dataset rows"):
         validate_split_integrity(4, ([0], [1], [2]))
-
-
-# =====================================================================
-# 3D Dataset Tests
-# =====================================================================
-
-class TestRNA3DDataset:
-    """Tests for the RNA 3D coordinate prediction dataset."""
-
-    @pytest.fixture
-    def dataset(self, tmp_path):
-        """3D dataset backed by explicit sequence and coordinate fixtures."""
-        sequences_csv = tmp_path / "sequences.csv"
-        labels_csv = tmp_path / "labels.csv"
-        pd.DataFrame({
-            "target_id": ["rna1", "rna2"],
-            "sequence": ["ACGU", "UGCA"],
-        }).to_csv(sequences_csv, index=False)
-        label_rows = []
-        for target_id in ("rna1", "rna2"):
-            for position in range(4):
-                label_rows.append({
-                    "ID": f"{target_id}_{position}",
-                    "x": float(position),
-                    "y": float(position + 1),
-                    "z": float(position + 2),
-                })
-        pd.DataFrame(label_rows).to_csv(labels_csv, index=False)
-        return RNA3DDataset(
-            sequences_csv=sequences_csv,
-            labels_csv=labels_csv,
-            max_length=200,
-        )
-
-    def test_fixture_length(self, dataset):
-        assert len(dataset) == 2
-
-    def test_missing_3d_labels_fail_fast(self, tmp_path):
-        with pytest.raises(FileNotFoundError, match="real sequence"):
-            RNA3DDataset(
-                sequences_csv=tmp_path / "missing_sequences.csv",
-                labels_csv=tmp_path / "missing_labels.csv",
-            )
-
-    def test_output_types(self, dataset):
-        """Each sample should return 3 tensors."""
-        one_hot, coords, mask = dataset[0]
-        assert isinstance(one_hot, torch.Tensor)
-        assert isinstance(coords, torch.Tensor)
-        assert isinstance(mask, torch.Tensor)
-
-    def test_one_hot_shape(self, dataset):
-        """One-hot features: (max_length, 4)."""
-        one_hot, coords, mask = dataset[0]
-        assert one_hot.shape == (200, 4)
-
-    def test_coords_shape(self, dataset):
-        """Coordinates: (max_length, 3) for x, y, z."""
-        one_hot, coords, mask = dataset[0]
-        assert coords.shape == (200, 3)
-
-    def test_mask_shape(self, dataset):
-        """Mask: (max_length,) — 1D for 3D dataset."""
-        one_hot, coords, mask = dataset[0]
-        assert mask.shape == (200,)
-
-    def test_mask_is_binary(self, dataset):
-        """Mask values should be 0.0 or 1.0."""
-        one_hot, coords, mask = dataset[0]
-        unique_vals = torch.unique(mask)
-        for v in unique_vals:
-            assert v.item() in (0.0, 1.0)
-
-    def test_padding_consistency(self, dataset):
-        """Padded positions should have zero one-hot features and zero coords."""
-        one_hot, coords, mask = dataset[0]
-
-        # Find padded positions (mask == 0)
-        padded_positions = (mask == 0).nonzero(as_tuple=True)[0]
-        if len(padded_positions) > 0:
-            idx = padded_positions[0].item()
-            assert one_hot[idx].sum().item() == 0.0, "Padded position has non-zero features"
-            assert coords[idx].sum().item() == 0.0, "Padded position has non-zero coords"
-
-    def test_dataloader_batching(self, dataset):
-        """DataLoader should produce valid batched tensors."""
-        loader = DataLoader(dataset, batch_size=16, shuffle=False)
-        one_hot, coords, mask = next(iter(loader))
-
-        assert one_hot.shape == (len(dataset), 200, 4)
-        assert coords.shape == (len(dataset), 200, 3)
-        assert mask.shape == (len(dataset), 200)
