@@ -1,6 +1,7 @@
 """Kaggle GPU entrypoint for leakage-safe Ribonanza ablation."""
 
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -18,6 +19,34 @@ RESULTS = WORKING / "results"
 def run(*args, cwd=None):
     print("+", " ".join(map(str, args)), flush=True)
     subprocess.run(list(map(str, args)), cwd=cwd, check=True)
+
+
+def checkout_repository(repository=REPOSITORY, repository_ref=REPOSITORY_REF,
+                        checkout=CHECKOUT):
+    """Checkout a branch/tag or an exact 40-character commit SHA."""
+    checkout = Path(checkout)
+    print(f"Checking out repository ref: {repository_ref}", flush=True)
+    if re.fullmatch(r"[0-9a-fA-F]{40}", repository_ref):
+        run("git", "init", checkout)
+        run("git", "remote", "add", "origin", repository, cwd=checkout)
+        run("git", "fetch", "--depth", "1", "origin", repository_ref, cwd=checkout)
+        run("git", "checkout", "--detach", "FETCH_HEAD", cwd=checkout)
+    else:
+        run(
+            "git", "clone", "--depth", "1", "--branch", repository_ref,
+            repository, checkout,
+        )
+
+    resolved_commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=checkout, text=True
+    ).strip()
+    if re.fullmatch(r"[0-9a-fA-F]{40}", repository_ref):
+        if resolved_commit.lower() != repository_ref.lower():
+            raise RuntimeError(
+                f"Requested commit {repository_ref}, checked out {resolved_commit}"
+            )
+    print(f"Checked out commit: {resolved_commit}", flush=True)
+    return resolved_commit
 
 
 def find_competition_input(root=KAGGLE_INPUT_ROOT):
@@ -62,11 +91,7 @@ def main():
         "print(torch.__version__, [torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())], caps); "
         "print((torch.ones(1, device='cuda') + 1).item())",
     )
-    print(f"Cloning repository ref: {REPOSITORY_REF}", flush=True)
-    run(
-        "git", "clone", "--depth", "1", "--branch", REPOSITORY_REF,
-        REPOSITORY, CHECKOUT,
-    )
+    checkout_repository()
 
     max_sequences = os.environ.get("RNA_MAX_SEQUENCES", "1000")
     epochs = os.environ.get("RNA_EPOCHS", "15")
