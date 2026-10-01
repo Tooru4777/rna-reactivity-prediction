@@ -59,14 +59,22 @@ try:
         raise RuntimeError(f'Unexpected Kaggle download format: {path}')
 
     candidates = sorted(Path('dataset').rglob('train_data.csv'))
-    competition_candidates = [
+    current_candidates = [
         candidate for candidate in candidates
+        if not any(part.casefold() == 'old' for part in candidate.parts)
+    ]
+    competition_candidates = [
+        candidate for candidate in current_candidates
         if 'stanford-ribonanza-rna-folding' in candidate.parts
     ]
     if len(competition_candidates) == 1:
         train_csv = competition_candidates[0]
-    elif len(candidates) == 1:
-        train_csv = candidates[0]
+    elif len(current_candidates) == 1:
+        train_csv = current_candidates[0]
+    elif not current_candidates and candidates:
+        raise FileNotFoundError(
+            'Only superseded OLD/train_data.csv was downloaded; current file required'
+        )
     else:
         found = ', '.join(map(str, candidates)) or 'none'
         raise FileNotFoundError(

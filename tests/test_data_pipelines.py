@@ -176,6 +176,84 @@ class TestReactivityDataset:
         f7, _, _ = dataset_7d[0]
         assert f7.shape[1] == dataset_7d.feature_dim
 
+    def test_structure_controls_preserve_targets_and_feature_width(
+        self, monkeypatch
+    ):
+        frame = pd.DataFrame({
+            "sequence": ["AACCGGUU", "AACCGGUU"],
+            "experiment_type": ["2A3_MaP", "DMS_MaP"],
+            "SN_filter": [1.0, 1.0],
+            **{
+                f"reactivity_{position:04d}": [0.1 * position, 0.05 * position]
+                for position in range(1, 9)
+            },
+        })
+        monkeypatch.setattr(
+            reactivity_pipeline.RNA,
+            "fold",
+            lambda sequence: ("((..))..", 0.0),
+        )
+        real = RNAReactivityDataset(dataframe=frame, structure_mode="real")
+        shuffled = RNAReactivityDataset(
+            dataframe=frame,
+            structure_mode="position_shuffled",
+            structure_control_seed=17,
+        )
+        zero = RNAReactivityDataset(dataframe=frame, structure_mode="zero")
+
+        real_features, real_targets, real_mask = real[0]
+        shuffled_features, shuffled_targets, shuffled_mask = shuffled[0]
+        zero_features, zero_targets, zero_mask = zero[0]
+        assert real_features.shape == shuffled_features.shape == zero_features.shape == (
+            206, 7
+        )
+        assert torch.equal(real_features[:, :4], shuffled_features[:, :4])
+        assert torch.equal(real_features[:, :4], zero_features[:, :4])
+        assert torch.equal(real_targets, shuffled_targets)
+        assert torch.equal(real_targets, zero_targets)
+        assert torch.equal(real_mask, shuffled_mask)
+        assert torch.equal(real_mask, zero_mask)
+        assert torch.equal(
+            real_features[:8, 4:].sum(dim=0),
+            shuffled_features[:8, 4:].sum(dim=0),
+        )
+        assert not torch.equal(real_features[:8, 4:], shuffled_features[:8, 4:])
+        assert torch.count_nonzero(zero_features[:, 4:]) == 0
+        assert torch.equal(shuffled[0][0], shuffled[1][0])
+
+    def test_structure_control_seed_is_reproducible(self, monkeypatch):
+        frame = pd.DataFrame({
+            "sequence": ["AACCGGUU"],
+            "experiment_type": ["2A3_MaP"],
+            "SN_filter": [1.0],
+            **{
+                f"reactivity_{position:04d}": [0.1]
+                for position in range(1, 9)
+            },
+        })
+        monkeypatch.setattr(
+            reactivity_pipeline.RNA,
+            "fold",
+            lambda sequence: ("((..))..", 0.0),
+        )
+        first = RNAReactivityDataset(
+            dataframe=frame,
+            structure_mode="position_shuffled",
+            structure_control_seed=99,
+        )
+        second = RNAReactivityDataset(
+            dataframe=frame,
+            structure_mode="position_shuffled",
+            structure_control_seed=99,
+        )
+        assert torch.equal(first[0][0], second[0][0])
+
+    def test_invalid_structure_mode_fails_fast(self, reactivity_frame):
+        with pytest.raises(ValueError, match="structure_mode"):
+            RNAReactivityDataset(
+                dataframe=reactivity_frame, structure_mode="random"
+            )
+
 
 def test_grouped_split_has_no_sequence_overlap():
     import pandas as pd
@@ -227,12 +305,61 @@ def test_unique_sequence_subset_samples_only_quality_eligible_sequences(tmp_path
     assert set(subset["sequence"]) == {"GOOD1", "GOOD2"}
 
 
-def test_resolve_ribonanza_data_nested_under_old(tmp_path):
+def test_resolve_ribonanza_data_rejects_legacy_only_directory(tmp_path):
     expected = tmp_path / "stanford-ribonanza-rna-folding" / "OLD" / "train_data.csv"
     expected.parent.mkdir(parents=True)
     expected.touch()
 
-    assert resolve_ribonanza_train_data(tmp_path) == expected.resolve()
+    with pytest.raises(FileNotFoundError, match="Only superseded OLD"):
+        resolve_ribonanza_train_data(tmp_path)
+    assert (
+        resolve_ribonanza_train_data(tmp_path, allow_legacy=True)
+        == expected.resolve()
+    )
+
+
+def test_resolve_ribonanza_data_prefers_current_over_old(tmp_path):
+    root = tmp_path / "stanford-ribonanza-rna-folding"
+    current = root / "train_data.csv"
+    legacy = root / "OLD" / "train_data.csv"
+    legacy.parent.mkdir(parents=True)
+    current.touch()
+    legacy.touch()
+
+    assert resolve_ribonanza_train_data(tmp_path) == current.resolve()
+
+
+def test_full_loader_filters_quality_and_excludes_error_columns(tmp_path):
+    frame = pd.DataFrame({
+        "sequence": ["AAAA", "CCCC"],
+        "experiment_type": ["2A3_MaP", "DMS_MaP"],
+        "SN_filter": [1.0, 0.0],
+        "reactivity_0001": [0.1, 0.2],
+        "reactivity_error_0001": [0.01, 0.02],
+    })
+    csv_path = tmp_path / "train_data.csv"
+    frame.to_csv(csv_path, index=False)
+
+    loaded = load_unique_sequence_subset(
+        csv_path, max_sequences=0, chunk_size=1
+    )
+
+    assert loaded["sequence"].tolist() == ["AAAA"]
+    assert "reactivity_error_0001" not in loaded.columns
+    assert loaded["reactivity_0001"].dtype.name == "float32"
+
+
+def test_loader_rejects_negative_sequence_limit(tmp_path):
+    csv_path = tmp_path / "train_data.csv"
+    pd.DataFrame({
+        "sequence": ["AAAA"],
+        "experiment_type": ["2A3_MaP"],
+        "SN_filter": [1.0],
+        "reactivity_0001": [0.1],
+    }).to_csv(csv_path, index=False)
+
+    with pytest.raises(ValueError, match="non-negative"):
+        load_unique_sequence_subset(csv_path, max_sequences=-1)
 
 
 def test_resolve_ribonanza_data_rejects_ambiguous_directory(tmp_path):

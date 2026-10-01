@@ -13,6 +13,7 @@ Usage:
 
 import sys
 import os
+import hashlib
 import pytest
 import pandas as pd
 import torch
@@ -29,7 +30,7 @@ from src.model_reactivity import (
     RNAReactivityCNN_LSTM_Transformer,
     RNAReactivityPredictor,
 )
-from experiments.run_ablation import evaluate_checkpoint
+from experiments.run_ablation import evaluate_checkpoint, sha256_frame
 
 
 # =====================================================================
@@ -169,3 +170,18 @@ class TestReactivityTraining:
         assert {row["structure_class"] for row in structure_rows} == {
             "paired", "unpaired"
         }
+
+
+def test_streaming_frame_hash_matches_reference_serialization():
+    frame = pd.DataFrame({
+        "sequence": ["AAAA", "CCCC"],
+        "value": [0.1, float("nan")],
+    })
+    serialized = frame.to_csv(
+        index=False,
+        na_rep="<NA>",
+        float_format="%.17g",
+        lineterminator="\n",
+    )
+    expected = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+    assert sha256_frame(frame, ["sequence", "value"]) == expected

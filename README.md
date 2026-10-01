@@ -10,7 +10,15 @@ row-random validation.
 The reportable experiment uses real competition measurements only. Competition
 data and model checkpoints are not redistributed.
 
-## Validated result
+## Archived V10 benchmark
+
+> **Historical, not the final headline result.** V10 used Kaggle's real
+> `OLD/train_data.csv` snapshot. Kaggle now provides a corrected current
+> `train_data.csv` with changed error fields and a small number of changed
+> `SN_filter` values. The models did not consume error fields, but they did use
+> `SN_filter`; therefore V10 remains an auditable benchmark and is not presented
+> as the final current-data estimate. New runs fail closed if only `OLD` is
+> available.
 
 Kaggle Version 10 trained four controlled model variants on a quality-filtered
 cohort of 1,000 unique RNA sequences (1,820 experimental profiles). Three
@@ -59,15 +67,17 @@ to unrelated RNA families.
 
 ## Data and cohort
 
-The Kaggle runner locates the competition's `OLD/train_data.csv`; `OLD` is the
-competition directory name, not generated data. It then:
+The Kaggle runner requires the corrected current competition
+`train_data.csv` and explicitly rejects any path whose components contain
+`OLD`. It then:
 
 1. requires `SN_filter == 1` quality eligibility;
-2. samples 1,000 unique sequences with sampling seed 42;
+2. samples unique sequences with a recorded sampling seed (or uses the full
+   quality-filtered cohort when `--max-sequences 0` is requested);
 3. retains every eligible experimental profile for those sequences; and
 4. validates sequence, experiment, and reactivity fields before training.
 
-The final cohort contains:
+The archived V10 cohort contains:
 
 - 1,820 profiles across 1,000 exact sequences;
 - 864 `2A3_MaP` and 956 `DMS_MaP` profiles;
@@ -93,8 +103,17 @@ metric:
 
 - **Row-random:** rows are split directly; repeated sequences can cross
   partitions.
-- **Sequence-grouped:** unique sequence identities are assigned 70/15/15 to
+- **Exact-sequence-grouped:** unique sequence identities are assigned 70/15/15 to
   train, CV, and test, then all associated profiles follow that assignment.
+- **Similarity-clustered:** MMseqs2 connected components use at least 80%
+  sequence identity and at least 80% coverage of both sequences. Whole clusters
+  are allocated 70/15/15 using measured-target counts, so exact sequences and
+  operationally defined near neighbours cannot cross partitions.
+
+The MMseqs2 preprocessing records its version and parameters, uses a sorted
+SHA-256-labelled FASTA, one thread, single-step connected-component clustering,
+and a frozen assignment checksum. Training validates the source hash, cohort
+membership, canonical cluster IDs, and zero cluster overlap before fitting.
 
 The row-random splits contained 153–158 overlapping sequences between train and
 CV and 151–161 between train and test. Every grouped train/CV/test overlap count
@@ -113,12 +132,21 @@ ACGU one-hot ──> padding-safe CNN ──> packed Bi-LSTM ──> masked Tran
      + optional ViennaRNA MFE channels: paired-left, paired-right, unpaired
 ```
 
-The ablation isolates four variants:
+The current ablation registry includes six variants:
 
 1. CNN only;
 2. CNN + Bi-LSTM;
 3. CNN + Bi-LSTM + Transformer; and
-4. the same full sequence architecture with three ViennaRNA structure channels.
+4. the same full sequence architecture with three real ViennaRNA structure
+   channels;
+5. the identical 7D architecture with ViennaRNA positions deterministically
+   shuffled within each RNA; and
+6. the identical 7D architecture with all three structure channels zeroed.
+
+The real, shuffled, and zero controls have identical parameter counts and, for
+the same training seed, identical initialisation. The shuffle seed is fixed
+independently of the training seed. This separates useful position-specific
+structure information from extra input width or parameter count.
 
 Padding is excluded at each stage: per-position LayerNorm avoids batch-statistic
 contamination, CNN padded activations are zeroed, the Bi-LSTM uses packed
@@ -132,9 +160,23 @@ MAE over measured, non-padding positions.
 
 ## Held-out evaluation and error analysis
 
-For every seed/model/split combination, CV selects the best epoch without test
-access. The checkpoint is loaded once for held-out evaluation. The archive
-contains error summaries by:
+Every checkpoint is re-evaluated on CV after epoch selection. Run modes enforce
+test discipline:
+
+- `smoke`: exercises CV and test plumbing for all requested variants but writes
+  `reportable=false`;
+- `development`: trains and evaluates CV only; test is not accessed; and
+- `final-eval`: requires one frozen similarity manifest, selects the variant by
+  mean CV MAE, then and only then evaluates that selected variant on the fixed
+  test membership across training seeds.
+
+Outputs include nucleotide-weighted MAE and macro-sequence MAE. The latter first
+pools all profiles for each exact RNA, then gives every sequence equal weight.
+Controlled ViennaRNA comparisons use a paired 10,000-replicate bootstrap that
+resamples whole similarity clusters. Positive improvement is defined as
+reference MAE minus candidate MAE.
+
+The archive contains error summaries by:
 
 - sequence length;
 - chemical-probing experiment (`2A3_MaP` versus `DMS_MaP`); and
@@ -162,12 +204,18 @@ python experiments/validate_archive.py results/kaggle-v10-fec86dc
 ### Kaggle GPU run
 
 1. Accept the Ribonanza competition rules and attach the competition source.
-2. Select one Kaggle P100 and enable Internet for dependency and repository
+2. Select one Kaggle P100 and enable Internet for dependency, MMseqs2, and repository
    access.
 3. Configure `~/.kaggle/kaggle.json`.
 4. Run `bash kaggle/run_gpu_ablation.sh`, or push `kaggle/` with the Kaggle CLI.
 
-The reportable run used Python 3.12.13, PyTorch 2.7.1 + CUDA 11.8, ViennaRNA
+The next submitted run is deliberately a non-reportable smoke test: 256 current-
+data sequences, one epoch, seed 42, all three split strategies, and four
+Transformer controls (sequence-only, real ViennaRNA, shuffled ViennaRNA, and
+zero structure channels). Only after this passes should a full development run
+consume substantial GPU time.
+
+The archived run used Python 3.12.13, PyTorch 2.7.1 + CUDA 11.8, ViennaRNA
 features, and one Tesla P100 16 GB. New runs pin ViennaRNA 2.7.2, record exact
 dependency versions, hash both the full source CSV and the selected cohort
 including measured targets, and emit a train-only experiment-mean baseline.
@@ -177,7 +225,8 @@ has no generated-data fallback.
 ## Repository layout
 
 ```text
-src/                         models, data pipelines, splitting, training
+src/                         models, data pipelines, MMseqs splitting, statistics
+experiments/build_similarity_manifest.py  frozen MMseqs2 split preprocessing
 experiments/run_ablation.py  repeated ablation and held-out evaluation
 experiments/validate_archive.py independent compact-result validator
 kaggle/                      private Kaggle GPU entrypoint and metadata
@@ -188,18 +237,18 @@ docs/                        development journal
 
 ## Limitations
 
-- The experiment samples 1,000 quality-eligible sequences rather than the full
-  Ribonanza corpus.
+- The archived V10 experiment samples 1,000 quality-eligible sequences rather
+  than the full Ribonanza corpus; the current-data full run is not yet complete.
 - Three repeated holdouts quantify seed sensitivity but do not replace an
   external test set or RNA-family-aware benchmark.
-- Grouping prevents exact-sequence overlap but does not cluster near-identical
-  mutants or library families.
-- Each seed defines a different held-out partition; the reported test mean is a
-  repeated-holdout estimate rather than one permanently untouched test set.
+- MMseqs2 similarity clustering is an operational threshold definition, not a
+  guarantee that every biologically related RNA family is separated.
+- Archived V10 seeds used different held-out partitions. Schema-v4 final runs
+  instead keep one frozen cluster membership across all optimisation seeds.
 - Source targets outside `[0, 1]` are retained and clipped for the competition
   metric; the archive reports their counts.
-- Repeated sequence/experiment profiles may give some sequences greater
-  nucleotide weight in the aggregate metric.
+- Repeated profiles give some sequences greater weight in nucleotide-weighted
+  MAE, so macro-sequence MAE is reported as a secondary robustness metric.
 - ViennaRNA MFE supplies one predicted secondary structure and omits ensemble
   uncertainty and pseudoknots.
 - CUDA attention emitted a deterministic-algorithm warning under
