@@ -62,10 +62,38 @@ def audit_smoke_results(results_dir, expected_sequences, expected_variants):
         raise RuntimeError(
             f"Smoke summary has {len(rows)} rows; expected {expected_rows}"
         )
+    expected_summary_keys = {
+        ("42", split_method, variant_id)
+        for split_method in ("random", "grouped", "clustered")
+        for variant_id in expected_variants
+    }
+    summary_keys = [
+        (row.get("seed"), row.get("split_method"), row.get("variant_id"))
+        for row in rows
+    ]
+    if len(set(summary_keys)) != len(summary_keys):
+        raise RuntimeError("Smoke summary contains duplicate seed/split/variant rows")
+    if set(summary_keys) != expected_summary_keys:
+        raise RuntimeError("Smoke summary does not contain the complete split/variant grid")
     for row in rows:
-        for column in ("best_cv_loss", "test_mae", "cv_macro_sequence_mae"):
+        for column in ("best_cv_loss", "cv_macro_sequence_mae"):
             if not math.isfinite(float(row[column])):
                 raise RuntimeError(f"Smoke metric is not finite: {column}")
+        for column in ("test_mae", "test_macro_sequence_mae"):
+            if column not in row:
+                raise RuntimeError(f"Smoke summary is missing locked-test column: {column}")
+            test_value = str(row.get(column, "")).strip()
+            if test_value and not math.isnan(float(test_value)):
+                raise RuntimeError(
+                    f"Smoke run must not evaluate the locked test partition: {column}"
+                )
+
+    with (results_dir / "test_results.csv").open(
+        encoding="utf-8", newline=""
+    ) as handle:
+        test_rows = list(csv.DictReader(handle))
+    if test_rows:
+        raise RuntimeError("Smoke run wrote locked-test result rows")
 
     with (results_dir / "paired_bootstrap_ci.csv").open(
         encoding="utf-8", newline=""
@@ -76,9 +104,34 @@ def audit_smoke_results(results_dir, expected_sequences, expected_variants):
         "vienna_real_vs_position_shuffled",
         "vienna_real_vs_zero_channels",
     }
-    if {row["comparison_id"] for row in bootstrap_rows} != expected_comparisons:
-        raise RuntimeError("Smoke bootstrap controls are incomplete")
-    print("Smoke audit passed: current data, P100, all splits and controls", flush=True)
+    expected_bootstrap_keys = {
+        ("42", split_method, "cv", comparison_id, metric)
+        for split_method in ("random", "grouped", "clustered")
+        for comparison_id in expected_comparisons
+        for metric in ("nucleotide_weighted_mae", "macro_sequence_mae")
+    }
+    bootstrap_keys = [
+        (
+            row.get("seed"), row.get("split"), row.get("partition"),
+            row.get("comparison_id"), row.get("metric"),
+        )
+        for row in bootstrap_rows
+    ]
+    if len(set(bootstrap_keys)) != len(bootstrap_keys):
+        raise RuntimeError("Smoke bootstrap output contains duplicate result rows")
+    if set(bootstrap_keys) != expected_bootstrap_keys:
+        raise RuntimeError("Smoke bootstrap controls or split/metric rows are incomplete")
+    for row in bootstrap_rows:
+        for column in (
+            "point_improvement", "ci_lower", "ci_upper",
+            "probability_improvement",
+        ):
+            if not math.isfinite(float(row[column])):
+                raise RuntimeError(f"Smoke bootstrap metric is not finite: {column}")
+    print(
+        "Smoke audit passed: current data, P100, CV-only splits and controls",
+        flush=True,
+    )
 
 
 def run(*args, cwd=None):
@@ -149,6 +202,13 @@ def main():
             "Kaggle submissions must pin RNA_REPOSITORY_REF to an exact "
             "40-character commit SHA"
         )
+
+    # Kaggle may allocate a Tesla P100 (sm_60). Its current torch 2.10 image
+    gpu_names = subprocess.check_output(
+        ["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"], text=True
+    ).strip().splitlines()
+    if not gpu_names or not all("P100" in name for name in gpu_names):
+        raise RuntimeError(f"Select P100 before starting this run: {gpu_names}")
 
     # Kaggle may allocate a Tesla P100 (sm_60). Its current torch 2.10 image
     # starts at sm_70, so pin the last CUDA 11.8 wheel family that supports it.

@@ -105,15 +105,22 @@ metric:
   partitions.
 - **Exact-sequence-grouped:** unique sequence identities are assigned 70/15/15 to
   train, CV, and test, then all associated profiles follow that assignment.
-- **Similarity-clustered:** MMseqs2 connected components use at least 80%
-  sequence identity and at least 80% coverage of both sequences. Whole clusters
-  are allocated 70/15/15 using measured-target counts, so exact sequences and
-  operationally defined near neighbours cannot cross partitions.
+- **Similarity-clustered:** MMseqs2 operationally groups sequences at
+  `--min-seq-id 0.8 -c 0.8 --cov-mode 0`. With `--seq-id-mode 0`, identity is
+  identical aligned residues divided by alignment length; coverage mode 0 is
+  alignment length divided by the longer sequence length. Whole clusters are
+  allocated 70/15/15 using measured-target counts.
 
 The MMseqs2 preprocessing records its version and parameters, uses a sorted
 SHA-256-labelled FASTA, one thread, single-step connected-component clustering,
-and a frozen assignment checksum. Training validates the source hash, cohort
-membership, canonical cluster IDs, and zero cluster overlap before fitting.
+and a frozen assignment checksum. Because single-step clustering is heuristic
+and can miss qualifying edges, manifest construction also runs six fresh,
+directed `easy-search` checks between train, CV, and test at sensitivity 7.5.
+Any cross-partition hit satisfying the same identity and coverage thresholds
+fails manifest construction. `final-eval` refuses a manifest without a complete,
+checksum-matched audit. This supports the limited claim that no qualifying
+cross-partition hit was detected under the recorded MMseqs2 procedure; it does
+not establish that the partitions are universally homology-free.
 
 The row-random splits contained 153–158 overlapping sequences between train and
 CV and 151–161 between train and test. Every grouped train/CV/test overlap count
@@ -163,12 +170,24 @@ MAE over measured, non-padding positions.
 Every checkpoint is re-evaluated on CV after epoch selection. Run modes enforce
 test discipline:
 
-- `smoke`: exercises CV and test plumbing for all requested variants but writes
-  `reportable=false`;
-- `development`: trains and evaluates CV only; test is not accessed; and
+- `smoke`: exercises training, CV, controls, and artifact plumbing for all
+  requested variants and writes `reportable=false`; it does not evaluate test
+  targets or checkpoints;
+- `development`: trains and evaluates CV only and does not evaluate test
+  targets or checkpoints; and
 - `final-eval`: requires one frozen similarity manifest, selects the variant by
   mean CV MAE, then and only then evaluates that selected variant on the fixed
   test membership across training seeds.
+
+> **Version 13 protocol correction.** Version 13 contained a smoke branch that
+> would have evaluated test, but its downloaded execution log confirms that
+> the run failed at the P100 check (Kaggle allocated two T4 GPUs), before
+> repository checkout, manifest construction, or training. That run therefore
+> produced no test evaluation. The faulty branch has been removed. Formal
+> evaluation still requires a frozen test excluded from model development.
+> Smoke and development may load
+> partition membership solely for split-integrity reporting, but they must not
+> evaluate test targets, checkpoints, or model comparisons.
 
 Outputs include nucleotide-weighted MAE and macro-sequence MAE. The latter first
 pools all profiles for each exact RNA, then gives every sequence equal weight.

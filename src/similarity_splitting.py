@@ -267,12 +267,111 @@ def _normalise_manifest_assignments(
     return assignments
 
 
+def _validate_cross_split_search_audit(manifest: Mapping[str, Any]) -> None:
+    audit = manifest.get("cross_split_search_audit")
+    if not isinstance(audit, Mapping):
+        raise ValueError("Manifest is missing the independent cross-split search audit")
+    if audit.get("status") != "passed":
+        raise ValueError("Cross-split search audit did not pass")
+    if audit.get("backend") != "mmseqs" or audit.get("search") != "easy-search":
+        raise ValueError("Cross-split audit must use an independent MMseqs2 easy-search")
+    if not isinstance(audit.get("version"), str) or not audit["version"].strip():
+        raise ValueError("Cross-split audit must record the MMseqs2 version")
+
+    for checksum_name in ("cohort_sha256", "assignment_sha256"):
+        audit_checksum = _normalise_digest(
+            audit.get(checksum_name), f"audit {checksum_name}"
+        )
+        manifest_checksum = _normalise_digest(
+            manifest.get(checksum_name), f"manifest {checksum_name}"
+        )
+        if audit_checksum != manifest_checksum:
+            raise ValueError(f"Cross-split audit {checksum_name} does not match manifest")
+
+    hit_count = audit.get("qualifying_hit_count")
+    if isinstance(hit_count, bool) or hit_count != 0:
+        raise ValueError("Cross-split audit contains qualifying similarity hits")
+    for field in (
+        "max_qualifying_fident",
+        "max_qualifying_qcov",
+        "max_qualifying_tcov",
+    ):
+        if audit.get(field) is not None:
+            raise ValueError(f"Passed cross-split audit must record {field} as null")
+
+    clustering = manifest.get("clustering")
+    clustering_parameters = (
+        clustering.get("parameters") if isinstance(clustering, Mapping) else None
+    )
+    audit_parameters = audit.get("parameters")
+    if not isinstance(clustering_parameters, Mapping):
+        raise ValueError("Manifest clustering parameters are missing")
+    if not isinstance(audit_parameters, Mapping):
+        raise ValueError("Cross-split audit parameters are missing")
+    for parameter in ("min_seq_id", "coverage"):
+        try:
+            audit_value = float(audit_parameters.get(parameter))
+            clustering_value = float(clustering_parameters.get(parameter))
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                f"Cross-split audit parameter is invalid: {parameter}"
+            ) from exc
+        if not math.isfinite(audit_value) or not math.isclose(
+            audit_value, clustering_value, rel_tol=0.0, abs_tol=1e-12
+        ):
+            raise ValueError(
+                f"Cross-split audit {parameter} must match the clustering threshold"
+            )
+    fixed_parameters = {
+        "cov_mode": 0,
+        "alignment_mode": 3,
+        "seq_id_mode": 0,
+        "mask": 0,
+    }
+    for parameter, expected in fixed_parameters.items():
+        if audit_parameters.get(parameter) != expected:
+            raise ValueError(
+                f"Cross-split audit parameter {parameter} must equal {expected}"
+            )
+    try:
+        sensitivity = float(audit_parameters.get("sensitivity"))
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Cross-split audit sensitivity is invalid") from exc
+    if not math.isfinite(sensitivity) or sensitivity < 7.5:
+        raise ValueError("Cross-split audit sensitivity must be at least 7.5")
+
+    expected_directions = {
+        (query, target)
+        for query in PARTITIONS
+        for target in PARTITIONS
+        if query != target
+    }
+    raw_direction_results = audit.get("direction_results")
+    if not isinstance(raw_direction_results, list):
+        raise ValueError("Cross-split audit direction results must be a list")
+    observed_directions: list[tuple[Any, Any]] = []
+    for result in raw_direction_results:
+        if not isinstance(result, Mapping):
+            raise ValueError("Each cross-split audit direction must be a mapping")
+        observed_directions.append(
+            (result.get("query_partition"), result.get("target_partition"))
+        )
+        direction_hits = result.get("qualifying_hits")
+        if isinstance(direction_hits, bool) or direction_hits != 0:
+            raise ValueError("Cross-split audit direction contains qualifying hits")
+    if len(set(observed_directions)) != len(observed_directions):
+        raise ValueError("Cross-split audit contains duplicate directed searches")
+    if set(observed_directions) != expected_directions:
+        raise ValueError("Cross-split audit did not run all six directed searches")
+
+
 def validate_similarity_manifest(
     manifest: Mapping[str, Any],
     *,
     expected_sequence_digests: Iterable[str] | None = None,
     expected_source_sha256: str | None = None,
     expected_cohort_sha256: str | None = None,
+    require_cross_split_audit: bool = False,
 ) -> None:
     """Validate a frozen similarity split manifest, raising on any mismatch."""
     if not isinstance(manifest, Mapping):
@@ -345,6 +444,8 @@ def validate_similarity_manifest(
         )
         if cohort_sha256 != expected_cohort:
             raise ValueError("Manifest cohort SHA-256 does not match the expected cohort")
+    if require_cross_split_audit:
+        _validate_cross_split_search_audit(manifest)
 
 
 def _row_assignment_records(

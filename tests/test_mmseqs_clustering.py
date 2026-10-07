@@ -177,6 +177,76 @@ def test_manifest_passes_similarity_manifest_validation(
     assert validated is not False
 
 
+def _audit_assignments(sequences: list[str]):
+    partitions = ("train", "cv", "test")
+    return {
+        sequence_digest(sequence): {
+            "cluster_id": sequence_digest(sequence),
+            "partition": partitions[index],
+        }
+        for index, sequence in enumerate(sequences)
+    }
+
+
+def test_cross_partition_audit_runs_six_sensitive_directed_searches(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    sequences = ["AAA", "CCC", "GGG"]
+    calls: list[list[str]] = []
+
+    def fake_run(command, *, check, capture_output, text):
+        calls.append(command)
+        if command[1] == "version":
+            return SimpleNamespace(stdout="15.6f452\n", stderr="")
+        assert command[1] == "easy-search"
+        Path(command[4]).write_text("", encoding="utf-8")
+        return SimpleNamespace(stdout="", stderr="")
+
+    monkeypatch.setattr(mmseqs_clustering.subprocess, "run", fake_run)
+    audit = mmseqs_clustering.audit_cross_partition_similarity(
+        sequences,
+        assignments=_audit_assignments(sequences),
+        cohort_sha256="a" * 64,
+        assignment_sha256="b" * 64,
+        work_dir=tmp_path,
+        executable="custom-mmseqs",
+    )
+
+    assert len(calls) == 7
+    assert all(call[1] == "easy-search" for call in calls[1:])
+    assert all(call[call.index("-s") + 1] == "7.5" for call in calls[1:])
+    assert audit["status"] == "passed"
+    assert audit["qualifying_hit_count"] == 0
+    assert len(audit["direction_results"]) == 6
+
+
+def test_cross_partition_audit_fails_on_any_qualifying_hit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    sequences = ["AAA", "CCC", "GGG"]
+
+    def fake_run(command, *, check, capture_output, text):
+        if command[1] == "version":
+            return SimpleNamespace(stdout="15.6f452\n", stderr="")
+        query_digest = Path(command[2]).read_text(encoding="utf-8").splitlines()[0][1:]
+        target_digest = Path(command[3]).read_text(encoding="utf-8").splitlines()[0][1:]
+        Path(command[4]).write_text(
+            f"{query_digest}\t{target_digest}\t0.9\t0.9\t0.9\t3\t3\t3\n",
+            encoding="utf-8",
+        )
+        return SimpleNamespace(stdout="", stderr="")
+
+    monkeypatch.setattr(mmseqs_clustering.subprocess, "run", fake_run)
+    with pytest.raises(RuntimeError, match="cross-partition similarity"):
+        mmseqs_clustering.audit_cross_partition_similarity(
+            sequences,
+            assignments=_audit_assignments(sequences),
+            cohort_sha256="a" * 64,
+            assignment_sha256="b" * 64,
+            work_dir=tmp_path,
+        )
+
+
 def test_write_manifest_atomic_replaces_destination(tmp_path: Path) -> None:
     destination = tmp_path / "nested" / "manifest.json"
     destination.parent.mkdir()

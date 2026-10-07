@@ -172,6 +172,201 @@ def _parse_cluster_tsv(
     return raw_assignments
 
 
+def audit_cross_partition_similarity(
+    sequences: Iterable[str],
+    *,
+    assignments: Mapping[str, Mapping[str, str]],
+    cohort_sha256: str,
+    assignment_sha256: str,
+    work_dir: str | os.PathLike[str],
+    executable: str | os.PathLike[str] = "mmseqs",
+    identity: float = 0.8,
+    coverage: float = 0.8,
+    sensitivity: float = 7.5,
+    threads: int = 1,
+    split_memory_limit: str = "4G",
+) -> dict[str, Any]:
+    """Fail if a sensitive, independent search finds a cross-partition hit.
+
+    The clustering pass uses ``easy-cluster`` with single-step clustering.  This
+    audit deliberately creates fresh databases through six directed
+    ``easy-search`` runs at higher sensitivity.  It therefore checks for
+    qualifying edges that the clustering heuristic may have missed instead of
+    merely re-checking that cluster identifiers do not overlap.
+    """
+
+    if not math.isfinite(float(identity)) or not 0 < float(identity) <= 1:
+        raise ValueError("identity must be in (0, 1]")
+    if not math.isfinite(float(coverage)) or not 0 < float(coverage) <= 1:
+        raise ValueError("coverage must be in (0, 1]")
+    if not math.isfinite(float(sensitivity)) or float(sensitivity) <= 0:
+        raise ValueError("sensitivity must be a positive finite number")
+    if isinstance(threads, bool) or not isinstance(threads, int) or threads < 1:
+        raise ValueError("threads must be a positive integer")
+
+    _, digest_to_sequence = _normalise_sequences(sequences)
+    expected_digests = set(digest_to_sequence)
+    if set(assignments) != expected_digests:
+        raise ValueError("audit assignments must exactly match the sequence cohort")
+
+    partition_sequences: dict[str, dict[str, str]] = {
+        partition: {} for partition in ("train", "cv", "test")
+    }
+    for digest in sorted(expected_digests):
+        record = assignments[digest]
+        if not isinstance(record, Mapping):
+            raise ValueError("each audit assignment must be a mapping")
+        partition = record.get("partition")
+        if partition not in partition_sequences:
+            raise ValueError("audit assignment contains an invalid partition")
+        partition_sequences[str(partition)][digest] = digest_to_sequence[digest]
+    if any(not members for members in partition_sequences.values()):
+        raise ValueError("cross-partition audit requires non-empty partitions")
+
+    executable_string = os.fspath(executable)
+    version = _run_mmseqs_version(executable_string)
+    directions = [
+        (query, target)
+        for query in ("train", "cv", "test")
+        for target in ("train", "cv", "test")
+        if query != target
+    ]
+    direction_results: list[dict[str, Any]] = []
+    directory = Path(work_dir)
+    directory.mkdir(parents=True, exist_ok=True)
+
+    with tempfile.TemporaryDirectory(
+        prefix="mmseqs_cross_partition_audit_", dir=directory
+    ) as temporary_name:
+        temporary_root = Path(temporary_name)
+        fasta_paths: dict[str, Path] = {}
+        for partition, members in partition_sequences.items():
+            fasta_path = temporary_root / f"{partition}.fasta"
+            _write_digest_fasta(fasta_path, members)
+            fasta_paths[partition] = fasta_path
+
+        for query_partition, target_partition in directions:
+            label = f"{query_partition}_to_{target_partition}"
+            result_path = temporary_root / f"{label}.tsv"
+            search_tmp = temporary_root / f"{label}_tmp"
+            command = [
+                executable_string,
+                "easy-search",
+                os.fspath(fasta_paths[query_partition]),
+                os.fspath(fasta_paths[target_partition]),
+                os.fspath(result_path),
+                os.fspath(search_tmp),
+                "--search-type",
+                "3",
+                "--strand",
+                "1",
+                "-k",
+                "8",
+                "--min-seq-id",
+                format(float(identity), "g"),
+                "-c",
+                format(float(coverage), "g"),
+                "--cov-mode",
+                "0",
+                "--alignment-mode",
+                "3",
+                "--seq-id-mode",
+                "0",
+                "-s",
+                format(float(sensitivity), "g"),
+                "--threads",
+                str(threads),
+                "--mask",
+                "0",
+                "--split-memory-limit",
+                split_memory_limit,
+                "--format-output",
+                "query,target,fident,qcov,tcov,alnlen,qlen,tlen",
+            ]
+            try:
+                subprocess.run(command, check=True, capture_output=True, text=True)
+            except subprocess.CalledProcessError as exc:
+                raise RuntimeError(
+                    f"MMseqs2 cross-partition search failed for {label}: "
+                    f"{exc.stderr}\n{exc.stdout}"
+                ) from exc
+            if not result_path.is_file():
+                raise RuntimeError(
+                    f"MMseqs2 did not create the audit result for {label}"
+                )
+
+            hits: list[tuple[str, str, float, float, float]] = []
+            with result_path.open("r", encoding="utf-8") as handle:
+                for line_number, line in enumerate(handle, start=1):
+                    stripped = line.rstrip("\r\n")
+                    if not stripped:
+                        continue
+                    fields = stripped.split("\t")
+                    if len(fields) != 8:
+                        raise ValueError(
+                            f"invalid MMseqs2 audit row at {label}:{line_number}"
+                        )
+                    query_digest, target_digest = fields[:2]
+                    if query_digest not in partition_sequences[query_partition]:
+                        raise ValueError("MMseqs2 audit returned an unknown query digest")
+                    if target_digest not in partition_sequences[target_partition]:
+                        raise ValueError("MMseqs2 audit returned an unknown target digest")
+                    try:
+                        fident, qcov, tcov = map(float, fields[2:5])
+                        tuple(map(float, fields[5:]))
+                    except ValueError as exc:
+                        raise ValueError(
+                            f"invalid numeric MMseqs2 audit row at {label}:{line_number}"
+                        ) from exc
+                    if not all(math.isfinite(value) for value in (fident, qcov, tcov)):
+                        raise ValueError("MMseqs2 audit returned a non-finite metric")
+                    hits.append((query_digest, target_digest, fident, qcov, tcov))
+
+            if hits:
+                first = hits[0]
+                raise RuntimeError(
+                    "Independent MMseqs2 audit found cross-partition similarity "
+                    f"hits for {label} (hits={len(hits)}, "
+                    f"first={first[0][:12]}->{first[1][:12]})"
+                )
+            direction_results.append({
+                "query_partition": query_partition,
+                "target_partition": target_partition,
+                "qualifying_hits": 0,
+            })
+
+    return {
+        "status": "passed",
+        "backend": "mmseqs",
+        "search": "easy-search",
+        "version": version,
+        "cohort_sha256": cohort_sha256,
+        "assignment_sha256": assignment_sha256,
+        "qualifying_hit_count": 0,
+        "max_qualifying_fident": None,
+        "max_qualifying_qcov": None,
+        "max_qualifying_tcov": None,
+        "direction_results": direction_results,
+        "parameters": {
+            "min_seq_id": float(identity),
+            "coverage": float(coverage),
+            "cov_mode": 0,
+            "alignment_mode": 3,
+            "seq_id_mode": 0,
+            "sensitivity": float(sensitivity),
+            "search_type": 3,
+            "strand": 1,
+            "kmer_length": 8,
+            "threads": threads,
+            "mask": 0,
+            "split_memory_limit": split_memory_limit,
+            "format_output": (
+                "query,target,fident,qcov,tcov,alnlen,qlen,tlen"
+            ),
+        },
+    }
+
+
 def build_mmseqs_manifest(
     sequences: Iterable[str],
     *,

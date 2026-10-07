@@ -144,28 +144,57 @@ def test_smoke_audit_accepts_current_p100_complete_outputs(tmp_path):
         "w", encoding="utf-8", newline=""
     ) as handle:
         writer = csv.DictWriter(handle, fieldnames=[
-            "best_cv_loss", "test_mae", "cv_macro_sequence_mae",
+            "seed", "split_method", "variant_id", "best_cv_loss",
+            "test_mae", "cv_macro_sequence_mae", "test_macro_sequence_mae",
         ])
         writer.writeheader()
         writer.writerows([
             {
+                "seed": "42",
+                "split_method": split_method,
+                "variant_id": variant_id,
                 "best_cv_loss": "0.2",
-                "test_mae": "0.21",
+                "test_mae": "",
                 "cv_macro_sequence_mae": "0.22",
+                "test_macro_sequence_mae": "",
             }
-            for _ in range(12)
+            for split_method in ("random", "grouped", "clustered")
+            for variant_id in variants
         ])
+    with (tmp_path / "test_results.csv").open(
+        "w", encoding="utf-8", newline=""
+    ) as handle:
+        writer = csv.DictWriter(handle, fieldnames=[
+            "seed", "split_method", "variant_id", "test_mae",
+        ])
+        writer.writeheader()
     with (tmp_path / "paired_bootstrap_ci.csv").open(
         "w", encoding="utf-8", newline=""
     ) as handle:
-        writer = csv.DictWriter(handle, fieldnames=["comparison_id"])
+        writer = csv.DictWriter(handle, fieldnames=[
+            "comparison_id", "seed", "split", "partition", "metric",
+            "point_improvement", "ci_lower", "ci_upper",
+            "probability_improvement",
+        ])
         writer.writeheader()
-        for comparison_id in (
-            "vienna_real_vs_sequence_only",
-            "vienna_real_vs_position_shuffled",
-            "vienna_real_vs_zero_channels",
-        ):
-            writer.writerow({"comparison_id": comparison_id})
+        for split_method in ("random", "grouped", "clustered"):
+            for comparison_id in (
+                "vienna_real_vs_sequence_only",
+                "vienna_real_vs_position_shuffled",
+                "vienna_real_vs_zero_channels",
+            ):
+                for metric in ("nucleotide_weighted_mae", "macro_sequence_mae"):
+                    writer.writerow({
+                        "comparison_id": comparison_id,
+                        "seed": "42",
+                        "split": split_method,
+                        "partition": "cv",
+                        "metric": metric,
+                        "point_improvement": "0.01",
+                        "ci_lower": "0.001",
+                        "ci_upper": "0.02",
+                        "probability_improvement": "0.95",
+                    })
 
     audit_smoke_results(tmp_path, 256, variants)
 

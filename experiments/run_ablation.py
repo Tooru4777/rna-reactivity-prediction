@@ -880,6 +880,7 @@ def main():
             similarity_manifest,
             expected_sequence_digests=cohort_sequence_digests,
             expected_source_sha256=source_file_sha256,
+            require_cross_split_audit=(args.run_mode == "final-eval"),
         )
         clustered_indices = split_indices_from_manifest(
             quality_frame, similarity_manifest
@@ -1045,13 +1046,10 @@ def main():
                 quality_frame, cv_idx, reactivity_cols, baseline_means,
                 max_length=dataset_4dim.max_length,
             )
-            if args.run_mode == "smoke":
-                test_mae, test_valid_positions = evaluate_experiment_mean_baseline(
-                    quality_frame, test_idx, reactivity_cols, baseline_means,
-                    max_length=dataset_4dim.max_length,
-                )
-            else:
-                test_mae, test_valid_positions = np.nan, 0
+            # Smoke and development runs do not evaluate test targets. A
+            # final-eval run fills the selected split's baseline below, only
+            # after CV has selected one model variant.
+            test_mae, test_valid_positions = np.nan, 0
             baseline_records.append({
                 "seed": seed,
                 "split_method": split_method,
@@ -1171,41 +1169,6 @@ def main():
                         "split": split_method, "partition": "cv",
                         "variant_id": variant_id, "variant": name, **record,
                     })
-                if args.run_mode == "smoke":
-                    test_loader = DataLoader(
-                        Subset(dataset, test_idx), shuffle=False, **loader_kwargs
-                    )
-                    test_mae, row_errors, structure_errors = evaluate_checkpoint(
-                        model_factory=model_factory,
-                        checkpoint_path=checkpoint_path,
-                        data_loader=test_loader,
-                        device=device,
-                        dataframe=dataset_7dim.seq_df,
-                        row_indices=list(test_idx),
-                        max_length=dataset.max_length,
-                        cluster_by_digest=cluster_by_digest,
-                    )
-                    result["test_mae"] = test_mae
-                    test_records.append({
-                        "seed": seed,
-                        "split_method": split_method,
-                        "variant_id": variant_id,
-                        "variant": name,
-                        "test_mae": test_mae,
-                        "reportable": False,
-                    })
-                    for record in row_errors:
-                        error_records.append({
-                            "seed": seed, "split_method": split_method,
-                            "split": split_method, "partition": "test",
-                            "variant_id": variant_id, "variant": name, **record,
-                        })
-                    for record in structure_errors:
-                        structure_error_records.append({
-                            "seed": seed, "split_method": split_method,
-                            "split": split_method, "partition": "test",
-                            "variant_id": variant_id, "variant": name, **record,
-                        })
                 result["params"] = params
                 result["variant_id"] = variant_id
                 all_results[(seed, split_method, variant_id)] = result
@@ -1274,8 +1237,8 @@ def main():
     selected_row = selection_pool.sort_values("mean_cv_loss").iloc[0]
 
     # The reportable locked test remains untouched until CV has selected one
-    # variant.  Smoke mode exercises every test branch but is explicitly
-    # non-reportable; development mode never evaluates the test partition.
+    # variant. Smoke and development runs never evaluate the test partition;
+    # only final-eval enters the selected-model branch below.
     if args.run_mode == "final-eval":
         selected_split = str(selected_row["split_method"])
         selected_variant_id = str(selected_row["variant_id"])
@@ -1396,7 +1359,7 @@ def main():
             "CV-selected variant evaluated once on one frozen similarity-clustered "
             "test membership after model selection"
             if args.run_mode == "final-eval" else
-            "non-reportable smoke test plumbing"
+            "test partition not evaluated during smoke validation"
             if args.run_mode == "smoke" else
             "test partition not evaluated during development"
         ),

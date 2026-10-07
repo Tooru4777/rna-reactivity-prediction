@@ -235,3 +235,56 @@ def test_overlap_audit_rejects_invalid_row_partitions():
     frame = pd.DataFrame({"sequence": ["AAAA", "CCCC", "GGGG"]})
     with pytest.raises(ValueError, match="every dataframe row exactly once"):
         similarity_cluster_overlap_counts(frame, ([0], [0], [2]), manifest)
+
+
+def test_final_manifest_requires_complete_independent_cross_split_audit():
+    manifest = _manifest(
+        {"AAAA": "a", "CCCC": "c", "GGGG": "g"},
+        {"a": "train", "c": "cv", "g": "test"},
+    )
+    with pytest.raises(ValueError, match="missing the independent"):
+        validate_similarity_manifest(manifest, require_cross_split_audit=True)
+
+    manifest["clustering"] = {
+        "backend": "mmseqs",
+        "version": "15.6f452",
+        "parameters": {"min_seq_id": 0.8, "coverage": 0.8},
+    }
+    manifest["cross_split_search_audit"] = {
+        "status": "passed",
+        "backend": "mmseqs",
+        "search": "easy-search",
+        "version": "15.6f452",
+        "cohort_sha256": manifest["cohort_sha256"],
+        "assignment_sha256": manifest["assignment_sha256"],
+        "qualifying_hit_count": 0,
+        "max_qualifying_fident": None,
+        "max_qualifying_qcov": None,
+        "max_qualifying_tcov": None,
+        "direction_results": [
+            {
+                "query_partition": query,
+                "target_partition": target,
+                "qualifying_hits": 0,
+            }
+            for query in ("train", "cv", "test")
+            for target in ("train", "cv", "test")
+            if query != target
+        ],
+        "parameters": {
+            "min_seq_id": 0.8,
+            "coverage": 0.8,
+            "cov_mode": 0,
+            "alignment_mode": 3,
+            "seq_id_mode": 0,
+            "sensitivity": 7.5,
+            "threads": 1,
+            "mask": 0,
+            "split_memory_limit": "4G",
+        },
+    }
+    validate_similarity_manifest(manifest, require_cross_split_audit=True)
+
+    manifest["cross_split_search_audit"]["qualifying_hit_count"] = 1
+    with pytest.raises(ValueError, match="qualifying similarity hits"):
+        validate_similarity_manifest(manifest, require_cross_split_audit=True)
