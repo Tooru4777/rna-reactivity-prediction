@@ -15,8 +15,10 @@ from torch.utils.data import Dataset
 import pandas as pd
 import numpy as np
 import os
+import re
+import hashlib
 
-# ViennaRNA is optional — falls back to dummy structure if not installed
+# Sequence-only ablations do not need ViennaRNA; structure-feature runs do.
 try:
     import RNA
     HAS_VIENNA = True
@@ -41,10 +43,26 @@ class RNAReactivityDataset(Dataset):
         max_samples:   Optional maximum number of CSV rows to load.
     """
 
+    STRUCTURE_MODES = {"none", "real", "position_shuffled", "zero"}
+
     def __init__(self, sequences_csv=None, max_length=206, use_structure=True,
-                 max_samples=None, dataframe=None):
+                 max_samples=None, dataframe=None, structure_mode=None,
+                 structure_control_seed=314159, precomputed_structures=None):
         self.max_length = max_length
-        self.use_structure = use_structure and HAS_VIENNA
+        if structure_mode is None:
+            structure_mode = "real" if use_structure else "none"
+        if structure_mode not in self.STRUCTURE_MODES:
+            raise ValueError(
+                f"structure_mode must be one of {sorted(self.STRUCTURE_MODES)}"
+            )
+        self.structure_mode = structure_mode
+        self.structure_control_seed = int(structure_control_seed)
+        self.use_structure = structure_mode != "none"
+        if self.use_structure and not HAS_VIENNA:
+            raise RuntimeError(
+                "ViennaRNA is required when use_structure=True; install the "
+                "ViennaRNA Python package or use sequence-only features explicitly"
+            )
 
         # Feature dimension: 4 (seq only) or 7 (seq + structure)
         self.feature_dim = 7 if self.use_structure else 4
@@ -55,7 +73,7 @@ class RNAReactivityDataset(Dataset):
         if dataframe is not None or (sequences_csv and os.path.exists(sequences_csv)):
             if dataframe is not None:
                 print("Loading dataset from in-memory sequence subset")
-                self.seq_df = dataframe.copy()
+                self.seq_df = dataframe.copy(deep=False)
             else:
                 print(f"Loading dataset: {sequences_csv}")
                 self.seq_df = pd.read_csv(sequences_csv, nrows=max_samples)
@@ -73,16 +91,65 @@ class RNAReactivityDataset(Dataset):
             # Compute secondary structures if requested
             if self.use_structure:
                 print("Computing ViennaRNA 2D structures...")
-                self.seq_df['structure'] = self.seq_df['sequence'].apply(
-                    lambda seq: RNA.fold(seq)[0]
+                unique_sequences = self.seq_df["sequence"].astype(str).unique()
+                if precomputed_structures is None:
+                    structures = {
+                        sequence: RNA.fold(sequence)[0]
+                        for sequence in unique_sequences
+                    }
+                else:
+                    missing = sorted(set(unique_sequences) - set(precomputed_structures))
+                    if missing:
+                        raise ValueError(
+                            "precomputed_structures is missing retained RNA sequences"
+                        )
+                    structures = {
+                        sequence: str(precomputed_structures[sequence])
+                        for sequence in unique_sequences
+                    }
+                    invalid = [
+                        sequence for sequence, structure in structures.items()
+                        if len(structure) != len(sequence)
+                        or not set(structure).issubset(set("()."))
+                    ]
+                    if invalid:
+                        raise ValueError(
+                            "precomputed_structures contains invalid dot-bracket values"
+                        )
+                self.seq_df = self.seq_df.assign(
+                    structure=self.seq_df["sequence"].astype(str).map(structures)
                 )
+                if self.structure_mode == "position_shuffled":
+                    controlled = {
+                        sequence: self._shuffle_structure(sequence, structures[sequence])
+                        for sequence in unique_sequences
+                    }
+                    self.seq_df = self.seq_df.assign(
+                        feature_structure=(
+                            self.seq_df["sequence"].astype(str).map(controlled)
+                        )
+                    )
+                elif self.structure_mode == "real":
+                    self.seq_df = self.seq_df.assign(
+                        feature_structure=self.seq_df["structure"]
+                    )
+                else:
+                    self.seq_df = self.seq_df.assign(feature_structure="")
                 print("Structure computation complete.")
 
             # Identify reactivity columns
-            self.reactivity_cols = [
-                c for c in self.seq_df.columns
-                if c.startswith('reactivity_') and 'error' not in c
-            ]
+            self.reactivity_cols = self._reactivity_columns()
+            self._sequences = self.seq_df["sequence"].astype(str).to_numpy()
+            self._experiments = self.seq_df["experiment_type"].astype(str).to_numpy()
+            self._reactivities = self.seq_df[self.reactivity_cols].to_numpy(
+                dtype=np.float32, na_value=np.nan
+            )
+            if self.use_structure:
+                self._feature_structures = (
+                    self.seq_df["feature_structure"].astype(str).to_numpy()
+                )
+            else:
+                self._feature_structures = None
             print(f"Loaded {self.num_samples} samples, "
                   f"{len(self.reactivity_cols)} reactivity columns, "
                   f"feature_dim={self.feature_dim}")
@@ -91,6 +158,18 @@ class RNAReactivityDataset(Dataset):
                 f"Training data not found: {sequences_csv}. This pipeline requires "
                 "real measured reactivity targets."
             )
+
+    def _shuffle_structure(self, sequence, structure):
+        """Return a deterministic position-permuted structure control."""
+        if len(structure) < 2:
+            return structure
+        seed_material = f"{self.structure_control_seed}:{sequence}".encode("utf-8")
+        seed = int.from_bytes(hashlib.sha256(seed_material).digest()[:8], "big")
+        permutation = np.random.default_rng(seed).permutation(len(structure))
+        if np.array_equal(permutation, np.arange(len(structure))):
+            permutation = np.roll(permutation, 1)
+        chars = np.asarray(list(structure), dtype="U1")
+        return "".join(chars[permutation].tolist())
 
     def _validate_research_frame(self):
         """Fail fast on schema/domain problems that could corrupt labels."""
@@ -112,43 +191,52 @@ class RNAReactivityDataset(Dataset):
         if unexpected or self.seq_df["experiment_type"].isna().any():
             raise ValueError(f"Unexpected experiment_type values: {unexpected}")
 
-        reactivity_cols = [
-            c for c in self.seq_df.columns
-            if c.startswith("reactivity_") and "error" not in c
-        ]
+        reactivity_cols = self._reactivity_columns()
         if not reactivity_cols:
             raise ValueError("No reactivity target columns were found")
+        observed_positions = [int(column.rsplit("_", 1)[-1]) for column in reactivity_cols]
+        expected_positions = list(range(1, len(reactivity_cols) + 1))
+        if observed_positions != expected_positions:
+            raise ValueError(
+                "Reactivity columns must cover continuous positions starting at 0001"
+            )
         if self.seq_df[reactivity_cols].notna().sum(axis=1).eq(0).any():
             raise ValueError("Each retained experiment row must contain a reactivity target")
+
+    def _reactivity_columns(self):
+        """Return target columns in numeric nucleotide order."""
+        indexed = []
+        for column in self.seq_df.columns:
+            match = re.fullmatch(r"reactivity_(\d+)", str(column))
+            if match:
+                indexed.append((int(match.group(1)), str(column)))
+        return [column for _, column in sorted(indexed)]
 
     def __len__(self):
         return self.num_samples
 
     def __getitem__(self, idx):
-        seq_str = self.seq_df.iloc[idx].get('sequence', '')
+        seq_str = self._sequences[idx]
         length = len(seq_str)
 
         # Get structure string
         if self.use_structure:
-            struct_str = self.seq_df.iloc[idx].get(
-                'structure', '.' * length
-            )[:self.max_length]
+            struct_str = self._feature_structures[idx][:self.max_length]
         else:
             struct_str = '.' * length
 
-        row_vals = self.seq_df.iloc[idx][self.reactivity_cols].values
+        row_vals = self._reactivities[idx]
         actual_len = min(length, len(row_vals))
         reactivities = np.zeros((length, 2), dtype=np.float32)
         valid_mask = np.zeros((length, 2), dtype=np.float32)
 
-        experiment_type = self.seq_df.iloc[idx]['experiment_type']
+        experiment_type = self._experiments[idx]
         exp_idx = 0 if experiment_type == '2A3_MaP' else 1
-
-        for i in range(actual_len):
-            val = row_vals[i]
-            if not pd.isna(val):
-                reactivities[i, exp_idx] = float(val)
-                valid_mask[i, exp_idx] = 1.0
+        finite = np.isfinite(row_vals[:actual_len])
+        reactivities[:actual_len, exp_idx] = np.where(
+            finite, row_vals[:actual_len], 0.0
+        )
+        valid_mask[:actual_len, exp_idx] = finite.astype(np.float32)
 
         # Truncate
         seq_str = seq_str[:self.max_length]
@@ -163,7 +251,11 @@ class RNAReactivityDataset(Dataset):
             c = seq_str[i]
             if c in self.seq_char_map:
                 features[i, self.seq_char_map[c]] = 1.0
-            if self.use_structure and i < len(struct_str):
+            if (
+                self.use_structure
+                and self.structure_mode != "zero"
+                and i < len(struct_str)
+            ):
                 s = struct_str[i]
                 if s in self.struct_char_map:
                     features[i, self.struct_char_map[s]] = 1.0

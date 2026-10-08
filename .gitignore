@@ -4,6 +4,7 @@
 # Dataset and CSVs (too large for Git — use kaggle/download_data.sh)
 *.csv
 dataset/
+outputs/
 
 # Keep small, curated experiment summaries under version control.
 !results/**/ablation_aggregate.csv
@@ -18,6 +19,8 @@ dataset/
 !results/**/error_by_experiment.csv
 !results/**/error_by_structure.csv
 !results/**/error_analysis_per_sequence.csv
+!results/**/sequence_length_distribution.csv
+!results/**/baseline_results.csv
 
 # Python caches
 __pycache__/

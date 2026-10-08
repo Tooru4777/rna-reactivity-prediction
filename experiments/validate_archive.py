@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import math
 import re
@@ -37,6 +38,14 @@ REQUIRED_FILES = {
     "error_by_structure.csv",
     "training_curves.png",
     "error_by_length.png",
+}
+SCHEMA_V2_FILES = {
+    "sequence_length_distribution.csv",
+    "sequence_length_histogram.png",
+}
+SCHEMA_V3_FILES = {
+    "baseline_results.csv",
+    "artifact_checksums.sha256",
 }
 FORBIDDEN_NAMES = {
     "train_data.csv",
@@ -82,6 +91,54 @@ def assert_close(actual: float, expected: float, label: str, tolerance: float = 
         )
 
 
+def validate_artifact_checksums(archive: Path, present: set[str]) -> None:
+    """Verify a complete checksum inventory of compact data and image artifacts."""
+    checksum_path = archive / "artifact_checksums.sha256"
+    expected_names = {
+        name for name in present
+        if Path(name).suffix.lower() in {".csv", ".json", ".png"}
+        and name != "error_analysis_per_profile.csv"
+    }
+    observed = {}
+    for line_number, line in enumerate(
+        checksum_path.read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        match = re.fullmatch(r"([0-9a-f]{64})  ([^/\\]+)", line)
+        require(bool(match), f"Invalid checksum line {line_number}")
+        digest, name = match.groups()
+        require(name not in observed, f"Duplicate checksum entry: {name}")
+        observed[name] = digest
+    require(
+        set(observed) == expected_names,
+        "Checksum inventory does not exactly match compact CSV/JSON/PNG artifacts",
+    )
+    for name, expected_digest in observed.items():
+        digest = hashlib.sha256((archive / name).read_bytes()).hexdigest()
+        require(digest == expected_digest, f"Checksum mismatch: {name}")
+
+
+def validate_baseline_results(path: Path, seeds: set[int]) -> None:
+    """Check the training-only statistical baseline coverage and domains."""
+    records = load_csv(path)
+    expected_keys = {
+        (seed, split) for seed in seeds for split in {"random", "grouped"}
+    }
+    observed_keys = {(int(row["seed"]), row["split_method"]) for row in records}
+    require(observed_keys == expected_keys, "Baseline seed/split coverage is incomplete")
+    require(len(records) == len(expected_keys), "Baseline rows are duplicated")
+    for row in records:
+        require(
+            row["baseline"] == "Train-only experiment mean",
+            "Unexpected baseline definition",
+        )
+        for column in ("cv_mae", "test_mae", "mean_2A3_MaP", "mean_DMS_MaP"):
+            value = float(row[column])
+            require(math.isfinite(value), f"Baseline {column} is non-finite")
+            require(0.0 <= value <= 1.0, f"Baseline {column} is outside [0, 1]")
+        for column in ("cv_valid_positions", "test_valid_positions"):
+            require(int(row[column]) > 0, f"Baseline {column} is not positive")
+
+
 def grouped_values(
     records: list[dict[str, str]], value_column: str
 ) -> dict[tuple[str, str], list[float]]:
@@ -110,6 +167,77 @@ def reconcile_error_file(
     return max_difference
 
 
+def validate_sequence_length_distribution(
+    path: Path, manifest: dict, quality: dict
+) -> None:
+    records = load_csv(path)
+    require(records, f"{path.name}: no length rows")
+    required_columns = {
+        "sequence_length",
+        "unique_sequences",
+        "experiment_profiles",
+        "share_of_sequences",
+        "cumulative_unique_sequences",
+    }
+    require(
+        required_columns.issubset(records[0]),
+        f"{path.name}: missing columns {sorted(required_columns - set(records[0]))}",
+    )
+
+    lengths = [int(row["sequence_length"]) for row in records]
+    unique_counts = [int(row["unique_sequences"]) for row in records]
+    profile_counts = [int(row["experiment_profiles"]) for row in records]
+    require(
+        lengths == list(range(lengths[0], lengths[-1] + 1)),
+        f"{path.name}: lengths must cover a continuous 1-nt range",
+    )
+    require(
+        all(value >= 0 for value in unique_counts),
+        f"{path.name}: negative sequence count",
+    )
+    require(
+        all(value >= 0 for value in profile_counts),
+        f"{path.name}: negative profile count",
+    )
+    require(
+        sum(unique_counts) == manifest["filtered_unique_sequences"],
+        f"{path.name}: unique-sequence total disagrees with manifest",
+    )
+    require(
+        sum(profile_counts) == manifest["filtered_rows"],
+        f"{path.name}: experiment-profile total disagrees with manifest",
+    )
+
+    cumulative = 0
+    expanded_lengths: list[int] = []
+    for row, length, count in zip(records, lengths, unique_counts):
+        cumulative += count
+        assert_close(
+            float(row["share_of_sequences"]),
+            count / manifest["filtered_unique_sequences"],
+            f"{path.name}: sequence share at {length}",
+        )
+        require(
+            int(row["cumulative_unique_sequences"]) == cumulative,
+            f"{path.name}: cumulative count mismatch at {length}",
+        )
+        expanded_lengths.extend([length] * count)
+
+    require(
+        lengths[0] == quality["sequence_length"]["min"],
+        f"{path.name}: minimum length mismatch",
+    )
+    require(
+        lengths[-1] == quality["sequence_length"]["max"],
+        f"{path.name}: maximum length mismatch",
+    )
+    assert_close(
+        statistics.median(expanded_lengths),
+        quality["sequence_length"]["median"],
+        f"{path.name}: median length",
+    )
+
+
 def validate_archive(archive: str | Path) -> dict[str, object]:
     archive = Path(archive)
     require(archive.is_dir(), f"Archive directory does not exist: {archive}")
@@ -126,11 +254,24 @@ def validate_archive(archive: str | Path) -> dict[str, object]:
         and (path.name in FORBIDDEN_NAMES or path.suffix in {".pth", ".log"})
     )
     require(not forbidden, f"Non-compact artifacts must not be committed: {forbidden}")
-    for image_name in ("training_curves.png", "error_by_length.png"):
+    manifest = load_json(archive / "run_manifest.json")
+    schema_version = int(manifest.get("artifact_schema_version", 1))
+    if schema_version >= 2:
+        missing_v2 = SCHEMA_V2_FILES - present
+        require(not missing_v2, f"Missing schema v2 artifacts: {sorted(missing_v2)}")
+    if schema_version >= 3:
+        missing_v3 = SCHEMA_V3_FILES - present
+        require(not missing_v3, f"Missing schema v3 artifacts: {sorted(missing_v3)}")
+    if "artifact_checksums.sha256" in present:
+        validate_artifact_checksums(archive, present)
+
+    image_names = ["training_curves.png", "error_by_length.png"]
+    if schema_version >= 2:
+        image_names.append("sequence_length_histogram.png")
+    for image_name in image_names:
         with (archive / image_name).open("rb") as handle:
             require(handle.read(8) == b"\x89PNG\r\n\x1a\n", f"Invalid PNG file: {image_name}")
 
-    manifest = load_json(archive / "run_manifest.json")
     commit = str(manifest["git_commit"])
     require(bool(re.fullmatch(r"[0-9a-f]{40}", commit)), "Manifest git_commit must be a full SHA")
     archive_suffix = archive.name.rsplit("-", maxsplit=1)[-1]
@@ -142,6 +283,20 @@ def validate_archive(archive: str | Path) -> dict[str, object]:
     require(manifest["filtered_unique_sequences"] == 1000, "Expected 1,000 retained sequences")
     require(manifest["filtered_rows"] == 1820, "Expected 1,820 retained profiles")
     require(manifest["split_method"] == "both", "Both split methods must be present")
+    if schema_version >= 3:
+        require(
+            bool(re.fullmatch(r"[0-9a-f]{64}", manifest["source_file_sha256"])),
+            "Source file SHA-256 is missing or invalid",
+        )
+        require(manifest["source_file_size_bytes"] > 0, "Source file size is invalid")
+        require(
+            bool(re.fullmatch(r"[0-9a-f]{64}", manifest["cohort_data_sha256"])),
+            "Cohort data SHA-256 is missing or invalid",
+        )
+        require(
+            len(manifest["cohort_data_sha256_columns"]) > 200,
+            "Cohort hash does not cover the reactivity targets",
+        )
 
     environment = load_json(archive / "environment.json")
     require(environment["cuda_available"] is True, "Archived run did not use CUDA")
@@ -149,6 +304,16 @@ def validate_archive(archive: str | Path) -> dict[str, object]:
     require(len(environment["gpu_names"]) == 1, "Expected one recorded GPU name")
     require("P100" in environment["gpu_names"][0], "Reportable archive is not the P100 run")
     require(environment["data_parallel"] is False, "Single-GPU run should not use DataParallel")
+    if schema_version >= 3:
+        dependencies = environment.get("dependencies", {})
+        for distribution in (
+            "torch", "pandas", "numpy", "matplotlib", "PyYAML", "ViennaRNA"
+        ):
+            require(dependencies.get(distribution), f"Missing dependency version: {distribution}")
+        require(
+            dependencies["ViennaRNA"] == "2.7.2",
+            "Reportable run must use pinned ViennaRNA 2.7.2",
+        )
 
     quality = load_json(archive / "data_quality_report.json")
     require(quality["rows"] == manifest["filtered_rows"], "Quality and manifest row counts disagree")
@@ -158,6 +323,12 @@ def validate_archive(archive: str | Path) -> dict[str, object]:
     )
     require(quality["duplicate_full_rows"] == 0, "Exact duplicate rows are present")
     require(quality["valid_reactivity_targets"] > 0, "No measured reactivity targets were recorded")
+    if schema_version >= 2:
+        validate_sequence_length_distribution(
+            archive / "sequence_length_distribution.csv", manifest, quality
+        )
+    if schema_version >= 3:
+        validate_baseline_results(archive / "baseline_results.csv", seeds)
 
     summary = load_csv(archive / "ablation_summary.csv")
     tests = load_csv(archive / "test_results.csv")

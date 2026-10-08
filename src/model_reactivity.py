@@ -262,21 +262,3 @@ class RNAReactivityPredictor(nn.Module):
         )
         transformer_out = transformer_out + lstm_out  # residual
         return self.fc(transformer_out)
-
-
-if __name__ == "__main__":
-    print("Testing all model variants...")
-    variants = [
-        ("CNN Only (7-dim)",           RNAReactivityCNNOnly(input_dim=7), 7),
-        ("CNN + LSTM (7-dim)",         RNAReactivityCNN_LSTM(input_dim=7), 7),
-        ("CNN + LSTM + Transformer (4-dim)", RNAReactivityCNN_LSTM_Transformer(input_dim=4), 4),
-        ("Full Model (7-dim)",         RNAReactivityPredictor(input_dim=7), 7),
-    ]
-
-    for name, model, in_dim in variants:
-        dummy = torch.randn(2, 206, in_dim)
-        out = model(dummy)
-        params = sum(p.numel() for p in model.parameters())
-        print(f"  {name:45s} | Output: {out.shape} | Params: {params:,}")
-
-    print("\nAll architecture tests passed.")
