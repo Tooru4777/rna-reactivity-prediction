@@ -138,7 +138,8 @@ def test_smoke_audit_accepts_current_p100_complete_outputs(tmp_path):
         }},
     }), encoding="utf-8")
     (tmp_path / "environment.json").write_text(json.dumps({
-        "gpu_names": ["Tesla P100-PCIE-16GB"],
+        "gpu_names": ["Tesla T4", "Tesla T4"],
+        "data_parallel": True,
     }), encoding="utf-8")
     with (tmp_path / "ablation_summary.csv").open(
         "w", encoding="utf-8", newline=""

@@ -1,4 +1,4 @@
-"""Submit an exact-commit smoke run with an explicit P100 machine shape."""
+"""Submit an exact-commit smoke run requesting Kaggle T4 GPUs."""
 
 import argparse
 import json
@@ -27,22 +27,22 @@ def main():
     # supports machine_shape. Set that documented field on every save request.
     original_request = kaggle_api_extended.ApiSaveKernelRequest
 
-    def p100_request():
+    def gpu_request():
         request = original_request()
-        request.machine_shape = "NvidiaTeslaP100"
+        request.machine_shape = "NvidiaTeslaT4"
         return request
 
-    kaggle_api_extended.ApiSaveKernelRequest = p100_request
+    kaggle_api_extended.ApiSaveKernelRequest = gpu_request
     try:
         api = kaggle_api_extended.KaggleApi()
         api.authenticate()
-        with tempfile.TemporaryDirectory(prefix="rna-p100-submit-") as directory:
+        with tempfile.TemporaryDirectory(prefix="rna-t4-submit-") as directory:
             staging = Path(directory)
             (staging / "kernel-metadata.json").write_text(json.dumps(metadata))
             (staging / metadata["code_file"]).write_text(
                 runner.replace(placeholder, args.commit)
             )
-            print(f"Submitting {args.commit} with NvidiaTeslaP100", flush=True)
+            print(f"Submitting {args.commit} requesting NvidiaTeslaT4", flush=True)
             response = api.kernels_push(str(staging))
             print(response)
     finally:

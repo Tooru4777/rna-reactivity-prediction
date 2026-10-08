@@ -50,8 +50,10 @@ def audit_smoke_results(results_dir, expected_sequences, expected_variants):
     with (results_dir / "environment.json").open(encoding="utf-8") as handle:
         environment = json.load(handle)
     gpu_names = environment.get("gpu_names", [])
-    if not gpu_names or not all("P100" in name for name in gpu_names):
-        raise RuntimeError(f"Smoke run did not use the requested P100: {gpu_names}")
+    if len(gpu_names) != 2 or not all("T4" in name for name in gpu_names):
+        raise RuntimeError(f"Smoke run did not use the requested T4 x2: {gpu_names}")
+    if environment.get("data_parallel") is not True:
+        raise RuntimeError("Smoke run did not enable multi-GPU DataParallel")
 
     with (results_dir / "ablation_summary.csv").open(
         encoding="utf-8", newline=""
@@ -129,7 +131,7 @@ def audit_smoke_results(results_dir, expected_sequences, expected_variants):
             if not math.isfinite(float(row[column])):
                 raise RuntimeError(f"Smoke bootstrap metric is not finite: {column}")
     print(
-        "Smoke audit passed: current data, P100, CV-only splits and controls",
+        "Smoke audit passed: current data, T4 x2, CV-only splits and controls",
         flush=True,
     )
 
@@ -203,19 +205,15 @@ def main():
             "40-character commit SHA"
         )
 
-    # Kaggle may allocate a Tesla P100 (sm_60). Its current torch 2.10 image
+    print("Stage: GPU preflight", flush=True)
     gpu_names = subprocess.check_output(
         ["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"], text=True
     ).strip().splitlines()
-    if not gpu_names or not all("P100" in name for name in gpu_names):
-        raise RuntimeError(f"Select P100 before starting this run: {gpu_names}")
-
-    # Kaggle may allocate a Tesla P100 (sm_60). Its current torch 2.10 image
-    # starts at sm_70, so pin the last CUDA 11.8 wheel family that supports it.
-    run(
-        sys.executable, "-m", "pip", "install", "--quiet", "--force-reinstall",
-        "torch==2.7.1", "--index-url", "https://download.pytorch.org/whl/cu118",
-    )
+    if len(gpu_names) != 2 or not all("T4" in name for name in gpu_names):
+        raise RuntimeError(f"Select T4 x2 before starting this run: {gpu_names}")
+    print(f"Allocated GPUs: {gpu_names}", flush=True)
+    # Use Kaggle's installed CUDA PyTorch on T4; avoid downloading a P100 wheel.
+    print("Stage: dependencies", flush=True)
     run(
         sys.executable, "-m", "pip", "install", "--quiet",
         "pandas==2.3.3", "numpy==2.2.5", "matplotlib==3.10.9",
@@ -228,13 +226,14 @@ def main():
         "import torch; "
         "assert torch.cuda.is_available(); "
         "names=[torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())]; "
-        "assert names and all('P100' in name for name in names), names; "
+        "assert len(names)==2 and all('T4' in name for name in names), names; "
         "caps=[torch.cuda.get_device_capability(i) for i in range(torch.cuda.device_count())]; "
         "assert all(f'sm_{c[0]}{c[1]}' in torch.cuda.get_arch_list() for c in caps), "
         "(caps, torch.cuda.get_arch_list()); "
         "print(torch.__version__, names, caps); "
         "print((torch.ones(1, device='cuda') + 1).item())",
     )
+    print("Stage: repository checkout", flush=True)
     checkout_repository()
 
     max_sequences = os.environ.get("RNA_MAX_SEQUENCES", "256")
@@ -248,6 +247,7 @@ def main():
         "transformer_vienna_shuffled7 transformer_vienna_zero7",
     ).split()
     similarity_manifest = WORKING / "similarity_split_manifest.json"
+    print("Stage: cohort and cross-split similarity audit", flush=True)
     run(
         sys.executable,
         "experiments/build_similarity_manifest.py",
@@ -259,6 +259,7 @@ def main():
         "--threads", "1",
         cwd=CHECKOUT,
     )
+    print("Stage: multi-GPU training and CV evaluation", flush=True)
     run(
         sys.executable,
         "experiments/run_ablation.py",

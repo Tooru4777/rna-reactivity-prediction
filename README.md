@@ -223,7 +223,7 @@ python experiments/validate_archive.py results/kaggle-v10-fec86dc
 ### Kaggle GPU run
 
 1. Accept the Ribonanza competition rules and attach the competition source.
-2. Select one Kaggle P100 and enable Internet for dependency, MMseqs2, and repository
+2. Select Kaggle T4 x2 and enable Internet for dependency, MMseqs2, and repository
    access.
 3. Configure `~/.kaggle/kaggle.json`.
 4. Run `bash kaggle/run_gpu_ablation.sh`, or push `kaggle/` with the Kaggle CLI.
