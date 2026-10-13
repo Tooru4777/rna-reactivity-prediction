@@ -12,6 +12,7 @@ from kaggle.api import kaggle_api_extended
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--commit", required=True)
+    parser.add_argument("--mode", choices=("smoke", "development"), default="smoke")
     args = parser.parse_args()
     if not re.fullmatch(r"[0-9a-f]{40}", args.commit):
         parser.error("--commit must be an exact lowercase 40-character SHA")
@@ -22,6 +23,22 @@ def main():
     placeholder = "__PIN_EXACT_COMMIT_BEFORE_SUBMISSION__"
     if runner.count(placeholder) != 1:
         raise RuntimeError("Runner must contain exactly one commit placeholder")
+    if args.mode == "development":
+        settings = {
+            "RNA_RUN_MODE": "development",
+            "RNA_MAX_SEQUENCES": "1000",
+            "RNA_EPOCHS": "20",
+            "RNA_VALIDATION_SEEDS": "42 123 2026",
+            "RNA_SPLIT_METHOD": "all",
+            "RNA_VARIANTS": (
+                "cnn_only cnn_bilstm transformer_seq4 transformer_vienna_real7 "
+                "transformer_vienna_shuffled7 transformer_vienna_zero7"
+            ),
+        }
+        prefix = "import os\n" + "\n".join(
+            f"os.environ[{key!r}] = {value!r}" for key, value in settings.items()
+        ) + "\n"
+        runner = prefix + runner
 
     # The installed CLI only maps enable_gpu, although its generated SDK
     # supports machine_shape. Set that documented field on every save request.

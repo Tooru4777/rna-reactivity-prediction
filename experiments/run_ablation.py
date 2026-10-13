@@ -592,7 +592,10 @@ def evaluate_checkpoint(model_factory, checkpoint_path, data_loader, device,
             features = features.to(device)
             targets = targets.to(device)
             masks = masks.to(device)
-            predictions = torch.clamp(forward_padding_safe(model, features), 0.0, 1.0)
+            raw_predictions = forward_padding_safe(model, features)
+            if not torch.isfinite(raw_predictions[masks.bool()]).all():
+                raise RuntimeError("Non-finite prediction at a measured position")
+            predictions = torch.clamp(raw_predictions, 0.0, 1.0)
             targets = torch.clamp(targets, 0.0, 1.0)
             errors = torch.abs(predictions - targets) * masks
 
@@ -609,6 +612,10 @@ def evaluate_checkpoint(model_factory, checkpoint_path, data_loader, device,
                 valid = masks[batch_pos]
                 sample_errors = errors[batch_pos]
                 valid_count = valid.sum().item()
+                measured_predictions = raw_predictions[batch_pos][valid.bool()].double()
+                measured_targets = targets[batch_pos][valid.bool()].double()
+                if measured_predictions.numel() == 0:
+                    raise RuntimeError("Profile has no measured positions during evaluation")
                 sequence_id = row.get("sequence_id", None)
                 if sequence_id is None or pd.isna(sequence_id):
                     sequence_id = "missing"
@@ -627,6 +634,19 @@ def evaluate_checkpoint(model_factory, checkpoint_path, data_loader, device,
                     "valid_positions": int(valid_count),
                     "absolute_error_sum": sample_errors.sum().item(),
                     "mae": sample_errors.sum().item() / max(valid_count, 1.0),
+                    "prediction_sum": measured_predictions.sum().item(),
+                    "prediction_squared_sum": measured_predictions.square().sum().item(),
+                    "prediction_min": measured_predictions.min().item(),
+                    "prediction_max": measured_predictions.max().item(),
+                    "prediction_low_count": (measured_predictions < 0).sum().item(),
+                    "prediction_high_count": (measured_predictions > 1).sum().item(),
+                    "prediction_clipped_count": (
+                        (measured_predictions < 0) | (measured_predictions > 1)
+                    ).sum().item(),
+                    "raw_absolute_error_sum": (
+                        measured_predictions - measured_targets
+                    ).abs().sum().item(),
+                    "target_sum": measured_targets.sum().item(),
                 })
 
                 structure = str(row.get("structure", "." * len(sequence)))[:len(sequence)]
@@ -1068,6 +1088,7 @@ def main():
     epoch_records = []
     test_records = []
     error_records = []
+    initial_health_records = []
     structure_error_records = []
     variant_registry = {
         "cnn_only": (
@@ -1136,6 +1157,28 @@ def main():
                     results_dir,
                     f"seed_{seed}_{split_method}_{variant_id}_best.pth",
                 )
+                # Inspect the untrained model on CV without changing training RNG.
+                if args.run_mode == "development":
+                    torch.save(model.state_dict(), checkpoint_path)
+                    with torch.random.fork_rng():
+                        _, initial_rows, _ = evaluate_checkpoint(
+                            model_factory, checkpoint_path, cv_loader, device,
+                            dataset_7dim.seq_df, list(cv_idx),
+                            max_length=dataset.max_length,
+                            cluster_by_digest=cluster_by_digest,
+                        )
+                    for record in initial_rows:
+                        initial_health_records.append({
+                            "seed": seed, "split_method": split_method,
+                            "partition": "cv", "variant_id": variant_id, **record,
+                        })
+                    from src.prediction_health import summarize_prediction_health
+                    summarize_prediction_health(
+                        pd.DataFrame(initial_health_records), baseline_df
+                    ).to_csv(
+                        os.path.join(results_dir, "prediction_health_initial.csv"),
+                        index=False,
+                    )
                 result = train_variant(
                     model=model, train_loader=train_loader, cv_loader=cv_loader,
                     device=device, num_epochs=num_epochs, lr=lr,
@@ -1373,6 +1416,10 @@ def main():
     ])
     test_df.to_csv(os.path.join(results_dir, "test_results.csv"), index=False)
     error_df = pd.DataFrame(error_records)
+    from src.prediction_health import summarize_prediction_health
+    summarize_prediction_health(error_df, baseline_df).to_csv(
+        os.path.join(results_dir, "prediction_health.csv"), index=False
+    )
     statistics_input = error_df[[
         "variant_id", "seed", "split", "partition", "sequence_hash",
         "cluster_id", "absolute_error_sum", "valid_positions",

@@ -141,6 +141,44 @@ def run(*args, cwd=None):
     subprocess.run(list(map(str, args)), cwd=cwd, check=True)
 
 
+def audit_development_results(results_dir, sequences, seeds, variants):
+    """Require the complete CV development grid and diagnostic artifacts."""
+    root = Path(results_dir)
+    manifest = json.loads((root / "run_manifest.json").read_text())
+    if manifest.get("run_mode") != "development" or manifest.get("reportable") is not False:
+        raise RuntimeError("Development must remain CV-only and non-reportable")
+    if manifest.get("filtered_unique_sequences") != int(sequences):
+        raise RuntimeError("Development cohort size differs from request")
+    expected = {
+        (str(seed), split, variant)
+        for seed in seeds for split in ("random", "grouped", "clustered")
+        for variant in variants
+    }
+    for filename in (
+        "ablation_summary.csv", "prediction_health.csv", "prediction_health_initial.csv"
+    ):
+        with (root / filename).open(newline="") as handle:
+            rows = list(csv.DictReader(handle))
+        keys = [(r["seed"], r["split_method"], r["variant_id"]) for r in rows]
+        if len(keys) != len(expected) or set(keys) != expected:
+            raise RuntimeError(f"Incomplete or duplicate development grid: {filename}")
+        for row in rows:
+            if filename == "ablation_summary.csv":
+                value = row["best_cv_loss"]
+                if row.get("test_mae") or row.get("test_macro_sequence_mae"):
+                    raise RuntimeError("Development unexpectedly evaluated test")
+            else:
+                if row["partition"] != "cv":
+                    raise RuntimeError("Development diagnostics must use CV only")
+                value = row["raw_mae"]
+            if not math.isfinite(float(value)):
+                raise RuntimeError(f"Non-finite development diagnostic: {filename}")
+    with (root / "test_results.csv").open(newline="") as handle:
+        if list(csv.DictReader(handle)):
+            raise RuntimeError("Development wrote test result rows")
+    print("Development audit passed: all seeds/models/splits and CV health reports", flush=True)
+
+
 def checkout_repository(repository=REPOSITORY, repository_ref=REPOSITORY_REF,
                         checkout=CHECKOUT):
     """Checkout a branch/tag or an exact 40-character commit SHA."""
@@ -283,6 +321,8 @@ def main():
             expected_sequences=int(max_sequences),
             expected_variants=variants,
         )
+    elif run_mode == "development":
+        audit_development_results(RESULTS, max_sequences, validation_seeds, variants)
     print(f"Kaggle outputs are ready in {RESULTS}")
 
 

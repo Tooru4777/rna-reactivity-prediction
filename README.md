@@ -211,6 +211,21 @@ claim.
 
 ## Reproducibility
 
+### Prediction health and development
+
+Development evaluates untrained and CV-selected checkpoints on the same CV
+memberships. `prediction_health_initial.csv` and `prediction_health.csv` record
+raw prediction moments, fractions outside [0, 1], raw/clipped MAE, the all-zero
+reference, and improvement over the train-only experiment-mean baseline.
+Saturation (at least 95% clipped) and near-constant predictions are diagnostic
+warnings, not evidence of biological usefulness. Baseline improvement must be
+assessed by split and seed before reporting model performance.
+
+`python kaggle/submit_gpu.py --commit <pushed-40-character-SHA> --mode development`
+submits 1,000 current quality-filtered sequences, 20 epochs, seeds 42/123/2026,
+all three splits and all six variants on T4 x2. Test targets are not evaluated.
+This is exploratory CV evidence; model selection and final test remain separate.
+
 ### Local CPU checks
 
 ```bash
