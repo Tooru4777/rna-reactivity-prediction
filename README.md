@@ -117,7 +117,11 @@ and a frozen assignment checksum. Because single-step clustering is heuristic
 and can miss qualifying edges, manifest construction also runs six fresh,
 directed `easy-search` checks between train, CV, and test at sensitivity 7.5.
 Any cross-partition hit satisfying the same identity and coverage thresholds
-fails manifest construction. `final-eval` refuses a manifest without a complete,
+merges the corresponding complete components, followed by deterministic
+reallocation and a fresh audit of all six directions. The cohort, thresholds,
+allocation seed and tolerance stay fixed. Repairs are logged in the manifest;
+search failures, infeasible allocation or failure to converge remain fatal.
+`final-eval` refuses a manifest without a complete,
 checksum-matched audit. This supports the limited claim that no qualifying
 cross-partition hit was detected under the recorded MMseqs2 procedure; it does
 not establish that the partitions are universally homology-free.

@@ -16,7 +16,7 @@ sys.path.insert(0, os.fspath(PROJECT_ROOT))
 
 from src.data_loading import load_unique_sequence_subset, resolve_ribonanza_train_data
 from src.mmseqs_clustering import (
-    audit_cross_partition_similarity,
+    repair_and_audit_manifest,
     build_mmseqs_manifest,
     write_manifest_atomic,
 )
@@ -103,11 +103,10 @@ def main():
         "filter": "SN_filter == 1.0",
         "weight": "finite reactivity targets across all retained profiles",
     }
-    manifest["cross_split_search_audit"] = audit_cross_partition_similarity(
+    repair_and_audit_manifest(
         sequences,
-        assignments=manifest["assignments"],
-        cohort_sha256=manifest["cohort_sha256"],
-        assignment_sha256=manifest["assignment_sha256"],
+        manifest,
+        sequence_weights=sequence_weights,
         work_dir=Path(args.work_dir) / "cross_split_search_audit",
         executable=args.mmseqs,
         identity=args.identity,

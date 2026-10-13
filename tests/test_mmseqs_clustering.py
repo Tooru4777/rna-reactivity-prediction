@@ -247,6 +247,62 @@ def test_cross_partition_audit_fails_on_any_qualifying_hit(
         )
 
 
+def test_audit_edges_merge_components_and_restart_full_audit(tmp_path, monkeypatch):
+    sequences = _sequences(20)
+    digests = [sequence_digest(s) for s in sequences]
+    _mock_mmseqs(monkeypatch, [(d, d) for d in digests])
+    manifest = mmseqs_clustering.build_mmseqs_manifest(
+        sequences, source_sha256="a" * 64,
+        sequence_weights=[1.0] * 20, work_dir=tmp_path,
+    )
+    cohort_hash = manifest["cohort_sha256"]
+    original_hash = manifest["assignment_sha256"]
+    cv = next(d for d, r in manifest["assignments"].items() if r["partition"] == "cv")
+    test = next(d for d, r in manifest["assignments"].items() if r["partition"] == "test")
+    calls = []
+
+    def fake_audit(supplied_sequences, **kwargs):
+        calls.append(kwargs["assignment_sha256"])
+        if len(calls) == 1:
+            raise mmseqs_clustering.CrossPartitionSimilarityError(
+                "cv_to_test", [(cv, test, 0.9, 0.9, 0.9)]
+            )
+        assert kwargs["assignments"][cv] == kwargs["assignments"][test]
+        assert kwargs["assignment_sha256"] != original_hash
+        validate_similarity_manifest(manifest)
+        return {"status": "passed", "assignment_sha256": kwargs["assignment_sha256"]}
+
+    monkeypatch.setattr(mmseqs_clustering, "audit_cross_partition_similarity", fake_audit)
+    mmseqs_clustering.repair_and_audit_manifest(
+        sequences, manifest, sequence_weights=[1.0] * 20, work_dir=tmp_path,
+    )
+    assert len(calls) == 2
+    assert manifest["cohort_sha256"] == cohort_hash
+    assert manifest["allocation"]["clusters"] == 19
+    assert manifest["similarity_repairs"][0]["clusters_before"] == 20
+    assert manifest["cross_split_search_audit"]["assignment_sha256"] == calls[-1]
+
+
+def test_repair_does_not_suppress_search_execution_errors(tmp_path, monkeypatch):
+    sequences = _sequences(20)
+    digests = [sequence_digest(s) for s in sequences]
+    _mock_mmseqs(monkeypatch, [(d, d) for d in digests])
+    manifest = mmseqs_clustering.build_mmseqs_manifest(
+        sequences, source_sha256="a" * 64,
+        sequence_weights=[1.0] * 20, work_dir=tmp_path,
+    )
+
+    def failed_search(*args, **kwargs):
+        raise RuntimeError("MMseqs2 execution failed")
+
+    monkeypatch.setattr(mmseqs_clustering, "audit_cross_partition_similarity", failed_search)
+    with pytest.raises(RuntimeError, match="execution failed"):
+        mmseqs_clustering.repair_and_audit_manifest(
+            sequences, manifest, sequence_weights=[1.0] * 20, work_dir=tmp_path,
+        )
+    assert "cross_split_search_audit" not in manifest
+
+
 def test_write_manifest_atomic_replaces_destination(tmp_path: Path) -> None:
     destination = tmp_path / "nested" / "manifest.json"
     destination.parent.mkdir()

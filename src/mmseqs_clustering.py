@@ -23,6 +23,17 @@ from .similarity_splitting import (
 _FRACTIONS = (0.70, 0.15, 0.15)
 
 
+class CrossPartitionSimilarityError(RuntimeError):
+    """Qualifying alignment edges requiring component merging, not suppression."""
+
+    def __init__(self, direction, hits):
+        self.pairs = [(hit[0], hit[1]) for hit in hits]
+        super().__init__(
+            f"Independent MMseqs2 audit found cross-partition similarity hits "
+            f"for {direction} (hits={len(hits)})"
+        )
+
+
 def _sha256_lines(lines: Iterable[str]) -> str:
     return hashlib.sha256("\n".join(lines).encode("utf-8")).hexdigest()
 
@@ -323,12 +334,7 @@ def audit_cross_partition_similarity(
                     hits.append((query_digest, target_digest, fident, qcov, tcov))
 
             if hits:
-                first = hits[0]
-                raise RuntimeError(
-                    "Independent MMseqs2 audit found cross-partition similarity "
-                    f"hits for {label} (hits={len(hits)}, "
-                    f"first={first[0][:12]}->{first[1][:12]})"
-                )
+                raise CrossPartitionSimilarityError(label, hits)
             direction_results.append({
                 "query_partition": query_partition,
                 "target_partition": target_partition,
@@ -523,6 +529,110 @@ def build_mmseqs_manifest(
         },
         "assignments": assignments,
     }
+
+
+def merge_audit_edges(manifest, pairs, sequence_weights):
+    """Merge complete existing components and deterministically reallocate."""
+    assignments = manifest["assignments"]
+    parent = {record["cluster_id"]: record["cluster_id"] for record in assignments.values()}
+
+    def find(component):
+        while parent[component] != component:
+            parent[component] = parent[parent[component]]
+            component = parent[component]
+        return component
+
+    for query, target in sorted(set(pairs)):
+        if query not in assignments or target not in assignments:
+            raise ValueError("Audit edge contains an unknown sequence digest")
+        a = find(assignments[query]["cluster_id"])
+        b = find(assignments[target]["cluster_id"])
+        if a != b:
+            parent[max(a, b)] = min(a, b)
+    clusters = canonicalize_cluster_assignments({
+        digest: find(record["cluster_id"]) for digest, record in assignments.items()
+    })
+    if len(set(clusters.values())) >= manifest["allocation"]["clusters"]:
+        raise RuntimeError("Audit repair did not merge any distinct components")
+    cluster_weights = {}
+    for digest, cluster in clusters.items():
+        cluster_weights[cluster] = cluster_weights.get(cluster, 0.0) + sequence_weights[digest]
+    allocation = manifest["allocation"]
+    partitions = allocate_cluster_partitions(
+        cluster_weights, fractions=_FRACTIONS,
+        seed=allocation["seed"], tolerance=allocation["tolerance"],
+    )
+    updated = {
+        digest: {"cluster_id": clusters[digest], "partition": partitions[clusters[digest]]}
+        for digest in sorted(clusters)
+    }
+    manifest["assignments"] = updated
+    manifest["assignment_sha256"] = _sha256_lines(
+        f"{digest}\t{entry['cluster_id']}\t{entry['partition']}"
+        for digest, entry in updated.items()
+    )
+    allocation["clusters"] = len(cluster_weights)
+    allocation["partition_weight"] = {
+        partition: float(sum(weight for cluster, weight in cluster_weights.items()
+                             if partitions[cluster] == partition))
+        for partition in ("train", "cv", "test")
+    }
+    # Any audit of the previous assignment is invalid after reallocation.
+    manifest.pop("cross_split_search_audit", None)
+
+
+def repair_and_audit_manifest(
+    sequences, manifest, *, sequence_weights, work_dir,
+    executable="mmseqs", identity=0.8, coverage=0.8, threads=1,
+    max_repairs=20,
+):
+    """Only return after all six searches pass for the final assignment.
+
+    Repairs use sequence-only alignments, never predictions or CV scores.
+    Thresholds, cohort membership, allocation seed and tolerance stay fixed.
+    Failure to converge or an infeasible allocation remains a fatal error.
+    """
+    sequences = list(sequences)
+    ordered_digests, digest_to_sequence = _normalise_sequences(sequences)
+    weights = _normalise_weights(
+        sequence_weights, ordered_digests=ordered_digests,
+        digest_to_sequence=digest_to_sequence,
+    )
+    repairs = []
+    for attempt in range(max_repairs + 1):
+        try:
+            audit = audit_cross_partition_similarity(
+                sequences, assignments=manifest["assignments"],
+                cohort_sha256=manifest["cohort_sha256"],
+                assignment_sha256=manifest["assignment_sha256"],
+                work_dir=Path(work_dir) / f"attempt_{attempt}",
+                executable=executable, identity=identity, coverage=coverage,
+                threads=threads,
+            )
+        except CrossPartitionSimilarityError as exc:
+            if attempt == max_repairs:
+                raise RuntimeError("Cross-split audit repair limit reached") from exc
+            previous_hash = manifest["assignment_sha256"]
+            previous_clusters = manifest["allocation"]["clusters"]
+            merge_audit_edges(manifest, exc.pairs, weights)
+            repairs.append({
+                "attempt": attempt + 1,
+                "edges": [list(pair) for pair in sorted(set(exc.pairs))],
+                "previous_assignment_sha256": previous_hash,
+                "new_assignment_sha256": manifest["assignment_sha256"],
+                "clusters_before": previous_clusters,
+                "clusters_after": manifest["allocation"]["clusters"],
+            })
+            print(
+                f"Similarity repair {attempt + 1}: merged {len(exc.pairs)} "
+                "cross-partition edges; restarting all six audit directions",
+                flush=True,
+            )
+        else:
+            manifest["cross_split_search_audit"] = audit
+            manifest["similarity_repairs"] = repairs
+            return manifest
+    raise RuntimeError("Cross-split audit did not converge")
 
 
 def write_manifest_atomic(
