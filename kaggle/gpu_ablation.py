@@ -7,6 +7,7 @@ import sys
 import csv
 import json
 import math
+import shutil
 from pathlib import Path
 
 
@@ -149,6 +150,15 @@ def audit_development_results(results_dir, sequences, seeds, variants):
         raise RuntimeError("Development must remain CV-only and non-reportable")
     if manifest.get("filtered_unique_sequences") != int(sequences):
         raise RuntimeError("Development cohort size differs from request")
+    baseline = list(csv.DictReader((root / "baseline_results.csv").open()))
+    expected_baselines = {(str(seed), split) for seed in seeds
+                          for split in ("random", "grouped", "clustered")}
+    baseline_keys = [(r["seed"], r["split_method"]) for r in baseline]
+    if set(baseline_keys) != expected_baselines or len(baseline_keys) != len(expected_baselines):
+        raise RuntimeError("Incomplete train-only baseline grid")
+    for row in baseline:
+        if not math.isfinite(float(row["median_cv_mae"])) or row["median_test_mae"]:
+            raise RuntimeError("Median baseline is invalid or unexpectedly evaluated test")
     expected = {
         (str(seed), split, variant)
         for seed in seeds for split in ("random", "grouped", "clustered")
@@ -171,6 +181,8 @@ def audit_development_results(results_dir, sequences, seeds, variants):
                 if row["partition"] != "cv":
                     raise RuntimeError("Development diagnostics must use CV only")
                 value = row["raw_mae"]
+                if not math.isfinite(float(row["improvement_over_median_baseline"])):
+                    raise RuntimeError("Missing median baseline health comparison")
             if not math.isfinite(float(value)):
                 raise RuntimeError(f"Non-finite development diagnostic: {filename}")
     with (root / "test_results.csv").open(newline="") as handle:
@@ -286,17 +298,20 @@ def main():
     ).split()
     similarity_manifest = WORKING / "similarity_split_manifest.json"
     print("Stage: cohort and cross-split similarity audit", flush=True)
-    run(
-        sys.executable,
-        "experiments/build_similarity_manifest.py",
-        "--data", competition_input,
-        "--max-sequences", max_sequences,
-        "--sample-seed", "42",
-        "--output", similarity_manifest,
-        "--work-dir", "/tmp/rna-mmseqs-work",
-        "--threads", "1",
-        cwd=CHECKOUT,
-    )
+    frozen_manifest = os.environ.get("RNA_FROZEN_MANIFEST")
+    if frozen_manifest:
+        source = CHECKOUT / frozen_manifest
+        if not source.is_file() or CHECKOUT not in source.resolve().parents:
+            raise RuntimeError("Frozen manifest must be a file in the pinned repository")
+        shutil.copyfile(source, similarity_manifest)
+        print(f"Using frozen development split: {frozen_manifest}", flush=True)
+    else:
+        run(
+            sys.executable, "experiments/build_similarity_manifest.py",
+            "--data", competition_input, "--max-sequences", max_sequences,
+            "--sample-seed", "42", "--output", similarity_manifest,
+            "--work-dir", "/tmp/rna-mmseqs-work", "--threads", "1", cwd=CHECKOUT,
+        )
     print("Stage: multi-GPU training and CV evaluation", flush=True)
     run(
         sys.executable,
@@ -304,6 +319,8 @@ def main():
         "--data", competition_input,
         "--max-sequences", max_sequences,
         "--epochs", epochs,
+        "--early-stopping-patience", os.environ.get("RNA_EARLY_STOPPING_PATIENCE", "0"),
+        "--early-stopping-min-delta", os.environ.get("RNA_EARLY_STOPPING_MIN_DELTA", "0"),
         "--output-dir", RESULTS,
         "--split-method", split_method,
         "--similarity-manifest", similarity_manifest,

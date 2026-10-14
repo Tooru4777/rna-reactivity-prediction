@@ -1,0 +1,218 @@
+{
+  "sample_seed": 42,
+  "validation_seeds": [
+    42,
+    123,
+    2026
+  ],
+  "source": "/kaggle/input/competitions/stanford-ribonanza-rna-folding/train_data.csv",
+  "requested_unique_sequences": 1000,
+  "filtered_rows": 1781,
+  "filtered_unique_sequences": 1000,
+  "splits_by_seed": {
+    "42": {
+      "random": {
+        "rows": {
+          "train": 1246,
+          "cv": 267,
+          "test": 268
+        },
+        "unique_sequences": {
+          "train": 848,
+          "cv": 243,
+          "test": 243
+        },
+        "sequence_overlap": {
+          "train_cv": 152,
+          "train_test": 153,
+          "cv_test": 37
+        },
+        "similarity_cluster_overlap": {
+          "train_cv": 150,
+          "train_test": 151,
+          "cv_test": 45
+        }
+      },
+      "grouped": {
+        "rows": {
+          "train": 1267,
+          "cv": 259,
+          "test": 255
+        },
+        "unique_sequences": {
+          "train": 700,
+          "cv": 150,
+          "test": 150
+        },
+        "sequence_overlap": {
+          "train_cv": 0,
+          "train_test": 0,
+          "cv_test": 0
+        },
+        "similarity_cluster_overlap": {
+          "train_cv": 11,
+          "train_test": 7,
+          "cv_test": 4
+        }
+      },
+      "clustered": {
+        "rows": {
+          "train": 1234,
+          "cv": 274,
+          "test": 273
+        },
+        "unique_sequences": {
+          "train": 751,
+          "cv": 128,
+          "test": 121
+        },
+        "sequence_overlap": {
+          "train_cv": 0,
+          "train_test": 0,
+          "cv_test": 0
+        },
+        "similarity_cluster_overlap": {
+          "train_cv": 0,
+          "train_test": 0,
+          "cv_test": 0
+        }
+      }
+    },
+    "123": {
+      "random": {
+        "rows": {
+          "train": 1246,
+          "cv": 267,
+          "test": 268
+        },
+        "unique_sequences": {
+          "train": 830,
+          "cv": 249,
+          "test": 240
+        },
+        "sequence_overlap": {
+          "train_cv": 154,
+          "train_test": 130,
+          "cv_test": 43
+        },
+        "similarity_cluster_overlap": {
+          "train_cv": 155,
+          "train_test": 125,
+          "cv_test": 50
+        }
+      },
+      "grouped": {
+        "rows": {
+          "train": 1248,
+          "cv": 271,
+          "test": 262
+        },
+        "unique_sequences": {
+          "train": 700,
+          "cv": 150,
+          "test": 150
+        },
+        "sequence_overlap": {
+          "train_cv": 0,
+          "train_test": 0,
+          "cv_test": 0
+        },
+        "similarity_cluster_overlap": {
+          "train_cv": 6,
+          "train_test": 7,
+          "cv_test": 2
+        }
+      },
+      "clustered": {
+        "rows": {
+          "train": 1234,
+          "cv": 274,
+          "test": 273
+        },
+        "unique_sequences": {
+          "train": 751,
+          "cv": 128,
+          "test": 121
+        },
+        "sequence_overlap": {
+          "train_cv": 0,
+          "train_test": 0,
+          "cv_test": 0
+        },
+        "similarity_cluster_overlap": {
+          "train_cv": 0,
+          "train_test": 0,
+          "cv_test": 0
+        }
+      }
+    },
+    "2026": {
+      "random": {
+        "rows": {
+          "train": 1246,
+          "cv": 267,
+          "test": 268
+        },
+        "unique_sequences": {
+          "train": 845,
+          "cv": 251,
+          "test": 241
+        },
+        "sequence_overlap": {
+          "train_cv": 160,
+          "train_test": 140,
+          "cv_test": 45
+        },
+        "similarity_cluster_overlap": {
+          "train_cv": 156,
+          "train_test": 140,
+          "cv_test": 52
+        }
+      },
+      "grouped": {
+        "rows": {
+          "train": 1270,
+          "cv": 253,
+          "test": 258
+        },
+        "unique_sequences": {
+          "train": 700,
+          "cv": 150,
+          "test": 150
+        },
+        "sequence_overlap": {
+          "train_cv": 0,
+          "train_test": 0,
+          "cv_test": 0
+        },
+        "similarity_cluster_overlap": {
+          "train_cv": 10,
+          "train_test": 12,
+          "cv_test": 5
+        }
+      },
+      "clustered": {
+        "rows": {
+          "train": 1234,
+          "cv": 274,
+          "test": 273
+        },
+        "unique_sequences": {
+          "train": 751,
+          "cv": 128,
+          "test": 121
+        },
+        "sequence_overlap": {
+          "train_cv": 0,
+          "train_test": 0,
+          "cv_test": 0
+        },
+        "similarity_cluster_overlap": {
+          "train_cv": 0,
+          "train_test": 0,
+          "cv_test": 0
+        }
+      }
+    }
+  }
+}

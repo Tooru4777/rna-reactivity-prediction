@@ -200,9 +200,12 @@ def write_artifact_checksums(results_dir):
 
 
 def fit_experiment_mean_baseline(
-    frame, train_indices, reactivity_cols, max_length=206
+    frame, train_indices, reactivity_cols, max_length=206, statistic="mean"
 ):
     """Fit one clipped constant per experiment using training targets only."""
+    if statistic not in ("mean", "median"):
+        raise ValueError("Baseline statistic must be mean or median")
+    reducer = np.mean if statistic == "mean" else np.median
     train_frame = frame.iloc[list(train_indices)]
     values_by_experiment = {"2A3_MaP": [], "DMS_MaP": []}
     for _, row in train_frame.iterrows():
@@ -219,15 +222,22 @@ def fit_experiment_mean_baseline(
     all_values = np.concatenate(finite_parts) if finite_parts else np.array([])
     if all_values.size == 0:
         raise ValueError("Cannot fit a baseline without finite training targets")
-    global_mean = float(all_values.mean())
+    global_mean = float(reducer(all_values))
     means = {}
     for experiment_type in ("2A3_MaP", "DMS_MaP"):
         parts = [values for values in values_by_experiment[experiment_type] if values.size]
         values = np.concatenate(parts) if parts else np.array([])
         means[experiment_type] = (
-            float(values.mean()) if values.size else global_mean
+            float(reducer(values)) if values.size else global_mean
         )
     return means
+
+
+def fit_experiment_median_baseline(frame, train_indices, reactivity_cols, max_length=206):
+    """Fit per-assay medians using measured, clipped training targets only."""
+    return fit_experiment_mean_baseline(
+        frame, train_indices, reactivity_cols, max_length=max_length, statistic="median"
+    )
 
 
 def evaluate_experiment_mean_baseline(
@@ -451,7 +461,8 @@ def write_length_error_figure(error_by_length, model_selection, output_path):
 
 def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
                   lr=0.001, weight_decay=1e-5, patience=2, factor=0.5,
-                  variant_name="model", save_path=None):
+                  variant_name="model", save_path=None,
+                  early_stopping_patience=0, early_stopping_min_delta=0.0):
     """
     Train a single model variant and return per-epoch loss history.
 
@@ -477,6 +488,9 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
     cv_losses = []
     best_cv_loss = float('inf')
     best_epoch = 0
+    early_best = float("inf")
+    stale_epochs = 0
+    stopped_early = False
 
     start_time = time.time()
 
@@ -550,9 +564,19 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
 
         scheduler.step(avg_cv)
 
+        if avg_cv < early_best - early_stopping_min_delta:
+            early_best = avg_cv
+            stale_epochs = 0
+        else:
+            stale_epochs += 1
+
         print(f"  Epoch [{epoch+1:2d}/{num_epochs}] | "
               f"Train: {avg_train:.4f} | CV: {avg_cv:.4f}"
               f"{'  ★ best' if avg_cv <= best_cv_loss else ''}")
+        if early_stopping_patience and stale_epochs >= early_stopping_patience:
+            stopped_early = True
+            print(f"  Early stopping: {stale_epochs} epochs without material CV improvement")
+            break
 
     elapsed = time.time() - start_time
 
@@ -562,6 +586,8 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
         'best_cv_loss': best_cv_loss,
         'best_epoch': best_epoch,
         'elapsed_sec': elapsed,
+        'epochs_trained': len(cv_losses),
+        'stopped_early': stopped_early,
     }
 
 
@@ -691,6 +717,8 @@ def parse_args():
         help="Unique sequences to load with all quality-eligible experiment rows; use 0 for full data",
     )
     parser.add_argument("--epochs", type=int, help="Override config epoch count")
+    parser.add_argument("--early-stopping-patience", type=int, default=0)
+    parser.add_argument("--early-stopping-min-delta", type=float, default=0.0)
     parser.add_argument(
         "--output-dir", default=os.path.join(PROJECT_ROOT, "outputs"),
         help="Directory for CSV, JSON, plots, and model weights",
@@ -747,6 +775,8 @@ def main():
         raise ValueError("--max-sequences must be non-negative")
     if args.epochs is not None and args.epochs <= 0:
         raise ValueError("--epochs must be positive")
+    if args.early_stopping_patience < 0 or not np.isfinite(args.early_stopping_min_delta) or args.early_stopping_min_delta < 0:
+        raise ValueError("Early stopping parameters must be finite and non-negative")
     if args.bootstrap_replicates <= 0:
         raise ValueError("--bootstrap-replicates must be positive")
     if args.num_workers < 0:
@@ -1042,6 +1072,8 @@ def main():
             if similarity_manifest is not None else None
         ),
         "epochs": num_epochs,
+        "early_stopping_patience": args.early_stopping_patience,
+        "early_stopping_min_delta": args.early_stopping_min_delta,
         "batch_size": batch_size,
         "learning_rate": lr,
         "weight_decay": weight_decay,
@@ -1066,6 +1098,16 @@ def main():
                 quality_frame, cv_idx, reactivity_cols, baseline_means,
                 max_length=dataset_4dim.max_length,
             )
+            baseline_medians = fit_experiment_median_baseline(
+                quality_frame, train_idx, reactivity_cols,
+                max_length=dataset_4dim.max_length,
+            )
+            median_cv_mae, median_cv_positions = evaluate_experiment_mean_baseline(
+                quality_frame, cv_idx, reactivity_cols, baseline_medians,
+                max_length=dataset_4dim.max_length,
+            )
+            if median_cv_positions != cv_valid_positions:
+                raise RuntimeError("Mean and median baselines used different CV positions")
             # Smoke and development runs do not evaluate test targets. A
             # final-eval run fills the selected split's baseline below, only
             # after CV has selected one model variant.
@@ -1075,6 +1117,10 @@ def main():
                 "split_method": split_method,
                 "baseline": "Train-only experiment mean",
                 "cv_mae": cv_mae,
+                "median_cv_mae": median_cv_mae,
+                "median_test_mae": np.nan,
+                "median_2A3_MaP": baseline_medians["2A3_MaP"],
+                "median_DMS_MaP": baseline_medians["DMS_MaP"],
                 "test_mae": test_mae,
                 "mean_2A3_MaP": baseline_means["2A3_MaP"],
                 "mean_DMS_MaP": baseline_means["DMS_MaP"],
@@ -1185,6 +1231,8 @@ def main():
                     weight_decay=weight_decay, patience=patience, factor=factor,
                     variant_name=name,
                     save_path=checkpoint_path,
+                    early_stopping_patience=args.early_stopping_patience,
+                    early_stopping_min_delta=args.early_stopping_min_delta,
                 )
                 checkpoints[(seed, split_method, variant_id)] = checkpoint_path
 
@@ -1245,6 +1293,8 @@ def main():
             'test_mae': res['test_mae'],
             'final_train_loss': res['train_losses'][-1],
             'elapsed_sec': res['elapsed_sec'],
+            'epochs_trained': res['epochs_trained'],
+            'stopped_early': res['stopped_early'],
         })
 
     summary_df = pd.DataFrame(summary_records)
@@ -1350,6 +1400,15 @@ def main():
                 (baseline_df["seed"] == seed)
                 & (baseline_df["split_method"] == selected_split)
             )
+            baseline_medians = fit_experiment_median_baseline(
+                quality_frame, train_idx, reactivity_cols,
+                max_length=dataset_4dim.max_length,
+            )
+            median_test_mae, _ = evaluate_experiment_mean_baseline(
+                quality_frame, test_idx, reactivity_cols, baseline_medians,
+                max_length=dataset_4dim.max_length,
+            )
+            baseline_df.loc[baseline_mask, "median_test_mae"] = median_test_mae
             baseline_df.loc[baseline_mask, "test_mae"] = baseline_test_mae
             baseline_df.loc[
                 baseline_mask, "test_valid_positions"

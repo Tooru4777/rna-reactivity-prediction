@@ -1,4 +1,4 @@
-"""Submit an exact-commit smoke run requesting Kaggle T4 GPUs."""
+"""Submit exact-commit smoke, development or convergence runs on Kaggle T4."""
 
 import argparse
 import json
@@ -12,7 +12,7 @@ from kaggle.api import kaggle_api_extended
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--commit", required=True)
-    parser.add_argument("--mode", choices=("smoke", "development"), default="smoke")
+    parser.add_argument("--mode", choices=("smoke", "development", "convergence"), default="smoke")
     args = parser.parse_args()
     if not re.fullmatch(r"[0-9a-f]{40}", args.commit):
         parser.error("--commit must be an exact lowercase 40-character SHA")
@@ -23,7 +23,7 @@ def main():
     placeholder = "__PIN_EXACT_COMMIT_BEFORE_SUBMISSION__"
     if runner.count(placeholder) != 1:
         raise RuntimeError("Runner must contain exactly one commit placeholder")
-    if args.mode == "development":
+    if args.mode in ("development", "convergence"):
         settings = {
             "RNA_RUN_MODE": "development",
             "RNA_MAX_SEQUENCES": "1000",
@@ -35,6 +35,17 @@ def main():
                 "transformer_vienna_shuffled7 transformer_vienna_zero7"
             ),
         }
+        if args.mode == "convergence":
+            settings.update({
+                "RNA_EPOCHS": "60",
+                "RNA_EARLY_STOPPING_PATIENCE": "8",
+                "RNA_EARLY_STOPPING_MIN_DELTA": "0.0001",
+                "RNA_FROZEN_MANIFEST": "results/kaggle-v17-9d904ff/similarity_split_manifest.json",
+                "RNA_VARIANTS": (
+                    "cnn_bilstm transformer_vienna_real7 "
+                    "transformer_vienna_zero7 transformer_vienna_shuffled7"
+                ),
+            })
         prefix = "import os\n" + "\n".join(
             f"os.environ[{key!r}] = {value!r}" for key, value in settings.items()
         ) + "\n"

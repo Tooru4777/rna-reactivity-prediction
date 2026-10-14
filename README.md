@@ -12,6 +12,13 @@ data and model checkpoints are not redistributed.
 
 ## Archived V10 benchmark
 
+Current-data CV development evidence is archived in
+[`results/kaggle-v17-9d904ff`](results/kaggle-v17-9d904ff/README.md).
+It includes all 54 model/seed/split results, prediction health diagnostics,
+similarity repairs and a checksum inventory. Its clustered CV mean MAE of
+0.2086 for real ViennaRNA is exploratory development evidence, not a final-test
+headline. V10 below is historical and uses the superseded data snapshot.
+
 > **Historical, not the final headline result.** V10 used Kaggle's real
 > `OLD/train_data.csv` snapshot. Kaggle now provides a corrected current
 > `train_data.csv` with changed error fields and a small number of changed
@@ -215,6 +222,22 @@ claim.
 
 ## Reproducibility
 
+### Convergence and final-test planning
+
+The convergence submission uses the exact V17 similarity manifest and the same
+1,000-sequence cohort and training seeds. It retrains Bi-LSTM and the real,
+zero and shuffled ViennaRNA models from initialization for up to 60 epochs,
+with CV early stopping (patience 8, material improvement 0.0001).
+The absolute best CV checkpoint is retained even if a small improvement does
+not reset patience. Per-assay train-only median baselines supplement the mean
+reference; both use the same measured CV positions.
+
+Submit with `python kaggle/submit_gpu.py --commit <pushed-SHA> --mode convergence`.
+The actual epoch count and stopping flag are recorded per model. The final-test
+protocol remains a [draft](docs/final_test_protocol.md) until the model and
+hyperparameters are determined. The entire development cohort is exposed by
+the random/grouped runs and cannot supply an independent final test.
+
 ### Prediction health and development
 
 Development evaluates untrained and CV-selected checkpoints on the same CV
@@ -245,7 +268,10 @@ python experiments/validate_archive.py results/kaggle-v10-fec86dc
 2. Select Kaggle T4 x2 and enable Internet for dependency, MMseqs2, and repository
    access.
 3. Configure `~/.kaggle/kaggle.json`.
-4. Run `bash kaggle/run_gpu_ablation.sh`, or push `kaggle/` with the Kaggle CLI.
+4. Push the source commit, then run
+   `python kaggle/submit_gpu.py --commit <pushed-40-character-SHA> --mode smoke`.
+   The helper pins the runner in a temporary staging directory and leaves the
+   repository placeholder unchanged.
 
 The next submitted run is deliberately a non-reportable smoke test: 256 current-
 data sequences, one epoch, seed 42, all three split strategies, and four

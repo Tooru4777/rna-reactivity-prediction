@@ -41,4 +41,14 @@ def summarize_prediction_health(errors, baselines):
     health["saturation_warning"] = health["fraction_clipped"] >= 0.95
     health["constant_warning"] = health["raw_prediction_std"] < 1e-6
     health["beats_baseline"] = health["improvement_over_baseline"] > 0
+    if "median_cv_mae" in baselines:
+        median = baselines[["seed", "split_method", "median_cv_mae"]].rename(
+            columns={"median_cv_mae": "train_median_baseline_cv_mae"}
+        )
+        health = health.merge(median, on=["seed", "split_method"], validate="many_to_one")
+        health["improvement_over_median_baseline"] = np.where(
+            health["partition"].eq("cv"),
+            health["train_median_baseline_cv_mae"] - health["mae"], np.nan,
+        )
+        health["beats_median_baseline"] = health["improvement_over_median_baseline"] > 0
     return health

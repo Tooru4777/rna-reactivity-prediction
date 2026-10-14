@@ -21,6 +21,11 @@ outputs/
 !results/**/error_analysis_per_sequence.csv
 !results/**/sequence_length_distribution.csv
 !results/**/baseline_results.csv
+!results/**/prediction_health.csv
+!results/**/prediction_health_initial.csv
+!results/**/evaluation_metrics.csv
+!results/**/evaluation_metrics_aggregate.csv
+!results/**/paired_bootstrap_ci.csv
 
 # Python caches
 __pycache__/

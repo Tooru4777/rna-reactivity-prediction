@@ -4,9 +4,21 @@ Each reportable Kaggle run is archived in a versioned subdirectory. Archives
 contain compact CSV, JSON, and PNG artifacts only; competition data, logs,
 profile-level predictions, and model checkpoints are intentionally excluded.
 
-## Reportable run
+## Current-data development evidence
 
-[`kaggle-v10-fec86dc`](kaggle-v10-fec86dc/README.md) is the current validated run.
+[`kaggle-v17-9d904ff`](kaggle-v17-9d904ff/README.md) is the current completed
+CV development archive: 1,000 real current-data sequences, three training seeds,
+all six variants and all three split protocols on T4 x2. It is non-reportable
+development evidence with no dedicated test scores. Validate with:
+
+```bash
+python experiments/validate_development_archive.py results/kaggle-v17-9d904ff
+```
+
+## Historical benchmark
+
+[`kaggle-v10-fec86dc`](kaggle-v10-fec86dc/README.md) is a historical validated run
+using the superseded OLD data snapshot, not the final current-data estimate.
 It used one Tesla P100, real competition measurements, three validation seeds,
 and training commit `fec86dc0b2fd23e2e5433b6c65380a9baad1a9f5`.
 Version 9 remains only as the prior validated snapshot; Version 10 supersedes it

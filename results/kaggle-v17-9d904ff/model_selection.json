@@ -1,0 +1,16 @@
+{
+  "selection_rule": "lowest mean CV MAE across validation seeds",
+  "selected_split_method": "clustered",
+  "selected_variant_id": "transformer_vienna_real7",
+  "selected_variant": "Full Model (+ViennaRNA 7d)",
+  "mean_cv_mae": 0.2085968329373805,
+  "std_cv_mae": 0.0006201520171469875,
+  "mean_held_out_test_mae": null,
+  "std_held_out_test_mae": null,
+  "seeds": 3,
+  "test_protocol": "test partition not evaluated during development",
+  "mean_cv_macro_sequence_mae": 0.21336208511336519,
+  "std_cv_macro_sequence_mae": 0.0009706330050807496,
+  "mean_test_macro_sequence_mae": null,
+  "std_test_macro_sequence_mae": null
+}
