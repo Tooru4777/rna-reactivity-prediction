@@ -92,8 +92,8 @@
 
 ### Experiment 5: Padding-safe repeated grouped evaluation (reportable)
 
-- **Date**: 2026-08-07
-- **Training commit**: `bff599f5bfa59ccf6a2d202a35231a76384b843a`
+- **Validated rerun date**: 2026-08-11
+- **Training commit**: `fec86dc0b2fd23e2e5433b6c65380a9baad1a9f5`
 - **Compute**: one Kaggle Tesla P100 16 GB
 - **Cohort**: 1,000 quality-eligible sequences, 1,820 profiles
 - **Protocol**: row-random and exact-sequence-grouped 70/15/15 splits; seeds
@@ -115,5 +115,5 @@
   - Results are internal repeated holdouts, not external validation or a
     competition leaderboard result.
 
-See [`results/kaggle-v9-bff599f`](../results/kaggle-v9-bff599f/README.md) for
+See [`results/kaggle-v10-fec86dc`](../results/kaggle-v10-fec86dc/README.md) for
 the compact evidence package.

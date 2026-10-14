@@ -2,7 +2,7 @@
 Unit Tests — Training Smoke Tests
 ===================================
 Verifies that a single training step (forward + backward + optimizer.step())
-completes without error for both reactivity and 3D models.
+completes without error for the reportable reactivity models.
 
 These are NOT performance tests — they only check that the training loop
 mechanics are correct (loss computation, gradient flow, parameter updates).
@@ -13,6 +13,7 @@ Usage:
 
 import sys
 import os
+import hashlib
 import pytest
 import pandas as pd
 import torch
@@ -29,8 +30,7 @@ from src.model_reactivity import (
     RNAReactivityCNN_LSTM_Transformer,
     RNAReactivityPredictor,
 )
-from src.model_3d import RNAPredictor3D
-from experiments.run_ablation import evaluate_checkpoint
+from experiments.run_ablation import evaluate_checkpoint, sha256_frame
 
 
 # =====================================================================
@@ -172,62 +172,16 @@ class TestReactivityTraining:
         }
 
 
-# =====================================================================
-# 3D Model Training Smoke Tests
-# =====================================================================
-
-class TestModel3DTraining:
-    """Smoke tests for 3D structure prediction training."""
-
-    def test_single_training_step(self):
-        """One forward + backward + step for 3D model."""
-        model = RNAPredictor3D()
-        model.train()
-
-        optimizer = optim.Adam(model.parameters(), lr=1e-3)
-        criterion = nn.MSELoss(reduction='none')
-
-        batch_size, seq_len = 4, 50
-        sequences = torch.randn(batch_size, seq_len, 4)
-        coords = torch.randn(batch_size, seq_len, 3)
-        masks = torch.ones(batch_size, seq_len)
-
-        initial_params = {n: p.clone() for n, p in model.named_parameters()}
-
-        optimizer.zero_grad()
-        predictions = model(sequences)
-        loss_matrix = criterion(predictions, coords)
-        loss_per_nt = loss_matrix.sum(dim=2)
-        masked_loss = loss_per_nt * masks
-        loss = masked_loss.sum() / masks.sum()
-        loss.backward()
-        optimizer.step()
-
-        assert not torch.isnan(loss), "3D model loss is NaN"
-        assert not torch.isinf(loss), "3D model loss is Inf"
-
-        params_changed = any(
-            not torch.equal(p, initial_params[n])
-            for n, p in model.named_parameters()
-        )
-        assert params_changed, "No parameters changed after optimizer step"
-
-    def test_masked_3d_loss(self):
-        """Padded positions should not contribute to 3D loss."""
-        model = RNAPredictor3D()
-        model.eval()
-
-        sequences = torch.randn(2, 50, 4)
-        coords = torch.randn(2, 50, 3)
-        masks = torch.zeros(2, 50)
-        masks[:, :25] = 1.0  # Only first 25 positions valid
-
-        with torch.no_grad():
-            predictions = model(sequences)
-            loss_matrix = (predictions - coords) ** 2
-            loss_per_nt = loss_matrix.sum(dim=2)
-            masked_loss = loss_per_nt * masks
-
-            assert (masked_loss[:, 25:] == 0).all(), (
-                "Padded positions should have zero loss"
-            )
+def test_streaming_frame_hash_matches_reference_serialization():
+    frame = pd.DataFrame({
+        "sequence": ["AAAA", "CCCC"],
+        "value": [0.1, float("nan")],
+    })
+    serialized = frame.to_csv(
+        index=False,
+        na_rep="<NA>",
+        float_format="%.17g",
+        lineterminator="\n",
+    )
+    expected = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+    assert sha256_frame(frame, ["sequence", "value"]) == expected

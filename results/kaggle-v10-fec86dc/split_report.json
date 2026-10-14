@@ -1,0 +1,122 @@
+{
+  "sample_seed": 42,
+  "validation_seeds": [
+    42,
+    123,
+    2026
+  ],
+  "source": "/kaggle/input/competitions/stanford-ribonanza-rna-folding/OLD/train_data.csv",
+  "requested_unique_sequences": 1000,
+  "filtered_rows": 1820,
+  "filtered_unique_sequences": 1000,
+  "splits_by_seed": {
+    "42": {
+      "random": {
+        "rows": {
+          "train": 1274,
+          "cv": 273,
+          "test": 273
+        },
+        "unique_sequences": {
+          "train": 838,
+          "cv": 245,
+          "test": 252
+        },
+        "sequence_overlap": {
+          "train_cv": 153,
+          "train_test": 152,
+          "cv_test": 41
+        }
+      },
+      "grouped": {
+        "rows": {
+          "train": 1269,
+          "cv": 247,
+          "test": 304
+        },
+        "unique_sequences": {
+          "train": 700,
+          "cv": 150,
+          "test": 150
+        },
+        "sequence_overlap": {
+          "train_cv": 0,
+          "train_test": 0,
+          "cv_test": 0
+        }
+      }
+    },
+    "123": {
+      "random": {
+        "rows": {
+          "train": 1274,
+          "cv": 273,
+          "test": 273
+        },
+        "unique_sequences": {
+          "train": 858,
+          "cv": 245,
+          "test": 240
+        },
+        "sequence_overlap": {
+          "train_cv": 156,
+          "train_test": 161,
+          "cv_test": 35
+        }
+      },
+      "grouped": {
+        "rows": {
+          "train": 1292,
+          "cv": 277,
+          "test": 251
+        },
+        "unique_sequences": {
+          "train": 700,
+          "cv": 150,
+          "test": 150
+        },
+        "sequence_overlap": {
+          "train_cv": 0,
+          "train_test": 0,
+          "cv_test": 0
+        }
+      }
+    },
+    "2026": {
+      "random": {
+        "rows": {
+          "train": 1274,
+          "cv": 273,
+          "test": 273
+        },
+        "unique_sequences": {
+          "train": 846,
+          "cv": 246,
+          "test": 246
+        },
+        "sequence_overlap": {
+          "train_cv": 158,
+          "train_test": 151,
+          "cv_test": 39
+        }
+      },
+      "grouped": {
+        "rows": {
+          "train": 1239,
+          "cv": 291,
+          "test": 290
+        },
+        "unique_sequences": {
+          "train": 700,
+          "cv": 150,
+          "test": 150
+        },
+        "sequence_overlap": {
+          "train_cv": 0,
+          "train_test": 0,
+          "cv_test": 0
+        }
+      }
+    }
+  }
+}

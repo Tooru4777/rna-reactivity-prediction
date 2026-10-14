@@ -1,1 +1,1 @@
-# RNA Structure Prediction — Source Package
+"""Leakage-safe RNA chemical-reactivity prediction package."""
