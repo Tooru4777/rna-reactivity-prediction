@@ -21,15 +21,29 @@ def main():
         raise RuntimeError("Archive destination must not already exist")
     api = KaggleApi()
     api.authenticate()
+    if api.kernels_status(args.kernel).to_dict().get("status") != "COMPLETE":
+        raise RuntimeError("Only COMPLETE kernel outputs may be archived")
     owner, slug = args.kernel.split("/", 1)
+    files = {}
+    seen_tokens = set()
     with api.build_kaggle_client() as client:
         request = ApiListKernelSessionOutputRequest()
         request.user_name = owner
         request.kernel_slug = slug
-        response = client.kernels.kernels_api_client.list_kernel_session_output(request)
-    if response.next_page_token:
-        raise RuntimeError("Paginated output requires explicit pagination support")
-    files = {item.file_name: item.url for item in response.files}
+        request.page_size = 20
+        while True:
+            response = client.kernels.kernels_api_client.list_kernel_session_output(request)
+            for item in response.files:
+                if item.file_name in files:
+                    raise RuntimeError("Duplicate output file across pages")
+                files[item.file_name] = item.url
+            token = response.next_page_token
+            if not token:
+                break
+            if token in seen_tokens:
+                raise RuntimeError("Repeated output pagination token")
+            seen_tokens.add(token)
+            request.page_token = token
 
     def fetch(name):
         response = requests.get(files[f"results/{name}"], timeout=120)
@@ -54,6 +68,8 @@ def main():
         raise RuntimeError("Downloaded run does not match requested training commit")
     if manifest.get("run_mode") != "development" or manifest.get("reportable") is not False:
         raise RuntimeError("This downloader requires a non-reportable development run")
+    if "run_manifest.json" not in names:
+        raise RuntimeError("Checksum inventory must include the run manifest")
     destination.mkdir(parents=True)
     for name, expected in names.items():
         data = manifest_bytes if name == "run_manifest.json" else fetch(name)

@@ -1,3 +1,6 @@
+Current development evidence: [V18 convergence](kaggle-v18-df2d87b/README.md).
+V17 and V18 are exploratory CV evidence, not independent final-test results.
+
 # Reproducibility artifacts
 
 Each reportable Kaggle run is archived in a versioned subdirectory. Archives
@@ -6,7 +9,7 @@ profile-level predictions, and model checkpoints are intentionally excluded.
 
 ## Current-data development evidence
 
-[`kaggle-v17-9d904ff`](kaggle-v17-9d904ff/README.md) is the current completed
+[`kaggle-v17-9d904ff`](kaggle-v17-9d904ff/README.md) is the earlier completed
 CV development archive: 1,000 real current-data sequences, three training seeds,
 all six variants and all three split protocols on T4 x2. It is non-reportable
 development evidence with no dedicated test scores. Validate with:
@@ -24,7 +27,7 @@ and training commit `fec86dc0b2fd23e2e5433b6c65380a9baad1a9f5`.
 Version 9 remains only as the prior validated snapshot; Version 10 supersedes it
 with direct full-cohort exact-length artifacts and an integrity inventory.
 
-Required files for a final run:
+Artifact roles (historical and development schemas differ; final protocol remains draft):
 
 - `run_manifest.json`: Git commit, cohort fingerprint, seeds, and hyperparameters
 - `environment.json`: Python, PyTorch, CUDA, and GPU details
@@ -33,7 +36,7 @@ Required files for a final run:
 - `ablation_results.csv`: per-epoch training and CV curves
 - `ablation_summary.csv`: per-seed checkpoint-selection and test results
 - `ablation_aggregate.csv`: multi-seed CV and held-out test MAE
-- `test_results.csv`: held-out test MAE for every seed and model
+- `test_results.csv`: empty for development; historical test rows must not be reused as a new final test
 - `model_selection.json`: selection rule and selected model result
 - `leakage_comparison.csv` and `leakage_aggregate.csv`: per-seed and aggregate random/grouped comparisons
 - `vienna_comparison.csv` and `vienna_aggregate.csv`: per-seed and aggregate controlled ViennaRNA comparisons

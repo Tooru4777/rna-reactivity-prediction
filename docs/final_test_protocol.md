@@ -1,6 +1,10 @@
 # Final-test protocol draft
 
 Status: DRAFT; no final-test evaluation is authorized by this document alone.
+The CLI currently rejects every `final-eval` request before loading data.
+Re-enabling requires a separately reviewed implementation of the frozen protocol
+and development-exposure/neighbour exclusion controls. A checksum-valid V17/V18
+manifest does not satisfy that requirement.
 Freeze a dated, committed protocol after the convergence study determines the
 model, hyperparameters, training seeds and any confirmatory contrasts.
 
@@ -30,3 +34,8 @@ model, hyperparameters, training seeds and any confirmatory contrasts.
 Remaining decisions: convergence result, model/hyperparameters, test cohort
 size and source availability, and whether confirmatory control contrasts are
 worth the additional scope. These are unresolved; this draft is not frozen.
+
+Review update (2026-10-22): V18 is COMPLETE; all 36 CV checkpoints and both
+train-only baselines have been independently replayed/recomputed. These results
+do not freeze a model or authorize test access. The 1,000-sequence development
+cohort remains entirely excluded from an independent final-test claim.

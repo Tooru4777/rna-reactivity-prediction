@@ -327,6 +327,9 @@ def _validate_cross_split_search_audit(manifest: Mapping[str, Any]) -> None:
         "alignment_mode": 3,
         "seq_id_mode": 0,
         "mask": 0,
+        "search_type": 3,
+        "strand": 1,
+        "kmer_length": 8,
     }
     for parameter, expected in fixed_parameters.items():
         if audit_parameters.get(parameter) != expected:

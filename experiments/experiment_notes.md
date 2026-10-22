@@ -52,7 +52,7 @@
 
 ## Key Takeaways
 
-1. **Training vs. evaluation metrics can differ**: It's valid (and sometimes necessary) to use a different loss formulation during training than the final evaluation metric, as long as they optimise the same objective.
+1. **Training vs. evaluation metrics can differ**: It's valid (and sometimes necessary) to use a different loss formulation during training than the final evaluation metric, provided the surrogate is justified and checkpoint selection uses the declared evaluation metric. The two objectives here are related but not identical.
 
 2. **Padding changes normalization conclusions**: BatchNorm appeared to
    stabilise the early exploratory model, but a later padding audit showed that
@@ -60,9 +60,9 @@
    reportable model uses per-position LayerNorm and explicitly zeroes padded CNN
    activations.
 
-3. **Residual connections are cheap insurance**: The `transformer_out + lstm_out` residual costs almost nothing computationally but prevents the Transformer from hurting performance when it hasn't learned useful patterns yet.
+3. **Residual connections are cheap insurance**: The `transformer_out + lstm_out` residual is inexpensive and may aid optimization; it does not guarantee that adding a Transformer cannot worsen performance.
 
-4. **Weight decay needs careful tuning**: 1e-4 was too aggressive for this dataset size, causing underfitting. Reducing to 1e-5 improved generalisation.
+4. **Weight decay needs careful tuning**: The early run favoured 1e-5 over 1e-4. Without a controlled, replicated comparison this does not establish an underfitting mechanism or a generalisation benefit.
 
 ## TODO: Future Experiments
 
@@ -90,7 +90,7 @@
 
 ---
 
-### Experiment 5: Padding-safe repeated grouped evaluation (reportable)
+### Experiment 5: Historical OLD-data repeated grouped evaluation
 
 - **Validated rerun date**: 2026-08-11
 - **Training commit**: `fec86dc0b2fd23e2e5433b6c65380a9baad1a9f5`

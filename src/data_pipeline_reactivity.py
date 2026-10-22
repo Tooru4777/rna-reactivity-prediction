@@ -26,6 +26,11 @@ except ImportError:
     HAS_VIENNA = False
 
 
+def fold_structure(sequence, model_details):
+    """Compute sequence-only MFE with the recorded ViennaRNA model details."""
+    return RNA.fold_compound(sequence, model_details, RNA.OPTION_MFE).mfe()[0]
+
+
 class RNAReactivityDataset(Dataset):
     """
     Dataset for RNA reactivity prediction.
@@ -37,7 +42,7 @@ class RNAReactivityDataset(Dataset):
 
     Args:
         sequences_csv: Path to CSV with 'sequence', 'experiment_type', reactivity columns
-        max_length:    Pad/truncate all sequences to this length
+        max_length:    Pad to this length; reject longer sequences
         use_structure: If True, compute ViennaRNA 2D structure (7-dim input).
                        If False, use sequence-only features (4-dim input).
         max_samples:   Optional maximum number of CSV rows to load.
@@ -49,6 +54,8 @@ class RNAReactivityDataset(Dataset):
                  max_samples=None, dataframe=None, structure_mode=None,
                  structure_control_seed=314159, precomputed_structures=None):
         self.max_length = max_length
+        if isinstance(max_length, bool) or not isinstance(max_length, int) or max_length <= 0:
+            raise ValueError("max_length must be a positive integer")
         if structure_mode is None:
             structure_mode = "real" if use_structure else "none"
         if structure_mode not in self.STRUCTURE_MODES:
@@ -91,10 +98,17 @@ class RNAReactivityDataset(Dataset):
             # Compute secondary structures if requested
             if self.use_structure:
                 print("Computing ViennaRNA 2D structures...")
+                model_details = RNA.md()
+                self.vienna_model_details = {
+                    name: getattr(model_details, name)
+                    for name in dir(model_details)
+                    if not name.startswith("_") and name != "thisown"
+                    and isinstance(getattr(model_details, name), (str, int, float))
+                }
                 unique_sequences = self.seq_df["sequence"].astype(str).unique()
                 if precomputed_structures is None:
                     structures = {
-                        sequence: RNA.fold(sequence)[0]
+                        sequence: fold_structure(sequence, model_details)
                         for sequence in unique_sequences
                     }
                 else:
@@ -185,6 +199,8 @@ class RNAReactivityDataset(Dataset):
         invalid_sequence = ~sequences.astype(str).str.fullmatch(r"[ACGU]+")
         if invalid_sequence.any():
             raise ValueError("RNA sequences may contain only A, C, G, and U")
+        if sequences.astype(str).str.len().gt(self.max_length).any():
+            raise ValueError("Sequence exceeds max_length; silent truncation is not allowed")
         allowed_experiments = {"2A3_MaP", "DMS_MaP"}
         observed = set(self.seq_df["experiment_type"].dropna().astype(str))
         unexpected = sorted(observed - allowed_experiments)
@@ -200,8 +216,14 @@ class RNAReactivityDataset(Dataset):
             raise ValueError(
                 "Reactivity columns must cover continuous positions starting at 0001"
             )
-        if self.seq_df[reactivity_cols].notna().sum(axis=1).eq(0).any():
-            raise ValueError("Each retained experiment row must contain a reactivity target")
+        values = self.seq_df[reactivity_cols].to_numpy(dtype=np.float32)
+        if np.isinf(values).any():
+            raise ValueError("Infinite reactivity targets are invalid; missing targets must be NaN")
+        within_sequence = np.arange(len(reactivity_cols))[None, :] < sequences.str.len().to_numpy()[:, None]
+        if (np.isfinite(values) & ~within_sequence).any():
+            raise ValueError("Finite reactivity target lies beyond its RNA sequence")
+        if not (np.isfinite(values) & within_sequence).any(axis=1).all():
+            raise ValueError("Each retained experiment row must contain a finite reactivity target")
 
     def _reactivity_columns(self):
         """Return target columns in numeric nucleotide order."""

@@ -1,0 +1,1809 @@
+seed,split_method,variant_id,variant,epoch,train_loss,cv_loss
+42,random,cnn_bilstm,CNN + Bi-LSTM,1,0.2727475693838619,0.25419932769610704
+42,random,cnn_bilstm,CNN + Bi-LSTM,2,0.2516763657519838,0.23427762797726448
+42,random,cnn_bilstm,CNN + Bi-LSTM,3,0.23708767449039334,0.22844236334961196
+42,random,cnn_bilstm,CNN + Bi-LSTM,4,0.23199600586222388,0.22663553304782727
+42,random,cnn_bilstm,CNN + Bi-LSTM,5,0.23023460120854317,0.2263157716170451
+42,random,cnn_bilstm,CNN + Bi-LSTM,6,0.2295616530494162,0.22403334376452
+42,random,cnn_bilstm,CNN + Bi-LSTM,7,0.2274570079921057,0.22473134511893433
+42,random,cnn_bilstm,CNN + Bi-LSTM,8,0.22692518743377948,0.2227004497580908
+42,random,cnn_bilstm,CNN + Bi-LSTM,9,0.22621219181588648,0.22467375800332381
+42,random,cnn_bilstm,CNN + Bi-LSTM,10,0.2261866523490679,0.2209403159919876
+42,random,cnn_bilstm,CNN + Bi-LSTM,11,0.22450994878784192,0.22007441325450222
+42,random,cnn_bilstm,CNN + Bi-LSTM,12,0.22310480527879972,0.21919465962029966
+42,random,cnn_bilstm,CNN + Bi-LSTM,13,0.22346427388015178,0.21990901843804836
+42,random,cnn_bilstm,CNN + Bi-LSTM,14,0.22230695623280547,0.21801309762997395
+42,random,cnn_bilstm,CNN + Bi-LSTM,15,0.22119664501353278,0.2180243129752538
+42,random,cnn_bilstm,CNN + Bi-LSTM,16,0.22013237130827024,0.2176095858947876
+42,random,cnn_bilstm,CNN + Bi-LSTM,17,0.21922655239440933,0.213102899464514
+42,random,cnn_bilstm,CNN + Bi-LSTM,18,0.21788794889793509,0.2125977085349182
+42,random,cnn_bilstm,CNN + Bi-LSTM,19,0.21668639901290931,0.21456823612079112
+42,random,cnn_bilstm,CNN + Bi-LSTM,20,0.21620023710786193,0.211158741212817
+42,random,cnn_bilstm,CNN + Bi-LSTM,21,0.21482088382593958,0.21142250998766315
+42,random,cnn_bilstm,CNN + Bi-LSTM,22,0.21414787483147324,0.20952781511120555
+42,random,cnn_bilstm,CNN + Bi-LSTM,23,0.2127981681436709,0.20910038648090198
+42,random,cnn_bilstm,CNN + Bi-LSTM,24,0.21179717407246346,0.20817859991842264
+42,random,cnn_bilstm,CNN + Bi-LSTM,25,0.21175130571037254,0.2083186981628434
+42,random,cnn_bilstm,CNN + Bi-LSTM,26,0.21095072154708822,0.20888528471519563
+42,random,cnn_bilstm,CNN + Bi-LSTM,27,0.21028663309067677,0.2072091039439283
+42,random,cnn_bilstm,CNN + Bi-LSTM,28,0.20928172824688118,0.20661274147616715
+42,random,cnn_bilstm,CNN + Bi-LSTM,29,0.20928608465069506,0.20658706198044915
+42,random,cnn_bilstm,CNN + Bi-LSTM,30,0.20785639185653676,0.2060810821704799
+42,random,cnn_bilstm,CNN + Bi-LSTM,31,0.2073997222315778,0.2059259416472305
+42,random,cnn_bilstm,CNN + Bi-LSTM,32,0.20698361889685632,0.2049594393873796
+42,random,cnn_bilstm,CNN + Bi-LSTM,33,0.20630890057773274,0.20474466699362476
+42,random,cnn_bilstm,CNN + Bi-LSTM,34,0.2053511624111974,0.20392040216840435
+42,random,cnn_bilstm,CNN + Bi-LSTM,35,0.20510747038500068,0.20354047277395787
+42,random,cnn_bilstm,CNN + Bi-LSTM,36,0.20399766563229313,0.20310403536011973
+42,random,cnn_bilstm,CNN + Bi-LSTM,37,0.20347612871930054,0.20262663087024657
+42,random,cnn_bilstm,CNN + Bi-LSTM,38,0.2033805044685545,0.20273991466769678
+42,random,cnn_bilstm,CNN + Bi-LSTM,39,0.20326927323298247,0.2034862617208506
+42,random,cnn_bilstm,CNN + Bi-LSTM,40,0.20247323144170393,0.20209608233115814
+42,random,cnn_bilstm,CNN + Bi-LSTM,41,0.201012982985509,0.20282572297097295
+42,random,cnn_bilstm,CNN + Bi-LSTM,42,0.20103911250565976,0.20289454558574144
+42,random,cnn_bilstm,CNN + Bi-LSTM,43,0.2013979242831852,0.20204468130449055
+42,random,cnn_bilstm,CNN + Bi-LSTM,44,0.1998654830738241,0.20038117962588212
+42,random,cnn_bilstm,CNN + Bi-LSTM,45,0.19920350060826633,0.20209813629925452
+42,random,cnn_bilstm,CNN + Bi-LSTM,46,0.19776590169297212,0.2005736128852666
+42,random,cnn_bilstm,CNN + Bi-LSTM,47,0.19797417271377193,0.20031713060111053
+42,random,cnn_bilstm,CNN + Bi-LSTM,48,0.19766541605563587,0.20261425293410984
+42,random,cnn_bilstm,CNN + Bi-LSTM,49,0.19750529595864372,0.20119048566691197
+42,random,cnn_bilstm,CNN + Bi-LSTM,50,0.19574408370290622,0.20004305225385127
+42,random,cnn_bilstm,CNN + Bi-LSTM,51,0.19595231169383184,0.19983643872579804
+42,random,cnn_bilstm,CNN + Bi-LSTM,52,0.1940071823368899,0.19920578990469717
+42,random,cnn_bilstm,CNN + Bi-LSTM,53,0.19345898866413871,0.20066955858925395
+42,random,cnn_bilstm,CNN + Bi-LSTM,54,0.19299392574073268,0.1992351143732355
+42,random,cnn_bilstm,CNN + Bi-LSTM,55,0.19260026174350356,0.1998291948461646
+42,random,cnn_bilstm,CNN + Bi-LSTM,56,0.19062168976618465,0.19863544954858262
+42,random,cnn_bilstm,CNN + Bi-LSTM,57,0.18967329155532844,0.19847305478084815
+42,random,cnn_bilstm,CNN + Bi-LSTM,58,0.1893280079745693,0.19874500315109916
+42,random,cnn_bilstm,CNN + Bi-LSTM,59,0.18847436451424285,0.19836257985818745
+42,random,cnn_bilstm,CNN + Bi-LSTM,60,0.1891371413013861,0.1983167833371218
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),1,0.9009379664834039,0.3076973953284499
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2,0.32260004378482593,0.2792874867477311
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),3,0.2935059478088104,0.2546384208152607
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),4,0.27721158052656947,0.24702350367842596
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),5,0.26475867904846584,0.24163624018407093
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),6,0.2533850088555679,0.236393806488902
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),7,0.24056616747871196,0.2176216638260524
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),8,0.22724595783494914,0.207371148610008
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),9,0.21726447174002034,0.20324086291802876
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),10,0.2125607921116503,0.19965753159777994
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),11,0.20852206846152296,0.1996094542335324
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),12,0.20589116260238854,0.19520060854761767
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),13,0.2039453126187031,0.1951724662479893
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),14,0.20254924495093984,0.1973522924343106
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),15,0.20136250476157708,0.19298653804318824
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),16,0.20212048291966833,0.19358119549285763
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),17,0.20169145182803408,0.19175453089584454
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),18,0.19886506570184997,0.19407781353851206
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),19,0.19866475174560033,0.18991523039305433
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),20,0.19636468972956078,0.1904635068591916
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),21,0.19648767553972876,0.18994165903721455
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),22,0.19517082933251126,0.1886264163730972
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),23,0.19499463386803964,0.19085740116372316
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),24,0.1948363615826561,0.18999023276268975
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),25,0.19481845521984067,0.18786416100017925
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),26,0.19468409864177064,0.18954957455094118
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),27,0.19304277750743365,0.18711015259420166
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),28,0.19300399324750286,0.18750485247803425
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),29,0.19223907986072422,0.19039039262002663
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),30,0.1919472349323348,0.18639462082074443
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),31,0.19169845647825182,0.18780862497353967
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),32,0.1909108317260406,0.18680456912878787
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),33,0.19025772033891222,0.18673256911117223
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),34,0.19010031310237868,0.18533028818138628
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),35,0.18935201518218994,0.1863551779537229
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),36,0.18893653207117223,0.18471403498753786
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),37,0.18888120653408977,0.18563367429825625
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),38,0.18886370895507906,0.18693552327077792
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),39,0.18842141996353187,0.18551321917513397
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),40,0.18866532219313698,0.18442389687851576
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),41,0.1876036020883389,0.18428167096038706
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),42,0.187851771694432,0.1851105936347613
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),43,0.18800588294152235,0.1853567674981544
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),44,0.18742484510986274,0.185407523024896
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),45,0.1873029310897793,0.18406329793234386
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),46,0.18710841578002307,0.18468683416193182
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),47,0.18699799073634668,0.18469603757434686
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),48,0.1868983622343203,0.1843309166737424
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),49,0.18656996812647636,0.18449750920638366
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),50,0.1864775270972274,0.18438876751724417
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),51,0.18675492635279753,0.1838736654861976
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),52,0.18658215398900663,0.18464240464963005
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),53,0.18633120821413432,0.18449118837436967
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),54,0.1862170994175508,0.18420838627699543
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),55,0.18660763707185216,0.18454979815534017
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),56,0.18601922332624196,0.18479797531422176
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),57,0.18654958482561596,0.18414388926030376
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),58,0.18612676437915557,0.1843430711897442
+42,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),59,0.18599326196881788,0.18439904772257767
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),1,0.9606955786283962,0.2744852091448321
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2,0.3236396475234861,0.28249913621629885
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),3,0.3004967562557484,0.27076460400222946
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),4,0.29011429553634555,0.26650561506853737
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),5,0.2802009277106344,0.2595169998491983
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),6,0.27126965840080525,0.25489164796018243
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),7,0.26097532434751913,0.24194694561366112
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),8,0.2514531767189412,0.23705992901467832
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),9,0.24563653384617926,0.2319192297931275
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),10,0.24149315906905622,0.24264340030188344
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),11,0.2398276363507704,0.23076136012613388
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),12,0.23784647812963416,0.22897975326659584
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),13,0.23535447023138306,0.22676906746204603
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),14,0.2330578733567059,0.23017641799738464
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),15,0.23320474569300834,0.2254774393848736
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),16,0.23154403292330222,0.22879407616299346
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),17,0.23085713566599594,0.22464267784408581
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),18,0.22881272897036867,0.22455496413558648
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),19,0.22973201326727152,0.22447050902127202
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),20,0.22876149077673738,0.22298917939894253
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),21,0.23014035885973358,0.22553682710554082
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),22,0.22815024300582334,0.22488034101264728
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),23,0.22692453060995288,0.22495240725014828
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),24,0.22625147067207227,0.22208241380976346
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),25,0.22584809033141398,0.22215973790616214
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),26,0.22489502065892947,0.22169235219703162
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),27,0.22480297777966576,0.22068183271564346
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),28,0.22502183217112973,0.22109077966385524
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),29,0.22439612191112374,0.2218048338701313
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),30,0.223852689221923,0.21996569920496706
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),31,0.22369384765625,0.22018191173727222
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),32,0.22330945041445424,0.22134751473522585
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),33,0.22326997421436273,0.21891573858403265
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),34,0.22245394479922778,0.21870448102662776
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),35,0.22179258898712512,0.21756628212053697
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),36,0.22170324116285484,0.21662003047745462
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),37,0.22170821729577622,0.21822195687587856
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),38,0.2211644275080794,0.21713098368872705
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),39,0.221114888252584,0.2168482679651163
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),40,0.2200488438927286,0.21523378109400207
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),41,0.21925115460132472,0.2155452938303686
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),42,0.21992160158719024,0.21495823554441323
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),43,0.21919811607732528,0.2148077897231234
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),44,0.21899215333724747,0.21519971067507118
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),45,0.2188377512675592,0.21446864832310888
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),46,0.2193753477209511,0.2151491348057577
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),47,0.21860759980303515,0.21554168916530458
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),48,0.21810098683744045,0.21793366774122078
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),49,0.21810078059080212,0.21354998964251895
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),50,0.2181526033972068,0.21533497601951077
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),51,0.2175768048236762,0.21396080514314808
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),52,0.21774210087047674,0.21308453179579007
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),53,0.21753220114420926,0.21328802262437968
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),54,0.21715713693374505,0.21395684807312895
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),55,0.21701450130896283,0.21396382822487112
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),56,0.21630437088717494,0.21431521281795127
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),57,0.2168244052167449,0.2133397881483293
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),58,0.21704109377120828,0.2130698108273617
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),59,0.21639558927448158,0.2136422828879598
+42,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),60,0.2160918967874003,0.21335841724164414
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),1,0.9852415227468062,0.294997238987792
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2,0.32197016902435294,0.2913732549920074
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),3,0.3002784385012211,0.2768954183431008
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),4,0.2913668343384901,0.27418054699956246
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),5,0.28416429665373744,0.2675581738122783
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),6,0.2790714053836256,0.2654515902741171
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),7,0.2715786742273789,0.2560107939656921
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),8,0.2631852644961493,0.2480631460895709
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),9,0.2561021455933737,0.24453242157372831
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),10,0.24701477626491292,0.24287371191151966
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),11,0.2423325650815867,0.2306719523402195
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),12,0.23995159799934945,0.23279085680783354
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),13,0.2383636012656473,0.2274266038599039
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),14,0.23491360147298204,0.22781040279895587
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),15,0.2346455490974386,0.22975815419921505
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),16,0.23293341859566064,0.23005231559814168
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),17,0.23220184989920048,0.22548256998642638
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),18,0.23078765379490332,0.2257916579233385
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),19,0.23164036147911535,0.22887652855764457
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),20,0.2305428024350849,0.2253195308704161
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),21,0.23057002006699667,0.22481098633549557
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),22,0.22965727581637346,0.22583338451266735
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),23,0.22931954669881294,0.22427103457268582
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),24,0.22913619046976166,0.22500163050632513
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),25,0.22880805553035533,0.2250647835472565
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),26,0.228227245212973,0.22444762342889119
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),27,0.22805721884758978,0.22369724732758195
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),28,0.22706664146810857,0.22399239799401333
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),29,0.22737249731920917,0.22309385000469506
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),30,0.22687940958280323,0.22265032936642362
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),31,0.2270020833027343,0.22518713025579976
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),32,0.2265788147520669,0.2239126640696126
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),33,0.2263330063484951,0.22255498424800524
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),34,0.2257670477674574,0.2222059922081744
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),35,0.22572947131158128,0.22150013717535627
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),36,0.22514825641446234,0.22123456837127844
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),37,0.2248467539995981,0.22139012751936837
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),38,0.22502707637522132,0.22021114464962122
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),39,0.2241199665651349,0.2198285192421029
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),40,0.22407205947728093,0.21973501561232264
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),41,0.22446736454488408,0.22082287761651237
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),42,0.22404609169010553,0.21992784100859347
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),43,0.22330487638828816,0.21915076620115675
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),44,0.2234942310807199,0.2192485493630066
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),45,0.2228347596803487,0.21901660816836543
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),46,0.22293530219625426,0.22042354925060556
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),47,0.2229604974240794,0.21922975558371602
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),48,0.22166733842070557,0.21992808746173204
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),49,0.22193422701126103,0.21820303641506814
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),50,0.22196515757725893,0.2179031547696965
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),51,0.22132720605994208,0.21829345534984074
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),52,0.22172205065843187,0.21724651723480426
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),53,0.22110870085343415,0.21873979580357839
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),54,0.22113674396649546,0.21756985914599666
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),55,0.2206099307006547,0.21749305329217908
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),56,0.22009935057849878,0.21754396371586987
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),57,0.22110967421886396,0.21710963439768657
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),58,0.22077036140409498,0.21726185951850482
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),59,0.22062333574295354,0.21696181606628287
+42,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),60,0.220335525236216,0.21697591399196373
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,1,0.27323008443522834,0.2584433547904419
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,2,0.2529414283904669,0.23157948707832202
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,3,0.23716689726073614,0.22497310214637656
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,4,0.2323479816797203,0.2226293690979797
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,5,0.22977856780152894,0.22227115972775102
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,6,0.22816507541660003,0.2221076474380757
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,7,0.22761471202398387,0.22022868247569968
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,8,0.22619809407675737,0.21950674419941246
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,9,0.22521635863432915,0.2184921403076754
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,10,0.22464910776651656,0.2181902489728525
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,11,0.22322553919651425,0.21836556168992688
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,12,0.2224748494838733,0.2158334274098427
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,13,0.2216326311980812,0.21603910490598963
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,14,0.22102747893570815,0.21431629119026052
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,15,0.21966909002602814,0.21320493147779576
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,16,0.21843400438342198,0.21225060871857762
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,17,0.21701496738517884,0.21063139862602528
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,18,0.2168629635128229,0.2100276361927224
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,19,0.2152592449530669,0.2092203864807847
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,20,0.21456237180396306,0.21015198793291742
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,21,0.21347281140898652,0.20658868792752294
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,22,0.2122904221277215,0.20634664279048812
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,23,0.2126865060999915,0.21063700145346917
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,24,0.21343520287774526,0.20681120088779195
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,25,0.21079648826422487,0.2054927488948634
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,26,0.2099057474074958,0.20478292485592944
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,27,0.21035564696709186,0.20561301846613092
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,28,0.20867265811651556,0.20380692868024863
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,29,0.2079359946044424,0.20369214315789094
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,30,0.20767125006872525,0.2082428098174
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,31,0.20710401384407864,0.2034417163622758
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,32,0.20677376554596597,0.20329526272305448
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,33,0.20579322303345796,0.20397290100534057
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,34,0.2046728929538491,0.2027987590656939
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,35,0.20481089795954707,0.2034853462107205
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,36,0.20473949983474699,0.20160533599724473
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,37,0.2036500746450028,0.20186694058611618
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,38,0.20298446319090752,0.20162909962262657
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,39,0.20200364197014076,0.2011126077375854
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,40,0.2013752373364339,0.2041054490509467
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,41,0.20053228835666034,0.2010328149579238
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,42,0.20001225828233085,0.2018161860785899
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,43,0.19878408470216347,0.20101467468960899
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,44,0.19829551791042724,0.2008626079581322
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,45,0.19825159573412945,0.2034256487060603
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,46,0.19750693949396966,0.20379991605425354
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,47,0.1969717796124645,0.20040738673344685
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,48,0.19536162342884686,0.20129618832047166
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,49,0.19549374139372325,0.2023214655632957
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,50,0.19499020928637564,0.2009686487408598
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,51,0.193077721512443,0.20186850670308384
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,52,0.19221151869701908,0.20104725490830208
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,53,0.19109153468423243,0.19948315277650977
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,54,0.19136527744543214,0.20073564484986975
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,55,0.19100475977085749,0.20020857141048526
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,56,0.19036015198591008,0.19983552645471173
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,57,0.18980399575684004,0.20091098454873457
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,58,0.18845674346297833,0.20020545237416482
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,59,0.18871450027989925,0.19983494136045135
+42,grouped,cnn_bilstm,CNN + Bi-LSTM,60,0.18769142425133203,0.2002246815923487
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),1,0.9349785112515744,0.29025052729691897
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2,0.3206849723552646,0.27198175263274704
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),3,0.29307556994325795,0.2640804455888311
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),4,0.2761370779566231,0.2501440217587165
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),5,0.26431926010542456,0.24062489594413855
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),6,0.2526876711102753,0.23049194906074463
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),7,0.23777664845343177,0.21098725676784016
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),8,0.22441487958866058,0.20471189822536212
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),9,0.2172235221882622,0.20982855867714484
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),10,0.21298344021933355,0.19771446033875764
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),11,0.2085840240091692,0.19737338968451332
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),12,0.20695082778012416,0.19316050864626078
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),13,0.20557203215436193,0.1918507392175322
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),14,0.2033760102222575,0.19002048958454087
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),15,0.20188648688034808,0.19389902635294112
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),16,0.20072328893239058,0.19166410030735404
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),17,0.20093490952632054,0.1937852133481611
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),18,0.19870208150846946,0.18681708912392275
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),19,0.1971867695988819,0.18674983349185173
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),20,0.19755075672757808,0.18657913788702868
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),21,0.19665639363969595,0.1867791187060258
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),22,0.19599824531918508,0.18689031007792678
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),23,0.19563611494393268,0.18557519209580134
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),24,0.195438527384048,0.18480629142666793
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),25,0.19472778666867427,0.1846545898292033
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),26,0.19453911630875384,0.18547576449125802
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),27,0.19432268055375065,0.1839738952725876
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),28,0.1946475684769108,0.18412061565026996
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),29,0.19471045404123266,0.18398010416383553
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),30,0.1936550019727273,0.1836117758889857
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),31,0.19337322841120946,0.1829935617740913
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),32,0.1924717053032783,0.18318573840347985
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),33,0.19235485479133763,0.18448801305334914
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),34,0.19164646332788945,0.18215920914692268
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),35,0.19170073480578242,0.1830945660536942
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),36,0.1913699310435743,0.18389964666430367
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),37,0.1908032131870027,0.1815702649956251
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),38,0.1905479486369282,0.18132796529126294
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),39,0.19044305378188853,0.1817241488920329
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),40,0.1898202994578202,0.180742027849919
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),41,0.18956000351592175,0.18037192537570665
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),42,0.18950346039488283,0.1804654515934291
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),43,0.18948542391926407,0.18031978189253262
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),44,0.18949953505019443,0.18011883618124647
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),45,0.18916087376513205,0.18078012437835833
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),46,0.18911589239982982,0.18086541645750695
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),47,0.18773199265451937,0.17965349649186046
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),48,0.18728843456199518,0.18005549642815527
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),49,0.1873120910847095,0.17974395617044173
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),50,0.18770333402631303,0.17910778244791642
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),51,0.18674960119825612,0.17993826289487452
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),52,0.1870325432844176,0.17974887008238802
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),53,0.18715728255796663,0.1780712007147331
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),54,0.18633924404401916,0.18125795047783766
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),55,0.18664024310623176,0.17940765337453887
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),56,0.18587343712513496,0.17969046770366962
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),57,0.18521109451378753,0.17885053483164265
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),58,0.18483759420827253,0.17863029831330304
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),59,0.18463170055654965,0.179153504851523
+42,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),60,0.1846383348869407,0.1785000123388901
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),1,0.7949245986288687,0.29859467004386087
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2,0.31497196360872587,0.2820508553208804
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),3,0.29496612274268763,0.2689360765744715
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),4,0.28113531081935506,0.25811969003056345
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),5,0.270450246309766,0.25161149447360376
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),6,0.2602987836488239,0.23647432583157596
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),7,0.25224888571364307,0.23276769151656093
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),8,0.24530134190753827,0.22804467603100284
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),9,0.23906111280407802,0.23281294907084285
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),10,0.23697542810369518,0.22508203877909266
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),11,0.23407619155541506,0.2251657618084703
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),12,0.23303077005559247,0.22327120811665938
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),13,0.2321564588310708,0.22575250401104258
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),14,0.2314758962164246,0.22241687048789383
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),15,0.23046711875131204,0.22178423255303936
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),16,0.22850885497627105,0.2222535139300743
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),17,0.22843484841550793,0.2204564046812083
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),18,0.22773663004755787,0.2199472632811036
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),19,0.22770703230430794,0.221089354666335
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),20,0.22667050994454496,0.21979939251132277
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),21,0.22537746567485706,0.21979913882383645
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),22,0.22504271899616138,0.21738186895851902
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),23,0.22383620314655475,0.21675741442474109
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),24,0.2241900113224864,0.21688904362307015
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),25,0.2227661576988534,0.21633003899436512
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),26,0.22214218018232187,0.21780451231075396
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),27,0.22233634563432164,0.2178607276980439
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),28,0.22139532502674036,0.2183868462166706
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),29,0.22035296785344777,0.213809326810053
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),30,0.2191534982953012,0.21555772219593597
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),31,0.2185399994283308,0.21220876993311444
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),32,0.2178777241755468,0.21344778020293761
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),33,0.21745493594962065,0.21551193263113358
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),34,0.21711587344181094,0.2115587351955843
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),35,0.2160095890869912,0.2154924796400571
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),36,0.2168193249258392,0.21436629226061643
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),37,0.21546693190451438,0.21051549746528836
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),38,0.21556717218520083,0.21034263921130433
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),39,0.2149842384866448,0.21066731666816577
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),40,0.21457010144316796,0.21088955277180227
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),41,0.21365748857754957,0.21202952168727807
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),42,0.21366426641096706,0.21041645141845572
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),43,0.21261574153617196,0.20959284780869947
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),44,0.21319703617635152,0.20945115381597035
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),45,0.21331367192185813,0.2098332139158392
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),46,0.21233874067054612,0.20975934305262162
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),47,0.21237006630737934,0.20906183209510534
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),48,0.212189052370834,0.20999621736414018
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),49,0.2117308550171938,0.20953477243755014
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),50,0.21165347271857132,0.20966870007383345
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),51,0.21085426433983767,0.20894476367865095
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),52,0.21074436249825063,0.20967792168728183
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),53,0.21094456581568136,0.20938262212117903
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),54,0.21116231457456566,0.2089191019429667
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),55,0.2111341728501177,0.2075106571737439
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),56,0.21069816526206817,0.20843561641293962
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),57,0.21094951520577593,0.2095271665054454
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),58,0.2107743956316351,0.20936254092363352
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),59,0.21009713358659632,0.2083172006666445
+42,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),60,0.21039532604199987,0.20923143376429368
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),1,0.9387776162300322,0.29265612812442565
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2,0.32357157673237635,0.2774189588080877
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),3,0.29856368992319016,0.27402377324732297
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),4,0.2892038377902705,0.2674147517252016
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),5,0.28192456184523573,0.26373155285487804
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),6,0.27413128539350834,0.2563991169765634
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),7,0.267934759306962,0.24897548909868095
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),8,0.2584213589357831,0.24164055095258202
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),9,0.25066499985786367,0.23723237395534016
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),10,0.24364469220768023,0.22934329435498524
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),11,0.2395038528317306,0.22987658739034975
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),12,0.23794300555706197,0.22637702893209996
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),13,0.23591111008630644,0.2288243911190624
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),14,0.2351569880155644,0.22565169329645815
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),15,0.23295145193043004,0.224659318587411
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),16,0.2313066065747581,0.2253841964124561
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),17,0.2311989851622166,0.22253077499613716
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),18,0.22972085029858,0.22305686066736677
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),19,0.22997796672104293,0.22198545394783667
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),20,0.22943234088072045,0.22249501679177708
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),21,0.22763507676299033,0.22371212869912369
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),22,0.2277530001308904,0.22058495590246327
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),23,0.22713080517576173,0.22021555818088637
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),24,0.22643496681038577,0.22001163156831569
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),25,0.22532388535439743,0.22110265786215025
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),26,0.2247789819102623,0.22204125053081394
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),27,0.22557026638378933,0.21940740193944547
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),28,0.22455756845504368,0.2257508619344692
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),29,0.22352562452517094,0.2202678576891965
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),30,0.22325757161015786,0.21840484395074453
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),31,0.22260530252078,0.21818078335016872
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),32,0.2223249005358071,0.21632590843418298
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),33,0.22056754587879612,0.2177156542360604
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),34,0.21990723281025082,0.2150483892837751
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),35,0.21928427836291436,0.21468999485365753
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),36,0.2193639000897177,0.21491133029339746
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),37,0.21827096054014306,0.21342924840538088
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),38,0.2165322973963748,0.2158420014603202
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),39,0.21764428477623055,0.21369213609570056
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),40,0.21643012617020374,0.21522057651236173
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),41,0.21449058612337057,0.2114008477293777
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),42,0.21386262859433103,0.21113206598424542
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),43,0.21424171575576542,0.21248206966174613
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),44,0.21450914877675287,0.21188283078426895
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),45,0.21348758685154595,0.21114022152369052
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),46,0.21234405321115649,0.21129029922796227
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),47,0.21229632429981457,0.2101092534693233
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),48,0.21157608456268243,0.21127116268636298
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),49,0.21135867162040414,0.20943117467998001
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),50,0.2112055285097365,0.21071431278824998
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),51,0.2106193986961569,0.21042833601730979
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),52,0.21098054358634016,0.2097769158234959
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),53,0.21031776314433054,0.2111352829761964
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),54,0.20995121346159132,0.21047818722141654
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),55,0.20997104274882916,0.2088884471096468
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),56,0.21003035001149586,0.20942772922265115
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),57,0.21001983426591428,0.2093322389065518
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),58,0.21013115747081051,0.21015298449948225
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),59,0.2087147923622496,0.20928862489524497
+42,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),60,0.20945866909787478,0.20943056055096684
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,1,0.27027112574826295,0.2624510520717339
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,2,0.2478502189678457,0.2422035951080161
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,3,0.23350689394026203,0.23686162507121844
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,4,0.2294980682971266,0.23424837255557102
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,5,0.22748810235110647,0.23333151240048589
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,6,0.22569786059350513,0.23325782072034718
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,7,0.22480614874701688,0.23064548746437605
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,8,0.2240301412130441,0.23090639593880935
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,9,0.22320724062814012,0.232045678921054
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,10,0.2225151088905608,0.22967576296617848
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,11,0.22184426351179862,0.22950923297046338
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,12,0.2210787926945278,0.22800389917239167
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,13,0.22003369417798987,0.23011983220317692
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,14,0.21984244091180802,0.2276539307930814
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,15,0.21790591964263556,0.22717063865794096
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,16,0.2172126530447529,0.22613914290457968
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,17,0.21593788392850813,0.22580632943140855
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,18,0.2142932158879026,0.22529152327751656
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,19,0.2126181734559482,0.22416424020510614
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,20,0.21236485997447135,0.22420219480136397
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,21,0.21168680851717797,0.22388642449474724
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,22,0.210378165960024,0.22382789483949458
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,23,0.20983949137303184,0.22308877665309337
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,24,0.2087448630915609,0.22727137246953386
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,25,0.20861558942083117,0.22293571646113094
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,26,0.20738122271626677,0.22328362744973718
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,27,0.20684203473420165,0.2224663238087648
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,28,0.20553864829404217,0.22301068565878968
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,29,0.20505940190704566,0.22290254247597152
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,30,0.2048879185552747,0.2255797399848893
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,31,0.2039884926757852,0.2232901728551013
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,32,0.20340275217506995,0.2209176903456409
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,33,0.2026087676526395,0.22130336700997
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,34,0.20209776669226032,0.22200099870767295
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,35,0.20215587876095623,0.21993765355092457
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,36,0.20158110428997117,0.2217380904402597
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,37,0.20174800467570556,0.22114200237815013
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,38,0.2013401187200486,0.22134397110153536
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,39,0.20096861630163532,0.22110192127391937
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,40,0.20034213359885902,0.2213765587418637
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,41,0.19963678960445527,0.22109110211742872
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,42,0.19921647533339065,0.2208598806619392
+42,clustered,cnn_bilstm,CNN + Bi-LSTM,43,0.19922287941759545,0.22085127095414417
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),1,0.8411486899795855,0.35141915539213486
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2,0.31773799978683914,0.2789302700940673
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),3,0.2835793654416323,0.261314093733633
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),4,0.2677126194238054,0.25537409804728783
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),5,0.2537517539415605,0.25042520943822666
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),6,0.24062305711124704,0.23215970859127283
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),7,0.22730332315506663,0.22496664101095082
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),8,0.21813370062203777,0.22773708577928597
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),9,0.21201376055880555,0.21682027580333804
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),10,0.20655528083434585,0.21812997201985504
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),11,0.20353234065886705,0.2169578007371624
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),12,0.2015738660624229,0.21193445900605018
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),13,0.19948310345394638,0.21057102411296924
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),14,0.19759306076068475,0.21244755565949155
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),15,0.19678243986380942,0.2099964418890756
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),16,0.1956064874287016,0.21480909690528627
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),17,0.19610268722891158,0.21142407520541284
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),18,0.19514591121243127,0.20809202958823655
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),19,0.1936591002863522,0.20965212615040626
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),20,0.19321725013063779,0.21154741612370598
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),21,0.19207396431179752,0.21154271845333025
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),22,0.19156680565356116,0.20652338321990482
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),23,0.1905361788934173,0.2093706195778885
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),24,0.18998713550651244,0.20617659423496362
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),25,0.1896310228225813,0.20600943642405609
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),26,0.18897706037649512,0.20508928628697165
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),27,0.18842160449718098,0.2050994695645885
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),28,0.18821836879772852,0.20609738930067625
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),29,0.18781857994297646,0.2066823575461755
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),30,0.18772705911031842,0.20641194544726946
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),31,0.187451615729276,0.20476364603435707
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),32,0.1869863215210973,0.2045347745660099
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),33,0.1871719182913718,0.20392535032686754
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),34,0.18651901775205018,0.2047179871665267
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),35,0.18659010936814682,0.2056371961567997
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),36,0.18660000409370744,0.20511030024062393
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),37,0.18612620943810942,0.2053595486317951
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),38,0.18603740074599331,0.20551689755029232
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),39,0.18593926562401872,0.20483424471671283
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),40,0.18596445883031296,0.20491111924708402
+42,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),41,0.18593144376816015,0.2058783163571491
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),1,1.0145223263033516,0.3140515674911884
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2,0.3274304002071085,0.29785188965507275
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),3,0.2986066538834525,0.27811872276963917
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),4,0.28812781184206293,0.27645290904078945
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),5,0.2804446698421375,0.2737478757037797
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),6,0.27244466416214813,0.2613643074294834
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),7,0.26077570013001733,0.24999193171081127
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),8,0.24977028290786843,0.24675463550169627
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),9,0.2426223906354143,0.24130479644724703
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),10,0.23863812758323782,0.2504847747005582
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),11,0.23701777334965898,0.23673355768368753
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),12,0.2331457348498479,0.236138560522472
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),13,0.23155648775790752,0.23675746649895194
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),14,0.2312164782693378,0.23928666665585366
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),15,0.22983738287232686,0.23816785620865497
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),16,0.22925947436677555,0.23334296167607793
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),17,0.22858794940725205,0.23334865233121674
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),18,0.2271508930419255,0.23479585159442296
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),19,0.22691583055745201,0.23241686860582322
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),20,0.22730346535264223,0.23504084120987587
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),21,0.22600723083228516,0.2322712339124488
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),22,0.22574566469812068,0.2321474540994982
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),23,0.22591559648886675,0.2327980964219446
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),24,0.22570338577304264,0.23144225636476046
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),25,0.22534368130200189,0.23129324414084618
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),26,0.22487006668089954,0.23093818757859094
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),27,0.2244151212413229,0.2305709375781486
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),28,0.2239220621527827,0.23113759205130027
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),29,0.22324668376261048,0.23140293900635098
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),30,0.22368430558067684,0.22994546085330594
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),31,0.22338363140372017,0.23125388070425743
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),32,0.2224241437412982,0.22982009825489771
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),33,0.22218756060831624,0.22955422485664895
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),34,0.22146789917280044,0.22956272628072272
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),35,0.22121765839545723,0.22957505449758417
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),36,0.22122596693797456,0.22917614418017113
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),37,0.22052708687440742,0.2305715354425245
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),38,0.2201479473333338,0.22940040667863765
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),39,0.21957737028748034,0.22886737660484768
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),40,0.21918856353696703,0.22906519598819042
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),41,0.21844927166431452,0.22830943666734888
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),42,0.2186916938007009,0.23004514523436614
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),43,0.21828978088511955,0.2301163429330523
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),44,0.2180635551762442,0.22730931093842893
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),45,0.2171755397248212,0.22909206187060893
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),46,0.21667124307100644,0.22744798206696243
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),47,0.21662495887299893,0.22833257943288304
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),48,0.21570380594585803,0.22720183128139215
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),49,0.21491333481639552,0.22632606825439047
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),50,0.214502665992359,0.22710060328132667
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),51,0.21457119656829401,0.22558476941815572
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),52,0.21400840601438034,0.22878938122276596
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),53,0.21536308917891228,0.2258441146903576
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),54,0.21376106804598044,0.2262616935820985
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),55,0.21365635746080994,0.22561381249454435
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),56,0.2132500680748018,0.22551439421496938
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),57,0.21313436079468476,0.22528474287343822
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),58,0.2128735919561442,0.225913705412542
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),59,0.21265260826815582,0.22734698560974775
+42,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),60,0.21289324638139367,0.22638905021371428
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),1,0.9091658114896227,0.3127005414517826
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2,0.313981540465677,0.27922602519156725
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),3,0.293512352289412,0.27643566658610974
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),4,0.28563417753539533,0.27475743248404
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),5,0.2780432596897019,0.275889140213614
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),6,0.27034005002600725,0.2633478762825216
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),7,0.2612347005498499,0.2543316437509437
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),8,0.2523713275752419,0.2492978215379584
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),9,0.24545702190007662,0.24579785090818984
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),10,0.24067505245849094,0.25545487770335146
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),11,0.23855235276913472,0.23815961397433955
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),12,0.234172449816512,0.23746499463760581
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),13,0.23363121987726126,0.23754322271449282
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),14,0.23232304719035712,0.24091198803272273
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),15,0.2310838363708173,0.24285133680907797
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),16,0.2311027570565767,0.2336938907854258
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),17,0.23000795121361134,0.2344396062151428
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),18,0.22836663062758553,0.2356032852893975
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),19,0.22811793794906537,0.2333455028876642
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),20,0.22842860700813594,0.23580144449931228
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),21,0.22735727909775288,0.23331672245689736
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),22,0.22737006946055302,0.23295928480472877
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),23,0.22746241924325178,0.23298750768952656
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),24,0.22739612450780547,0.23201485492303692
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),25,0.22643532145598416,0.23246494657806485
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),26,0.22637386044890775,0.2326157212923359
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),27,0.2257864420168004,0.23137553055337165
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),28,0.22557279745481396,0.23234148816041458
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),29,0.22497578921820807,0.23224872011406156
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),30,0.22548686214292551,0.23041516338142765
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),31,0.2248790369985687,0.23486053729442496
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),32,0.22430995488201005,0.23227298257935178
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),33,0.2232046400199575,0.23067380135357785
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),34,0.22277001622138504,0.23440671445883132
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),35,0.22242287805922528,0.2323229267178535
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),36,0.2223393502141168,0.23034156500960196
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),37,0.2217839336555236,0.23180565538137102
+42,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),38,0.2218217651350371,0.23168527383414098
+123,random,cnn_bilstm,CNN + Bi-LSTM,1,0.2733791314594327,0.2543127529359831
+123,random,cnn_bilstm,CNN + Bi-LSTM,2,0.25332374025754234,0.23237726286048008
+123,random,cnn_bilstm,CNN + Bi-LSTM,3,0.23707376036093855,0.22380707169013084
+123,random,cnn_bilstm,CNN + Bi-LSTM,4,0.23112876703249866,0.22165485565798906
+123,random,cnn_bilstm,CNN + Bi-LSTM,5,0.22925626317454426,0.21982032564674583
+123,random,cnn_bilstm,CNN + Bi-LSTM,6,0.2274969101060251,0.21937920661147997
+123,random,cnn_bilstm,CNN + Bi-LSTM,7,0.22607757425787353,0.21927479008720552
+123,random,cnn_bilstm,CNN + Bi-LSTM,8,0.22541719745958225,0.21754112084525798
+123,random,cnn_bilstm,CNN + Bi-LSTM,9,0.22489566900734245,0.21625055538057422
+123,random,cnn_bilstm,CNN + Bi-LSTM,10,0.22380668315643293,0.217587615885787
+123,random,cnn_bilstm,CNN + Bi-LSTM,11,0.22258412091204852,0.21572342584383591
+123,random,cnn_bilstm,CNN + Bi-LSTM,12,0.22337332351512718,0.21498117631341546
+123,random,cnn_bilstm,CNN + Bi-LSTM,13,0.22145523911030854,0.21384109653303648
+123,random,cnn_bilstm,CNN + Bi-LSTM,14,0.21972731267097967,0.21335127840993257
+123,random,cnn_bilstm,CNN + Bi-LSTM,15,0.21936068365400088,0.21333775323224782
+123,random,cnn_bilstm,CNN + Bi-LSTM,16,0.21844278768738817,0.2109153773597483
+123,random,cnn_bilstm,CNN + Bi-LSTM,17,0.21745842597895515,0.21123011230653915
+123,random,cnn_bilstm,CNN + Bi-LSTM,18,0.215888045329035,0.20917564973625036
+123,random,cnn_bilstm,CNN + Bi-LSTM,19,0.214649041590254,0.2083563997386575
+123,random,cnn_bilstm,CNN + Bi-LSTM,20,0.21341812862833687,0.20873758940250078
+123,random,cnn_bilstm,CNN + Bi-LSTM,21,0.21368715239508185,0.20615708167054772
+123,random,cnn_bilstm,CNN + Bi-LSTM,22,0.211776617141703,0.20569285688230293
+123,random,cnn_bilstm,CNN + Bi-LSTM,23,0.21115653954820754,0.20573807370269392
+123,random,cnn_bilstm,CNN + Bi-LSTM,24,0.21000258137886416,0.20469355722426644
+123,random,cnn_bilstm,CNN + Bi-LSTM,25,0.20957584577696,0.20606149580155894
+123,random,cnn_bilstm,CNN + Bi-LSTM,26,0.2095745717711724,0.20488425216125095
+123,random,cnn_bilstm,CNN + Bi-LSTM,27,0.20795946551232927,0.20325637950470468
+123,random,cnn_bilstm,CNN + Bi-LSTM,28,0.207614388838411,0.20328479256194154
+123,random,cnn_bilstm,CNN + Bi-LSTM,29,0.20714146583195941,0.20371782565415245
+123,random,cnn_bilstm,CNN + Bi-LSTM,30,0.20656470987126488,0.20321476357336699
+123,random,cnn_bilstm,CNN + Bi-LSTM,31,0.20615342492527625,0.20150991938174742
+123,random,cnn_bilstm,CNN + Bi-LSTM,32,0.2051787126493526,0.2024039993604386
+123,random,cnn_bilstm,CNN + Bi-LSTM,33,0.2052167618353932,0.20142031840677735
+123,random,cnn_bilstm,CNN + Bi-LSTM,34,0.20396397778187675,0.2014213177214801
+123,random,cnn_bilstm,CNN + Bi-LSTM,35,0.20400772441272938,0.19980707613410126
+123,random,cnn_bilstm,CNN + Bi-LSTM,36,0.20262116777477693,0.19949592529574622
+123,random,cnn_bilstm,CNN + Bi-LSTM,37,0.201997294355659,0.19903114964033466
+123,random,cnn_bilstm,CNN + Bi-LSTM,38,0.20178902455459255,0.19894441178589098
+123,random,cnn_bilstm,CNN + Bi-LSTM,39,0.2011038832186637,0.19924283828706418
+123,random,cnn_bilstm,CNN + Bi-LSTM,40,0.20052357605331833,0.1981626531595889
+123,random,cnn_bilstm,CNN + Bi-LSTM,41,0.19998559671719013,0.19771729325723775
+123,random,cnn_bilstm,CNN + Bi-LSTM,42,0.1992027715558063,0.1977537500166649
+123,random,cnn_bilstm,CNN + Bi-LSTM,43,0.19818016249363649,0.19795493341821316
+123,random,cnn_bilstm,CNN + Bi-LSTM,44,0.19748306882877842,0.1977683051770774
+123,random,cnn_bilstm,CNN + Bi-LSTM,45,0.19637316467259952,0.1973906290273482
+123,random,cnn_bilstm,CNN + Bi-LSTM,46,0.1964844296567262,0.19634420708087433
+123,random,cnn_bilstm,CNN + Bi-LSTM,47,0.19604391769355684,0.19636751940904082
+123,random,cnn_bilstm,CNN + Bi-LSTM,48,0.19503666539238412,0.19541992025480245
+123,random,cnn_bilstm,CNN + Bi-LSTM,49,0.19472891145434823,0.19563277602240947
+123,random,cnn_bilstm,CNN + Bi-LSTM,50,0.1936330011002982,0.19516690557636815
+123,random,cnn_bilstm,CNN + Bi-LSTM,51,0.19359230556010995,0.19579145817038776
+123,random,cnn_bilstm,CNN + Bi-LSTM,52,0.1929551341496269,0.19556997137897883
+123,random,cnn_bilstm,CNN + Bi-LSTM,53,0.19289426405075977,0.19554648777278572
+123,random,cnn_bilstm,CNN + Bi-LSTM,54,0.19218947693279784,0.19482210786405005
+123,random,cnn_bilstm,CNN + Bi-LSTM,55,0.1913054923514267,0.1948450278729528
+123,random,cnn_bilstm,CNN + Bi-LSTM,56,0.19085525188634297,0.19498972482287075
+123,random,cnn_bilstm,CNN + Bi-LSTM,57,0.191117812717599,0.19410179117931126
+123,random,cnn_bilstm,CNN + Bi-LSTM,58,0.19127978540531862,0.19435121422696394
+123,random,cnn_bilstm,CNN + Bi-LSTM,59,0.19027706526360222,0.1945623305967734
+123,random,cnn_bilstm,CNN + Bi-LSTM,60,0.19001643916184913,0.19422245191994336
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),1,0.9024068938384439,0.2968757823239595
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2,0.31965127073468635,0.2711924316035919
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),3,0.29464464580575395,0.269459829377459
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),4,0.2792311945162078,0.24932897203927878
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),5,0.2657658394125055,0.24958031559966937
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),6,0.25602627568838454,0.23212794396838413
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),7,0.24215716205767943,0.21608494515214674
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),8,0.22674667735337117,0.20043964639142195
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),9,0.2166754708472369,0.19726318081626848
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),10,0.2135509385427673,0.19301669916782951
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),11,0.20795367269004741,0.1914444305338912
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),12,0.2062883509346573,0.19013215037155295
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),13,0.2038502018499584,0.18813054211717417
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),14,0.20195604088198188,0.18908728323608445
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),15,0.20079545916742067,0.18758004933177497
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),16,0.19937687349024877,0.19152108150130653
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),17,0.19981692487413416,0.18715427125273304
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),18,0.19743778182708013,0.18545650038070013
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),19,0.19642381257995498,0.1874889566177756
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),20,0.19632873656231276,0.18681312534996267
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),21,0.1949523803717856,0.18591104333130393
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),22,0.19374459619919063,0.18457237825187536
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),23,0.19317662880285885,0.18522952459145098
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),24,0.19258730476024385,0.18274286043747925
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),25,0.19202016561592916,0.18407230601421035
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),26,0.19215520479339607,0.18405328431633958
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),27,0.19186564917309848,0.1824613754162519
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),28,0.19132640719740962,0.18363284652414855
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),29,0.19115859325739762,0.1836160392891425
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),30,0.1905600432977736,0.1820483048937743
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),31,0.19027708503095345,0.18248461830738055
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),32,0.1903370142039014,0.18243838365574339
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),33,0.18983581746078285,0.18180739251239128
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),34,0.18968992403074825,0.18056131130734943
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),35,0.18913382643465426,0.1812617718924796
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),36,0.18885208633085449,0.18171997648954483
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),37,0.18868037278662597,0.1843433887885292
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),38,0.18815482909116488,0.181404473106202
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),39,0.18798363098062001,0.18113473335992308
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),40,0.1877760896064469,0.18030319358527683
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),41,0.18732726349534465,0.18127360627829328
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),42,0.18792805507259963,0.18158574543715336
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),43,0.18752633752461273,0.17955445169181955
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),44,0.1871947792480259,0.181352321261658
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),45,0.1865077797810802,0.1798946549868014
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),46,0.1868775201791447,0.1792481834345077
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),47,0.18686221135397438,0.18121240447315248
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),48,0.18635763982981482,0.18085875238122748
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),49,0.1861071365886334,0.18063400031311475
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),50,0.18584667949773342,0.17991736494866473
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),51,0.18605602859617776,0.18022553057303517
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),52,0.18591310372811612,0.1793751785689156
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),53,0.18583213962252645,0.17956833967802693
+123,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),54,0.1856917074174566,0.17991710166656297
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),1,0.863350508868551,0.34030539867414145
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2,0.3226771249159334,0.2814425396476228
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),3,0.29771135218344785,0.2790956696100564
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),4,0.2875835275356989,0.26117092070364345
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),5,0.2767040538045794,0.2575171854354054
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),6,0.26397223446611956,0.23779075833762917
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),7,0.2522215251068133,0.23244326739407056
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),8,0.24412504140864738,0.22828043423053393
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),9,0.23987129669348828,0.22513734472489602
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),10,0.23787229809564184,0.2258520219648793
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),11,0.23441779137360383,0.22710084419698937
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),12,0.23340233364493004,0.22178285068574166
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),13,0.23172113228210242,0.21972379427675862
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),14,0.23018777686942846,0.2193111652581132
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),15,0.22936061650430872,0.22113086525400252
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),16,0.22795730011760468,0.2204256065695585
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),17,0.22860718885351008,0.21853776916573342
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),18,0.2278105181451317,0.2195893549132537
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),19,0.2270682961115691,0.22170269083334815
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),20,0.22589647962292875,0.21706502810996456
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),21,0.22337922505784086,0.21807494816293668
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),22,0.2221533932935608,0.21899628275761696
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),23,0.22189773225625622,0.2193895330562888
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),24,0.2203099909301067,0.21447651833804393
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),25,0.2199895809454373,0.2146326700846354
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),26,0.21987306328190154,0.2137402022025058
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),27,0.219423878887558,0.2165520602570911
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),28,0.21804219589005455,0.21385938567015814
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),29,0.2178422827367262,0.2140918487213216
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),30,0.21716752766132436,0.21243970434820286
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),31,0.2165133143231507,0.2126614330119602
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),32,0.21597455862430243,0.2102562549578045
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),33,0.215554961507116,0.21067559795936583
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),34,0.21561320304245155,0.21170010615534343
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),35,0.2151681688035015,0.2087899096318615
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),36,0.215270296329516,0.20969062258359109
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),37,0.2143937551442555,0.21145248442018036
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),38,0.21439729004084157,0.2081385531839567
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),39,0.21377360737666312,0.2081992041219307
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),40,0.21379327885625282,0.20823921374312665
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),41,0.21342890381149954,0.20965083053178032
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),42,0.2133387869281005,0.20870279334556166
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),43,0.213020772252218,0.20793188541370403
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),44,0.2130451192045605,0.2089880783086841
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),45,0.21248910907899576,0.20895519987127298
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),46,0.2125764891726152,0.20799537748380914
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),47,0.21217921186590133,0.20793914042687298
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),48,0.2122801587868628,0.2096740213451306
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),49,0.21194486497507478,0.20801589034206722
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),50,0.21230237926639534,0.20828934902036375
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),51,0.2121540341906228,0.20764106979051863
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),52,0.2118499658752262,0.2083493570870959
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),53,0.2121119030465505,0.20859617335262015
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),54,0.2121688340064986,0.2085786312422971
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),55,0.21186827538431527,0.20830316294039747
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),56,0.21166348957890543,0.2081234691447727
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),57,0.21238584690701995,0.2080852498418687
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),58,0.2121713578030686,0.20825200230956847
+123,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),59,0.21186382180008015,0.20845210885838844
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),1,0.8916675874298876,0.30316815743357745
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2,0.3201324639067143,0.27159968445958355
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),3,0.2978898518593582,0.27593837791561493
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),4,0.2883398530801898,0.26772381547820084
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),5,0.28202300869475644,0.2652320048824422
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),6,0.275199620991877,0.2611688202332492
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),7,0.26905211263250134,0.2516115630536446
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),8,0.25728058726396835,0.23394248189915298
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),9,0.2461922062347048,0.23083031675695334
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),10,0.24433516736399558,0.22882617347205186
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),11,0.2379527536861208,0.2306059089808198
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),12,0.23560822178854235,0.22332727391022736
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),13,0.23360978408928745,0.22206087484927534
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),14,0.23296614826076406,0.2223906799478426
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),15,0.2319385879712916,0.22268238725832207
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),16,0.23035372674821822,0.22515204859629787
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),17,0.22993409948582114,0.22211408908049807
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),18,0.22900042818454874,0.22146567097657732
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),19,0.22821257667992756,0.22192977367136393
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),20,0.2275996691989118,0.22117360490806906
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),21,0.22700235667547564,0.21978666025623933
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),22,0.226995545340421,0.22067055555740722
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),23,0.2269284574212203,0.2248434912313057
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),24,0.22647616016323974,0.21978049308999634
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),25,0.2255250590000086,0.22021393817529833
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),26,0.22523452044817044,0.21860239190227115
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),27,0.22460421473295794,0.2187260812550365
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),28,0.22437272027091582,0.22104562666093394
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),29,0.22410467597642492,0.21646107401321638
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),30,0.22351977092518036,0.2183873268795773
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),31,0.22411289326433673,0.2207362406806237
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),32,0.22328195733512954,0.21596188015407985
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),33,0.222858042040064,0.21979741547475676
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),34,0.22261789491419895,0.224668269180917
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),35,0.222374113066624,0.2260454874396731
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),36,0.2225514173119679,0.21883994642423327
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),37,0.22166056456440728,0.22606782707066803
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),38,0.22173163609906726,0.22176389842490876
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),39,0.22142871033657252,0.2162795233554717
+123,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),40,0.22128245269309127,0.21724981742688187
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,1,0.26906641329314507,0.2604263876567245
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,2,0.2476042452466122,0.23125451299537647
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,3,0.23434559526448961,0.22914086352083254
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,4,0.2299847175608705,0.22593966293363563
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,5,0.2284803420840551,0.22489489638091223
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,6,0.2271576526767303,0.22317911150788514
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,7,0.2256031017078212,0.22239377468772992
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,8,0.2242483327903287,0.22153675176307716
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,9,0.22331465758963623,0.22493360796423073
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,10,0.22288283908372272,0.22055934148901288
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,11,0.22144666443209515,0.22112879681964412
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,12,0.22227504817084384,0.2212896925528707
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,13,0.22007259850253408,0.21861719579239733
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,14,0.2185825701731232,0.21892401849775736
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,15,0.21807581153631436,0.21701607665191877
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,16,0.2172390620865808,0.21557340888665286
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,17,0.2151725852351775,0.21426539532988292
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,18,0.21344915095083566,0.2133682421446651
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,19,0.21300595699488808,0.21214915505322218
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,20,0.21144882462635128,0.21114079644943343
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,21,0.21065548567251965,0.21224325797435734
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,22,0.20940620385989014,0.21138586779535287
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,23,0.20970451682348876,0.210200858704286
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,24,0.20864186057001066,0.20969881742908883
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,25,0.20707620439520077,0.21076710084536324
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,26,0.2076343558578225,0.20986047684543
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,27,0.2062268730307651,0.2084645979710316
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,28,0.20498097692754202,0.20870434298475635
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,29,0.20395543700130422,0.2081867877874112
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,30,0.2043597439627836,0.20873906511036613
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,31,0.20412029481546107,0.20732810764179743
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,32,0.2021922056864915,0.20779397722358528
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,33,0.20180728861806252,0.20774411357860476
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,34,0.2007259133884133,0.20806482559184653
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,35,0.19959691294128823,0.20729397872921373
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,36,0.19837211613641928,0.20643033378528425
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,37,0.1984765252290358,0.20624148896620567
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,38,0.19728239989817398,0.2070273766678885
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,39,0.19767854519039985,0.20576621721537564
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,40,0.1965568927158418,0.20645566060641918
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,41,0.19566452682586147,0.20610786615894985
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,42,0.1959556869657644,0.20679139400910354
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,43,0.19458658226396627,0.20605186273054696
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,44,0.1941034494858362,0.20651242828998392
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,45,0.19443583988880717,0.20572105293877435
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,46,0.19387020310833675,0.20598643768349445
+123,grouped,cnn_bilstm,CNN + Bi-LSTM,47,0.19308177597749052,0.20609029401069978
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),1,0.7405636815567554,0.3130171570524405
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2,0.30872922185246193,0.28422632994676467
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),3,0.2872838963886483,0.2564812922143432
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),4,0.27098836042016794,0.24905747888935034
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),5,0.257095740921631,0.2309429903495899
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),6,0.2416810980656852,0.21908013992441142
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),7,0.2264783206816525,0.20634981012240677
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),8,0.21692302021855345,0.201652676159808
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),9,0.21149036910380462,0.20420286177587785
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),10,0.20834494180923488,0.20529599034948007
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),11,0.20545980753764184,0.19908347225997225
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),12,0.20370016152753692,0.20301760498834012
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),13,0.2015192567886749,0.19854883001046783
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),14,0.2004280460559083,0.19435126150245205
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),15,0.1988201596653325,0.19602383735647014
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),16,0.1990285208563731,0.19647584680478739
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),17,0.19645499437402109,0.19421082790031813
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),18,0.1949711307727546,0.19227560225961055
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),19,0.19417654088995506,0.19242724112380327
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),20,0.1929421605463343,0.19172965235158476
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),21,0.19265000341802013,0.19193156730684463
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),22,0.19244285017379098,0.18982623196742235
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),23,0.19157662731590624,0.18956905095269944
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),24,0.1914494396565462,0.19008220081396562
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),25,0.19191740220367756,0.18996413082807256
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),26,0.1913339520366088,0.19024520225321825
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),27,0.18906562257956114,0.19061649011030024
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),28,0.188462788942063,0.189860962101694
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),29,0.18818914427794972,0.1892062642901986
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),30,0.18777246734826394,0.18971151360652433
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),31,0.18786363398430228,0.1886477636649189
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),32,0.1869783779358611,0.18773180785775856
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),33,0.18694054178101172,0.18784854668963838
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),34,0.18676506589206088,0.18965703296797237
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),35,0.18697552876233903,0.18884748710706117
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),36,0.18593407605129572,0.1878687599801656
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),37,0.1855738475383109,0.1871408984660566
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),38,0.18547225600015885,0.1874513307897335
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),39,0.18537846695852744,0.18965885265036
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),40,0.18541073223065874,0.1880893986148438
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),41,0.1852506647037345,0.18769235032479106
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),42,0.18490234422428586,0.18811450863006082
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),43,0.18508802121170806,0.1874970305025859
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),44,0.18503398424219997,0.18796815548270612
+123,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),45,0.1847159123318625,0.18776920830871852
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),1,0.8650143834302731,0.28973764621345344
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2,0.3293747867294562,0.2728984918856787
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),3,0.30035453204332213,0.27997475216715306
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),4,0.287276240624317,0.26632388388725325
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),5,0.27558714238371523,0.257441792770904
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),6,0.26281089003663255,0.2395159299561151
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),7,0.25106358407520074,0.23270911595502644
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),8,0.24418447915080443,0.23031053259212358
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),9,0.2399032646748157,0.23130416155058092
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),10,0.23688064827036165,0.2292459005536173
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),11,0.23371378325471148,0.22745963316356313
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),12,0.23130933721285468,0.22712885540643804
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),13,0.23077918343767834,0.2243715657942601
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),14,0.22972919308702425,0.22451698364431716
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),15,0.22838488908951532,0.22314179972425308
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),16,0.2287665409961951,0.22970025825600596
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),17,0.22867623894376413,0.22493599797775338
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),18,0.2276504964579383,0.2227994317172519
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),19,0.22584453149267628,0.22352648836084238
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),20,0.22453651431619234,0.2215241976135396
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),21,0.22318858153777138,0.22219255419786413
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),22,0.22388810279520058,0.22116179136247785
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),23,0.22438559408383402,0.2233698040396679
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),24,0.2218173741686401,0.22323150875025483
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),25,0.2211310178022883,0.22064459884310622
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),26,0.22086980387425784,0.2300443916009035
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),27,0.2208522167615407,0.22210429130737827
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),28,0.21931085489205002,0.220766637693006
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),29,0.2175378261157986,0.2194782402094063
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),30,0.21675282372413307,0.21602929509936525
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),31,0.21651665900642297,0.2187129038781913
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),32,0.2159235339017639,0.21515498490600632
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),33,0.21537919403875788,0.21655741257763003
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),34,0.21461835453570322,0.21635550849126842
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),35,0.21437862674543523,0.21820734680043066
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),36,0.21386023674184457,0.21632874011099584
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),37,0.212493152201401,0.21585524799924405
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),38,0.21278758787805643,0.21615890270678492
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),39,0.21188838090852682,0.21507558703216967
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),40,0.21180758581744244,0.21416119806250059
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),41,0.21214273399509703,0.2156071367940955
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),42,0.21189971238830885,0.2141460948702974
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),43,0.21151357008139632,0.21383244649683006
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),44,0.21149754761798462,0.2145674637503251
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),45,0.2112005591964725,0.21454122394173633
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),46,0.2110816759861731,0.21610021980893732
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),47,0.2107634331353053,0.21468549712519241
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),48,0.2110339949412986,0.2143895307330523
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),49,0.21102431407513497,0.21487906076225766
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),50,0.21091406731400153,0.2147882453968225
+123,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),51,0.2107094544634347,0.21467942026697054
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),1,0.7886573403120599,0.3837698211177961
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2,0.32423421567156857,0.2740077418956369
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),3,0.29636074270605256,0.27691166667447703
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),4,0.287434492031618,0.26899716835682685
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),5,0.28003925490196574,0.2664014649389387
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),6,0.27248676137723254,0.2604447446538384
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),7,0.26425530589920554,0.24573390022821848
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),8,0.2531404107334559,0.23602550283779383
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),9,0.24512864446791702,0.2342941708638767
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),10,0.24164160191030964,0.2334690201253005
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),11,0.2371538557021935,0.23571924016671783
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),12,0.23457123083600537,0.2315217620421718
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),13,0.2333236124822364,0.23089506079645236
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),14,0.2322415317523636,0.2276416820609928
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),15,0.23087836599887637,0.2271024245340588
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),16,0.23079223272157623,0.235256600363855
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),17,0.2295635181178465,0.23051478779279302
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),18,0.2281046325840207,0.22375641132282373
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),19,0.2278591451847843,0.2244571892586106
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),20,0.22695536086261342,0.22336968448178704
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),21,0.22577578622683966,0.22939174515094288
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),22,0.2252668359940981,0.22363663091557293
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),23,0.22511464852919527,0.22685747045783114
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),24,0.22248902372080676,0.2270043676221461
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),25,0.22183981184241847,0.22354146684673923
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),26,0.22147525349472796,0.23232527337635958
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),27,0.22052996767726024,0.22929869536884437
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),28,0.2203425353380912,0.2222633873798719
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),29,0.2203112107329247,0.22406143837178175
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),30,0.21955196305180313,0.22083233846684594
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),31,0.2200083505535991,0.22254048708077448
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),32,0.21907809021113184,0.2237630642326534
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),33,0.21857966912458465,0.2267444316277379
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),34,0.21866825090266087,0.22118138569785153
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),35,0.2181623934089948,0.22630786402361178
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),36,0.21829842896996873,0.2286312185932316
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),37,0.2181823193438818,0.2255797079051552
+123,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),38,0.2179504854489729,0.22408147947607865
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,1,0.2687352383583918,0.26029237001013866
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,2,0.247747195216872,0.24206025280405996
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,3,0.2338596270205964,0.23682408748248293
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,4,0.2290819972017179,0.23426413935655988
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,5,0.22739049496761246,0.23651612627529656
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,6,0.22579411549258008,0.23157835172307323
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,7,0.22503317818131954,0.23091917341791862
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,8,0.22365954688071363,0.23069481300332118
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,9,0.22295295105304433,0.23002877365727448
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,10,0.22338746875986035,0.23133168370994073
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,11,0.22185984490388264,0.2322209027172413
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,12,0.22122553193704328,0.22741952763931386
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,13,0.22009884218272652,0.2277750461353162
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,14,0.21856216565813585,0.2265438659843066
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,15,0.21785561236608916,0.22651570760895978
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,16,0.21697323214276218,0.22529157972328615
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,17,0.21612586046794788,0.2247492683522384
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,18,0.21466163323717566,0.22690688831180167
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,19,0.21307013818704013,0.22263940381766192
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,20,0.21135282696931307,0.22366552339945786
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,21,0.2103334961372748,0.2230531225099352
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,22,0.2101481862351528,0.2232774045916279
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,23,0.20876077438202031,0.2230391435423017
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,24,0.20725144504786908,0.22296337719214174
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,25,0.20723951182732464,0.22260020626251853
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,26,0.20749659441010537,0.2228338191755117
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,27,0.2066911314520723,0.22176002826140614
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,28,0.20608483289142712,0.2217420773547203
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,29,0.20529815485138125,0.22050430341625832
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,30,0.20542828467516616,0.22091263326546692
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,31,0.20536548132297608,0.22032217710881763
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,32,0.20491633952288502,0.22053024082336473
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,33,0.20402731409772504,0.219511004169596
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,34,0.20399844032357398,0.22026550440418924
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,35,0.20338587542489725,0.21993330261884778
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,36,0.20321454539920777,0.22053870192903163
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,37,0.2022609323514091,0.21961087862314566
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,38,0.20211267864288843,0.2188875664041857
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,39,0.2021526183560228,0.2192167316375138
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,40,0.2021695059874013,0.21981988233254968
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,41,0.20150363925488604,0.21889189084130942
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,42,0.20081154461232645,0.2192313603074749
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,43,0.20096781232890787,0.21940622008604602
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,44,0.20139515956841164,0.21945960741649306
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,45,0.20107413704203655,0.21934753030912044
+123,clustered,cnn_bilstm,CNN + Bi-LSTM,46,0.2004843005092436,0.21956995198432547
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),1,0.8035755080343975,0.29647802266220696
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2,0.3191478598148065,0.28008699136325355
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),3,0.29623140437542544,0.27296044569837713
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),4,0.27874669155948906,0.26063287162751964
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),5,0.26250435871427735,0.25424597059224247
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),6,0.24794642119199264,0.23345582096054351
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),7,0.23052978936035223,0.22276430793818652
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),8,0.2164536234067066,0.21710597433821413
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),9,0.2106158292999803,0.21704296473198276
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),10,0.20604550499881802,0.2122774453892478
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),11,0.202979730709466,0.21632632232947094
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),12,0.20112950729417475,0.22031645304699884
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),13,0.20162403114139368,0.2162483753294774
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),14,0.1979645693616013,0.2120739526300835
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),15,0.19608680858206953,0.20961157850461049
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),16,0.1958567163356385,0.20955635035090192
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),17,0.1948790140293325,0.20911087803334497
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),18,0.19431165163788816,0.2084093838322654
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),19,0.19384904113073628,0.20950819404575555
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),20,0.1930808621297256,0.21189204634594877
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),21,0.19306999403084749,0.20795516818019355
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),22,0.19217479253220393,0.20766171929556565
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),23,0.19153823333827036,0.20875155347973562
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),24,0.19099551935093062,0.20731060356959177
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),25,0.19063665495843649,0.2068126159511303
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),26,0.19028436405073723,0.20947267007345377
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),27,0.1897675260653547,0.2077120424270918
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),28,0.18991617520678564,0.20745642718350116
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),29,0.18944466288410103,0.20688310174194685
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),30,0.18825544131313854,0.20741863386087073
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),31,0.18820393438365432,0.2064153990068051
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),32,0.18765977665814698,0.20696066859696147
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),33,0.18776711925861683,0.2068581550156946
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),34,0.18763974683129792,0.20562058727708482
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),35,0.18752077692054628,0.20500458652980735
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),36,0.18719621651849022,0.20595160254931028
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),37,0.18690694361949517,0.20716125958278678
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),38,0.1867144466809521,0.20772182136868558
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),39,0.18642612984426532,0.2065477677923701
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),40,0.18628469766257139,0.20511701959111478
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),41,0.18626192478266393,0.20522521230797564
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),42,0.18609702826989494,0.20638320879077293
+123,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),43,0.1859460342286173,0.2064223084297854
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),1,0.7527875670820402,0.3695403416855501
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2,0.31838592118531356,0.27624229489902025
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),3,0.2937271848812301,0.27262706776751
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),4,0.2815475881186159,0.2719656408472074
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),5,0.27033731389735255,0.2548850518995121
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),6,0.2564484231399738,0.24598065686877466
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),7,0.247709821737202,0.24119295318663417
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),8,0.2403292680172509,0.23776136948661683
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),9,0.23584382231451526,0.2395155208448836
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),10,0.23410067466285198,0.23571291910131478
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),11,0.23200478675915054,0.23277555152078636
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),12,0.22983201200807138,0.24324801348675132
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),13,0.23089206600006051,0.23715888807713473
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),14,0.23068303482202684,0.23170995791477145
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),15,0.22664552335284027,0.23344694284735426
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),16,0.22581594195488436,0.23251883961652928
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),17,0.22549041337281356,0.23200124458083748
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),18,0.223775081792639,0.23031854435124283
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),19,0.22356595639325522,0.23114528365137352
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),20,0.22263202596292103,0.2304681509836696
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),21,0.2229892772166575,0.23072007651705587
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),22,0.22218900756138552,0.23225980882790087
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),23,0.22096923725248147,0.23159975618929476
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),24,0.22096899044695023,0.23077080398460503
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),25,0.2209384051085892,0.2304123825633092
+123,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),26,0.22035162446352094,0.231815487312871
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),1,0.7896254856737174,0.2915832137082362
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2,0.31804967956154706,0.280927162452639
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),3,0.2982547517315599,0.2829635645460186
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),4,0.28821385448220843,0.27991611965109753
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),5,0.2806263266267173,0.2743748568811752
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),6,0.27473401545330645,0.27242783954383637
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),7,0.2669811968886367,0.2589171759657102
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),8,0.2556130719826503,0.24643352127823967
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),9,0.24895838050171173,0.2449248514199894
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),10,0.24060460407003628,0.23985234542355946
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),11,0.23583081531679995,0.23821530290984072
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),12,0.23407381762127313,0.24584044442514486
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),13,0.23418852086285635,0.24736219011871508
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),14,0.23503395048973816,0.23753737424159002
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),15,0.2300301473896122,0.23435309673748797
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),16,0.2287083773995789,0.23522663534038576
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),17,0.22887898357778352,0.23452678843421482
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),18,0.2281494840484372,0.2326216492500979
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),19,0.2266969180080648,0.23382953803344525
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),20,0.22537977722919267,0.23617463628097043
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),21,0.22595983749318796,0.23286398361047084
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),22,0.22401067572509506,0.2322837349224825
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),23,0.22294799219080788,0.2326158595268737
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),24,0.22262076638793477,0.23129306328399257
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),25,0.2230111400320811,0.23171280324234084
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),26,0.22223144574774822,0.23249618758360424
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),27,0.2217426268672624,0.23273562938627404
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),28,0.22105957401210996,0.2302990555853241
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),29,0.21998188183284328,0.23591271639050232
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),30,0.21976206441227497,0.2360255837386493
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),31,0.2190754979168545,0.23326982408604485
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),32,0.21827214986954582,0.2322114912491271
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),33,0.21911618843318803,0.23855325640390848
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),34,0.2186964051155057,0.23671571506072292
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),35,0.2185408147539844,0.23391240272712044
+123,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),36,0.21815622595451362,0.23326828046703957
+2026,random,cnn_bilstm,CNN + Bi-LSTM,1,0.27059525174084015,0.25767960267908435
+2026,random,cnn_bilstm,CNN + Bi-LSTM,2,0.24951438328713074,0.23607115270424575
+2026,random,cnn_bilstm,CNN + Bi-LSTM,3,0.23592398062611641,0.2298797696721511
+2026,random,cnn_bilstm,CNN + Bi-LSTM,4,0.231028725543653,0.22691162150590216
+2026,random,cnn_bilstm,CNN + Bi-LSTM,5,0.22815347044821546,0.226028808740293
+2026,random,cnn_bilstm,CNN + Bi-LSTM,6,0.22680413776974748,0.22471754662558382
+2026,random,cnn_bilstm,CNN + Bi-LSTM,7,0.2258991771031215,0.22522651562456036
+2026,random,cnn_bilstm,CNN + Bi-LSTM,8,0.22445272998199953,0.22231760288343852
+2026,random,cnn_bilstm,CNN + Bi-LSTM,9,0.2230771539119396,0.22109456422950038
+2026,random,cnn_bilstm,CNN + Bi-LSTM,10,0.2226021750755536,0.21958831521500202
+2026,random,cnn_bilstm,CNN + Bi-LSTM,11,0.22198662595983065,0.22091721515266263
+2026,random,cnn_bilstm,CNN + Bi-LSTM,12,0.22176487951106483,0.22026904633923883
+2026,random,cnn_bilstm,CNN + Bi-LSTM,13,0.22052875974703406,0.21781440657012316
+2026,random,cnn_bilstm,CNN + Bi-LSTM,14,0.21917818305753972,0.2167644203066969
+2026,random,cnn_bilstm,CNN + Bi-LSTM,15,0.21822876630212173,0.2162901087253749
+2026,random,cnn_bilstm,CNN + Bi-LSTM,16,0.21722942742377174,0.21561847013585708
+2026,random,cnn_bilstm,CNN + Bi-LSTM,17,0.21623473727025075,0.21450377941704024
+2026,random,cnn_bilstm,CNN + Bi-LSTM,18,0.21444048770706672,0.21315354717021084
+2026,random,cnn_bilstm,CNN + Bi-LSTM,19,0.2133935841956789,0.21321880574129065
+2026,random,cnn_bilstm,CNN + Bi-LSTM,20,0.21395831180211972,0.21187133834857186
+2026,random,cnn_bilstm,CNN + Bi-LSTM,21,0.21190351708379576,0.21106115595347025
+2026,random,cnn_bilstm,CNN + Bi-LSTM,22,0.21053351285803468,0.21487033610441247
+2026,random,cnn_bilstm,CNN + Bi-LSTM,23,0.21099878633176725,0.20986157619938844
+2026,random,cnn_bilstm,CNN + Bi-LSTM,24,0.20933625409981732,0.2100158991361437
+2026,random,cnn_bilstm,CNN + Bi-LSTM,25,0.20874535776222375,0.20991928036473378
+2026,random,cnn_bilstm,CNN + Bi-LSTM,26,0.20804291180633472,0.20818631445803418
+2026,random,cnn_bilstm,CNN + Bi-LSTM,27,0.2076787221395325,0.20898647468631007
+2026,random,cnn_bilstm,CNN + Bi-LSTM,28,0.20675905484970797,0.20882904057313845
+2026,random,cnn_bilstm,CNN + Bi-LSTM,29,0.20628178428394708,0.20748813384148826
+2026,random,cnn_bilstm,CNN + Bi-LSTM,30,0.20537806663946745,0.2071483641827092
+2026,random,cnn_bilstm,CNN + Bi-LSTM,31,0.20537713066455773,0.20841777338987352
+2026,random,cnn_bilstm,CNN + Bi-LSTM,32,0.20499180665462755,0.20671938132552825
+2026,random,cnn_bilstm,CNN + Bi-LSTM,33,0.20467979721821256,0.20556266367936335
+2026,random,cnn_bilstm,CNN + Bi-LSTM,34,0.20328861464416395,0.20549739823908078
+2026,random,cnn_bilstm,CNN + Bi-LSTM,35,0.20241069242864115,0.20516435467467017
+2026,random,cnn_bilstm,CNN + Bi-LSTM,36,0.2030163102226331,0.2044487789470036
+2026,random,cnn_bilstm,CNN + Bi-LSTM,37,0.20246108822508793,0.20477559157207806
+2026,random,cnn_bilstm,CNN + Bi-LSTM,38,0.20095309222456165,0.20374777279838938
+2026,random,cnn_bilstm,CNN + Bi-LSTM,39,0.2007127637319198,0.20339431968771396
+2026,random,cnn_bilstm,CNN + Bi-LSTM,40,0.1997783077418576,0.20485869633192633
+2026,random,cnn_bilstm,CNN + Bi-LSTM,41,0.19942636584816095,0.20470076763615602
+2026,random,cnn_bilstm,CNN + Bi-LSTM,42,0.199264480755098,0.20292215244252
+2026,random,cnn_bilstm,CNN + Bi-LSTM,43,0.19799522560039096,0.20353914079975252
+2026,random,cnn_bilstm,CNN + Bi-LSTM,44,0.1976320366801378,0.2034607883833465
+2026,random,cnn_bilstm,CNN + Bi-LSTM,45,0.19700059230746933,0.20145249338138577
+2026,random,cnn_bilstm,CNN + Bi-LSTM,46,0.19615808040103783,0.20261686789889297
+2026,random,cnn_bilstm,CNN + Bi-LSTM,47,0.1957668107501729,0.20205398023772497
+2026,random,cnn_bilstm,CNN + Bi-LSTM,48,0.19578255767512004,0.2020406551292392
+2026,random,cnn_bilstm,CNN + Bi-LSTM,49,0.19382267417483423,0.20193403079157687
+2026,random,cnn_bilstm,CNN + Bi-LSTM,50,0.1928760421054657,0.2004876577553629
+2026,random,cnn_bilstm,CNN + Bi-LSTM,51,0.19253378579682273,0.20138333081340445
+2026,random,cnn_bilstm,CNN + Bi-LSTM,52,0.19181690417085212,0.20113200271258405
+2026,random,cnn_bilstm,CNN + Bi-LSTM,53,0.1911351821728956,0.20084067066462816
+2026,random,cnn_bilstm,CNN + Bi-LSTM,54,0.19041481968936322,0.20019080630298994
+2026,random,cnn_bilstm,CNN + Bi-LSTM,55,0.1903659838510993,0.20015090940093078
+2026,random,cnn_bilstm,CNN + Bi-LSTM,56,0.18923516645603258,0.19947389680512098
+2026,random,cnn_bilstm,CNN + Bi-LSTM,57,0.18920109113492664,0.19981111741724278
+2026,random,cnn_bilstm,CNN + Bi-LSTM,58,0.1896309004056085,0.1994466764443204
+2026,random,cnn_bilstm,CNN + Bi-LSTM,59,0.18899704267132655,0.20032033885942072
+2026,random,cnn_bilstm,CNN + Bi-LSTM,60,0.18828508813990186,0.19978910963646934
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),1,0.9501996101724328,0.32581988903654724
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2,0.3318088192462817,0.27805858900567065
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),3,0.2985456919751803,0.2637666539699376
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),4,0.28159100586989666,0.2539599041978852
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),5,0.26948106038503095,0.2487128945816608
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),6,0.2594341840717983,0.24309345281997077
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),7,0.24942772031708207,0.22975988949046416
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),8,0.23617772030917103,0.2181481124401665
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),9,0.22425448970501569,0.2040504499071357
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),10,0.21530419773938553,0.20065044870181958
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),11,0.21072402751010336,0.201613791993543
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),12,0.20888914387928537,0.20254502920400339
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),13,0.20732389518846756,0.2001339218625072
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),14,0.20420665423752637,0.1948659554535315
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),15,0.2016990454388931,0.1937347322809739
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),16,0.19994503538022737,0.19359316488130898
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),17,0.19948339010717497,0.1931623525264598
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),18,0.19927096039122688,0.19160133306862784
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),19,0.19734797002557608,0.19214613411893078
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),20,0.19654156682472818,0.191223013443964
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),21,0.1957224204219002,0.1954644536342369
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),22,0.19540307349596575,0.1902649468448268
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),23,0.19463303858169864,0.19260903652690325
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),24,0.1946547148310607,0.19048092717311535
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),25,0.19448840548892632,0.18818742859692705
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),26,0.19224221057650343,0.18874763726901894
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),27,0.19201131501007804,0.1890101621703369
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),28,0.19149978395543324,0.19036011621445453
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),29,0.19057843482796716,0.18796592485718652
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),30,0.19016126888238652,0.18792036773205376
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),31,0.19016885161414326,0.18655221716982692
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),32,0.19020921818974015,0.19001121910250918
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),33,0.1895895429722625,0.18927660022749335
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),34,0.18917314143091346,0.18659226920138172
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),35,0.1887894184176857,0.1865150484861303
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),36,0.18842303986502754,0.18786226114591345
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),37,0.1886103223628517,0.1876693212685465
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),38,0.1882240322171721,0.18742905830850407
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),39,0.18836177825526002,0.1857323663718417
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),40,0.18799825014917057,0.18715417227682088
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),41,0.18760898644136362,0.18591342310086875
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),42,0.18783128864068335,0.18642996138885243
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),43,0.18782920507054623,0.1866029359283997
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),44,0.18743890204987068,0.18638658867019708
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),45,0.18759337252077501,0.18607484764840995
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),46,0.18772460134529448,0.1859267504990888
+2026,random,transformer_vienna_real7,Full Model (+ViennaRNA 7d),47,0.18772088513429527,0.1859574300759122
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),1,0.9731156272767972,0.30842929670647556
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2,0.33049558068741747,0.27630445107119994
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),3,0.30224445122033805,0.2753224069473981
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),4,0.2895286392381631,0.2709411504317303
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),5,0.28196488408839254,0.2654582878836349
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),6,0.27331507912954384,0.2573587319143966
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),7,0.26419111511582016,0.2488904474448471
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),8,0.2556795788181337,0.2379959926170175
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),9,0.24739860532875624,0.23222330581097184
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),10,0.24200101305612712,0.23101016796794402
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),11,0.23925434697007805,0.23304996513375859
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),12,0.23776535032078316,0.23084570208088118
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),13,0.2355806998378047,0.22833288932333187
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),14,0.23462817354926085,0.22929350496912632
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),15,0.23286310632899648,0.22915096672213808
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),16,0.2318350914142813,0.22667682643125608
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),17,0.23072486398390857,0.2260973290378163
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),18,0.22981228053588626,0.22686537459832565
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),19,0.22853896306218383,0.22513679467758782
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),20,0.22824669958139207,0.22654715649077015
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),21,0.2285096679869454,0.22772394709226465
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),22,0.22659797854181055,0.22481054418227253
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),23,0.22662906942310926,0.22730032335810302
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),24,0.22644182598604468,0.22330510802343398
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),25,0.22587812632035256,0.22135998564464848
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),26,0.22455935695570906,0.22082615814575343
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),27,0.2252173038065266,0.22295284385726946
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),28,0.22423272148981463,0.2216907915662603
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),29,0.22343685604135108,0.22032225289407756
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),30,0.22278783383243556,0.22159093740035077
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),31,0.22207346297275743,0.2207002811500577
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),32,0.22161793145023792,0.22003131697014744
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),33,0.22006113620000728,0.21885489845046904
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),34,0.2193628376067927,0.21902773102649262
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),35,0.21989229779730068,0.2216352735246931
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),36,0.21889069388933557,0.21774368469311553
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),37,0.21781736008803784,0.21774302982911914
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),38,0.21798192999027133,0.21762958952501898
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),39,0.2166805718355967,0.21593255756282004
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),40,0.2160829936359165,0.21446964634852964
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),41,0.21508069058979903,0.21433099607030312
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),42,0.2150558790964314,0.21468069687897132
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),43,0.21461381414160408,0.21511161570646326
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),44,0.21352004612421066,0.2130832385902359
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),45,0.21319628088248474,0.21333052988956813
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),46,0.21223346974761378,0.21396433405515528
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),47,0.21227083161136365,0.2124847329678942
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),48,0.21179963177985614,0.21272944717132458
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),49,0.21122082746676984,0.21062113714962302
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),50,0.21057674125232015,0.21048078617128005
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),51,0.20994737748314884,0.2139988002799997
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),52,0.20996387397912777,0.2145667230667902
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),53,0.2102148808923324,0.20979796795427155
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),54,0.20889765220271198,0.20933164525575856
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),55,0.20814765891918488,0.21024729281055685
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),56,0.20747337824314663,0.21175125323566926
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),57,0.20701746995735126,0.21040483454123837
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),58,0.2064221557984062,0.2105958796635109
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),59,0.20595328675703312,0.21151641236633814
+2026,random,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),60,0.2062466933830923,0.2089866675964209
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),1,0.9601486224719797,0.3228504448807111
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2,0.33434785020101004,0.283850589720141
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),3,0.30318703580391104,0.27267535508466084
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),4,0.29136169492432107,0.27220991393383526
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),5,0.28441196205957026,0.27151777306381536
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),6,0.27829150148151627,0.2691741109896107
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),7,0.2735924263445793,0.26359821081447715
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),8,0.26759466500669843,0.25708512011982526
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),9,0.26143538841687053,0.24732583539397204
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),10,0.25376186659942496,0.24022426124380417
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),11,0.24634836978624497,0.2362521768045597
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),12,0.2414438182430036,0.23405373654588787
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),13,0.2390517956707815,0.23108924050577262
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),14,0.2370425917810371,0.23216411274592844
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),15,0.23536138998933212,0.22990714001054524
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),16,0.23353255335964776,0.22827991632138694
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),17,0.23226812295040777,0.22753762912635758
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),18,0.23147229952934376,0.22875845933160863
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),19,0.23045863227439106,0.2291783015696513
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),20,0.23055363051386824,0.22814424842202505
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),21,0.22977957481356526,0.22661023637970815
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),22,0.2281390555446137,0.22668083575593323
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),23,0.22871854119601254,0.226066573327329
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),24,0.22747177317225864,0.226200930353831
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),25,0.22715911898609076,0.22565070606794965
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),26,0.22680617881804507,0.22478696449893434
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),27,0.22636990375555419,0.22409650658359045
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),28,0.2258200830205097,0.224802713291127
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),29,0.22566920416172595,0.2251317412340913
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),30,0.2249202096469879,0.22411156044143732
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),31,0.22440869960604287,0.22508967423639378
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),32,0.22428492792552154,0.22571903631752993
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),33,0.22395938912753507,0.22714603305006084
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),34,0.22379056160250835,0.22282877918623503
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),35,0.22345615502321922,0.22321309276273987
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),36,0.22312000999290918,0.22753416704816692
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),37,0.22354006050141817,0.2233891286769835
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),38,0.22316775559098506,0.2239289117746708
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),39,0.22254909891989622,0.22381944415949973
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),40,0.2230417910690878,0.2257826668875558
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),41,0.22256707923029886,0.2243938926889115
+2026,random,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),42,0.22265723195782922,0.22532246235896702
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,1,0.27108571859419783,0.2562736158193925
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,2,0.24744300122645876,0.23899107270421416
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,3,0.23441129491412543,0.23167054558698738
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,4,0.23070414702299336,0.23036523932294758
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,5,0.22796018894943426,0.228778977577757
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,6,0.22635289816219542,0.22761465882818993
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,7,0.22542574500478757,0.2279292835464662
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,8,0.22399616315307183,0.2257982788641615
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,9,0.22305158028970223,0.22473205414198877
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,10,0.2218647318225387,0.2233248124263993
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,11,0.22230999965727263,0.22400094656556774
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,12,0.22150381265486663,0.2220049135825491
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,13,0.22027807309036926,0.22148076937647201
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,14,0.21869683866590925,0.22071490536740984
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,15,0.2183835308085397,0.22182530405137948
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,16,0.21757797141198437,0.21943455628042988
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,17,0.2178948168613383,0.2209969673719966
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,18,0.21635157305625244,0.21596802129874965
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,19,0.21492291702062077,0.21441528866326248
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,20,0.21340960533680464,0.2146757227250574
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,21,0.21212006340050915,0.21294253496188845
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,22,0.21098933010801618,0.21304174034469878
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,23,0.2097941600160717,0.2117798059337643
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,24,0.20868880870243106,0.2128236102684138
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,25,0.20802512233714243,0.21087047560445366
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,26,0.20797985285426096,0.2112515400486878
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,27,0.20779112086007792,0.21080660649189278
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,28,0.20611296518613434,0.21025285191194878
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,29,0.20601094951183024,0.20946090487447058
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,30,0.2049744248276945,0.2088922871238323
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,31,0.20422853671411584,0.20835138077889354
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,32,0.204056706223455,0.20860221369629003
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,33,0.20313021770454118,0.20907281956319518
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,34,0.20289277706436015,0.20817133636951768
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,35,0.20214361643456008,0.20955537008483255
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,36,0.20151442500202082,0.20694533739436133
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,37,0.2018834523695029,0.208546240039163
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,38,0.2008860482876355,0.2075843184387741
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,39,0.19965226484318244,0.2070878179906756
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,40,0.19880482542515657,0.20685663190424236
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,41,0.19790128350152233,0.20594524315142204
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,42,0.1973295862223473,0.2064011791268357
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,43,0.1979288153227762,0.2064637677646781
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,44,0.1965025030636521,0.20619172728675583
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,45,0.1960148099505013,0.20547476774797876
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,46,0.19600100700723103,0.20511523460693504
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,47,0.1955365231287647,0.20576084995998348
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,48,0.19548868669897224,0.20526074485475299
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,49,0.19465670061320445,0.20500612849696195
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,50,0.19465602428019144,0.20522308440209
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,51,0.19441018112813999,0.20491310321666073
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,52,0.1944152394948604,0.20471775592640423
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,53,0.19441042573849485,0.2052718777368335
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,54,0.19390301517911138,0.20454292039154345
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,55,0.19358221210963383,0.20525063152046719
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,56,0.19299197317065292,0.20516866664254543
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,57,0.19322669775880624,0.20470164127287188
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,58,0.1926961768808778,0.20449225224853293
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,59,0.19221138352115666,0.20454766056399182
+2026,grouped,cnn_bilstm,CNN + Bi-LSTM,60,0.1926065101313204,0.2041376912149809
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),1,0.9267253192790788,0.3020525729482098
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2,0.32837577141724844,0.2885479472743612
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),3,0.29594866740800563,0.26687680174872835
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),4,0.27826732560915035,0.2518103013331008
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),5,0.26683823617464614,0.2513580956463009
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),6,0.253214424673015,0.2386224844325199
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),7,0.23771929815328888,0.22477487998134624
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),8,0.2239343839330532,0.20722204556503088
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),9,0.21665734477069762,0.203501406415447
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),10,0.21251192236716773,0.20454088129595407
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),11,0.2088254328437727,0.19897369613076682
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),12,0.2064017535354246,0.19844075772096298
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),13,0.2035755625281916,0.1967594557597821
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),14,0.20143180517467807,0.19451454197931511
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),15,0.20119947991199735,0.1955025127842596
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),16,0.2000482782877004,0.1943822906848083
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),17,0.19844935687786158,0.19346517120362536
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),18,0.19787566714501928,0.20008481961174693
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),19,0.19666681349135218,0.19505407120993398
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),20,0.19590782605472712,0.1926316208177473
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),21,0.1949761763547804,0.19553086201132833
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),22,0.1967218391266733,0.19751617766255244
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),23,0.19328423966478955,0.19273073922491638
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),24,0.19281719078849874,0.1909725459648869
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),25,0.19221806109148096,0.19213712080939763
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),26,0.19222472989091602,0.190240476824432
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),27,0.19215529855732671,0.19414324296680174
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),28,0.1914000743194476,0.19150574530161452
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),29,0.19121758135112796,0.18915867379851461
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),30,0.1907212786356669,0.19206278079602582
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),31,0.1903139107877852,0.19075471063938615
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),32,0.18930541786558874,0.18932348297473084
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),33,0.1892968608886138,0.1889757253691169
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),34,0.18959948775200286,0.1890916638989085
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),35,0.18892340812024985,0.18912674890619433
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),36,0.18900384886889365,0.18938160686298885
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),37,0.18863084244133654,0.1897458366886603
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),38,0.18828940926587612,0.1889241101580127
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),39,0.18857931833989972,0.1893554755147721
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),40,0.18818129636175096,0.18979261508771475
+2026,grouped,transformer_vienna_real7,Full Model (+ViennaRNA 7d),41,0.1880672304602052,0.18906709328025423
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),1,0.8798409207840105,0.3281705269162164
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2,0.33743950308398496,0.2734215834576505
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),3,0.3062057185090617,0.27793548877527163
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),4,0.28918353144939934,0.2666586813364035
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),5,0.27677544315677916,0.2574834179973553
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),6,0.26323966896839746,0.25285287834481257
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),7,0.25223065834933767,0.24090956690305487
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),8,0.24585608813850202,0.23698373771981257
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),9,0.2428940233882271,0.2343988941414445
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),10,0.23913028766894995,0.23555864666984572
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),11,0.23660904586166215,0.23579609017046915
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),12,0.23470954900196792,0.23101628582159434
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),13,0.23335173836217607,0.23395014815237453
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),14,0.23145017449625627,0.23172425304546174
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),15,0.23058235348077533,0.22906775603464058
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),16,0.2306513219063226,0.23018009234261816
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),17,0.23073688095609646,0.23275407846176968
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),18,0.22945873630306754,0.23555128756419963
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),19,0.22773134475522966,0.22811732971483742
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),20,0.22673793142795629,0.2299882434059321
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),21,0.2264989149513458,0.22741616108692803
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),22,0.2263818021403402,0.22864197161486166
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),23,0.2258618492093757,0.22858368827126133
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),24,0.22579939755451703,0.22845634626850533
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),25,0.22480278285267924,0.22598478363089053
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),26,0.22455054864601795,0.22649344617282438
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),27,0.22453429618829784,0.22642758145249475
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),28,0.22407897593997736,0.22632009405584502
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),29,0.2241045177439221,0.22653942246318726
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),30,0.22389801105546808,0.22724694514488827
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),31,0.223733670904199,0.2270144737517565
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),32,0.22338644017096576,0.22695663978230268
+2026,grouped,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),33,0.22362206718616526,0.2265043567838217
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),1,0.9340221884474119,0.29833520504913313
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2,0.33013439902521974,0.29796400267622114
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),3,0.3017738525072924,0.27844181263885176
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),4,0.2914924933740415,0.2707920972154188
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),5,0.28288834070961216,0.26691772861991847
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),6,0.27282998825652,0.2685579829104075
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),7,0.2630998824342213,0.24808741048080443
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),8,0.2534282813666333,0.24425665050543285
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),9,0.24806536208538407,0.23833435829294572
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),10,0.24325524076613259,0.23727290273510174
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),11,0.24044875892151463,0.2376650179177552
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),12,0.2378088216449891,0.23390162057653485
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),13,0.23594618298541672,0.23834776220565898
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),14,0.23383929455200075,0.2363419686228996
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),15,0.23325246456529572,0.23065076102526422
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),16,0.23277388196968382,0.23318051519885802
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),17,0.2317197604454196,0.23366979183675238
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),18,0.23067012571826176,0.2433701126261108
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),19,0.22968736804684445,0.22941388526297105
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),20,0.2282411010402072,0.23272705319724005
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),21,0.22900746333284933,0.22992270242826712
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),22,0.2284299178196527,0.22977935207554032
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),23,0.2267858234067138,0.22865928459945128
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),24,0.22681477903565064,0.23001168817323012
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),25,0.22649701849018833,0.22792625872694255
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),26,0.226142719394789,0.2294276709021098
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),27,0.2261024171588344,0.22808296467258193
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),28,0.22564473851585765,0.22775155848752374
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),29,0.22610389554093918,0.2273318478666924
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),30,0.2259279368850866,0.2290740762645717
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),31,0.226014162522441,0.22845945806367018
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),32,0.22495445004357223,0.22624595215365603
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),33,0.2258632632716262,0.22957044141722827
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),34,0.22465356468896447,0.22729071805233939
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),35,0.22439546080833014,0.22618847575072734
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),36,0.22373889835417266,0.2285575230991841
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),37,0.22333076159166956,0.22646727616876708
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),38,0.2230920813324791,0.2256873655936424
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),39,0.22334647415243117,0.2264441551441337
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),40,0.22314482848569014,0.23047575153912095
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),41,0.2232300971215766,0.22525745466288397
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),42,0.22278012809022207,0.2255080556452371
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),43,0.2223702985461,0.23101701545058484
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),44,0.2228568032037618,0.2292668915972717
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),45,0.22177224279573973,0.22508981394634692
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),46,0.2217437032967691,0.22550594890192674
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),47,0.22138540857405956,0.22521450802402476
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),48,0.22086321516817156,0.22542683972422614
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),49,0.22090672852412302,0.2240618536743459
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),50,0.2207824859547268,0.2251265224989362
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),51,0.22078700978447657,0.22417010452384664
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),52,0.22105450728746287,0.2249916571032117
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),53,0.22070832029004653,0.22493457692264873
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),54,0.22066541797271055,0.2250007847135633
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),55,0.22059095994505634,0.225120129789304
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),56,0.2206945334267398,0.22445153837102433
+2026,grouped,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),57,0.2209106500861465,0.22458594956062225
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,1,0.2689178361199719,0.25973204783077203
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,2,0.24635813955976557,0.24213970425660636
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,3,0.23406115981134348,0.237885583586407
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,4,0.22950897818972696,0.23512871690554576
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,5,0.22743637384070448,0.23476415326295438
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,6,0.22639986504693338,0.23314323926393168
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,7,0.22548072909966482,0.2326558484747459
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,8,0.22423283087380624,0.23129477624030662
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,9,0.2236560013387286,0.23082363146517404
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,10,0.22318800339821243,0.22968383125536718
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,11,0.22185500449840917,0.2298676083135799
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,12,0.22046148161172768,0.2299512747675743
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,13,0.22001493349541557,0.22764027091683928
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,14,0.2188286864504345,0.22816850425216811
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,15,0.21837767629785007,0.23019179710354776
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,16,0.2167863726580163,0.22694411256891822
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,17,0.21731022160212626,0.22483636071886087
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,18,0.21531395163198777,0.22620469141848837
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,19,0.21263155140386072,0.22368587613123772
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,20,0.2118107345698646,0.22664325316111056
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,21,0.2118512227946906,0.22367047219591055
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,22,0.21040206825963192,0.22387467340708103
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,23,0.20893922788799704,0.22357888720681007
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,24,0.20868234289802137,0.22408206668411984
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,25,0.2081610431236667,0.2232134307994955
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,26,0.20820491268319044,0.2225159695910558
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,27,0.20734799398680037,0.2225759184542297
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,28,0.20688498977783917,0.22254564854631823
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,29,0.20601956618262737,0.22340206334584792
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,30,0.20611883418650429,0.22244758035739562
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,31,0.20512192061678441,0.22226370653500643
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,32,0.2056546006485895,0.22242591209359783
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,33,0.2049382179182169,0.2233245103142871
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,34,0.2044756363451804,0.2237691808715249
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,35,0.20469079858807374,0.22188841704423742
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,36,0.20429818044793405,0.221987047386947
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,37,0.20443053226340033,0.22169058268548641
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,38,0.20385672003722685,0.22233326154660193
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,39,0.20376741451914662,0.2216755381599575
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,40,0.20392712663195928,0.22194694669949006
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,41,0.20362312255873224,0.22173821600329816
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,42,0.20337186142104655,0.22168180709624605
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,43,0.20325485606253937,0.2218023625886028
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,44,0.2034481280396945,0.2216264096052287
+2026,clustered,cnn_bilstm,CNN + Bi-LSTM,45,0.2034410238488175,0.22167674425629966
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),1,0.9952143616136636,0.32368662997025044
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2,0.3291720519402765,0.2960893301810452
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),3,0.29856368053960525,0.2683349683100087
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),4,0.2817390948674326,0.2615589969524998
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),5,0.267943438732623,0.2546838169711316
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),6,0.2555876460669324,0.24815065573119657
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),7,0.24208999400955988,0.23872140950348808
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),8,0.22941271018374504,0.23123601849806663
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),9,0.2203050524081604,0.22348032828527833
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),10,0.21213333487107852,0.2206428017516196
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),11,0.20954075479260534,0.2180050149094243
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),12,0.20734895598431183,0.21355721037247094
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),13,0.20378234155508274,0.21370836062390297
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),14,0.20188192214830422,0.21157785421697176
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),15,0.20027214840355065,0.21114008847489632
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),16,0.19905491044799292,0.2105885626199507
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),17,0.1970029336502373,0.20952027113654004
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),18,0.1972679936406593,0.2140587621380983
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),19,0.19696493103903281,0.21057671016029014
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),20,0.19645913970322337,0.20928908539163946
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),21,0.19476453459436827,0.2109841380291397
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),22,0.193240347962918,0.21074891007596339
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),23,0.19285151326748984,0.20803838882780357
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),24,0.19201290022143214,0.21013128392091243
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),25,0.19125799159277682,0.21003601267747102
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),26,0.19037647964021145,0.20979562857603534
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),27,0.190636889151661,0.2058681941331198
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),28,0.190045128376545,0.20673206438205402
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),29,0.1895571992819322,0.2065349488428995
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),30,0.1891337670508099,0.20593666515554815
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),31,0.1886012858483105,0.20610680192074493
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),32,0.18802759405730107,0.20586149321390065
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),33,0.18812482232969355,0.205721367166857
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),34,0.18791796145761372,0.20595970309322448
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),35,0.18749179482893763,0.20555019133871782
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),36,0.18779350098934297,0.20539508757950514
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),37,0.18744801850156348,0.20511129668125047
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),38,0.18781242167510237,0.20439749269458116
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),39,0.18717396123775798,0.205848709975019
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),40,0.1864029736491541,0.2060833400638194
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),41,0.1865134708101011,0.2038538508161072
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),42,0.18636560066408434,0.20441357858696138
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),43,0.1864306512325692,0.20587467387707845
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),44,0.18584951298730076,0.20399116494226147
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),45,0.18607265436893627,0.20447602143158783
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),46,0.1859753348427953,0.2042291621940114
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),47,0.18576299206870098,0.20399306912301945
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),48,0.18585088105162811,0.20384678242340848
+2026,clustered,transformer_vienna_real7,Full Model (+ViennaRNA 7d),49,0.18538826065247097,0.20590364553228924
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),1,0.9521496744952577,0.28213174743053326
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2,0.3305824036009052,0.31740263072490044
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),3,0.3011230865419411,0.276057643507356
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),4,0.2865181248996555,0.2698952584005313
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),5,0.2739174603424761,0.25791795912887616
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),6,0.261487713561667,0.25199471746851054
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),7,0.254272718624237,0.24493654030211362
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),8,0.246652984378023,0.24321554564968906
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),9,0.24112564566305367,0.23969038983909058
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),10,0.23771271293293114,0.24316600584721035
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),11,0.23715724147370873,0.238334359709417
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),12,0.23514786434930168,0.2360964346990365
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),13,0.23220556404799594,0.235263193767812
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),14,0.23168939327836818,0.23385996115130275
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),15,0.23060554406772804,0.2335463449995665
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),16,0.2303645572613048,0.23584932779124654
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),17,0.2287191015697805,0.23370362019297689
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),18,0.22872657423785345,0.2349792554193837
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),19,0.22762122994708522,0.2353667475639757
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),20,0.22734422610221314,0.23159922053046084
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),21,0.2270805863564462,0.23802503113226103
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),22,0.22726171268224396,0.23283819826135602
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),23,0.22692560435324835,0.23111568994074272
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),24,0.226192721016203,0.23227101964891525
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),25,0.22548890410011113,0.23394415980826758
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),26,0.22452459581622622,0.2313760823395683
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),27,0.2242685140570776,0.2304737552422223
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),28,0.2244407079021263,0.2316098645898703
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),29,0.22415335429945166,0.22997063797045453
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),30,0.2238241594929317,0.2325255785502463
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),31,0.22415939683086425,0.23009758105041145
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),32,0.22324889487308605,0.2300583351131798
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),33,0.22293195106777944,0.23033057190798462
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),34,0.22351260287368926,0.23015497142268185
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),35,0.22277316187905746,0.22987846087675054
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),36,0.22294749338644268,0.23052685228014
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),37,0.22307269056180512,0.22977418595708138
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),38,0.22320031276225685,0.22974392180894232
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),39,0.22272590554423313,0.22981519784053323
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),40,0.2226267144506971,0.22958192705802105
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),41,0.22243353570569155,0.23013551951930653
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),42,0.22219491061552393,0.22934667952161855
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),43,0.22252383215539862,0.22933478674355112
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),44,0.22210644616519085,0.22919505581689462
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),45,0.2225304261661044,0.2295448030209444
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),46,0.22220364649266847,0.22952824597918123
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),47,0.2220863307724963,0.22915561635131007
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),48,0.2215000857795128,0.22910750612434297
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),49,0.22175899714676583,0.22965490567833569
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),50,0.22181579160036122,0.22933096916639928
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),51,0.2213602637689749,0.22994314772870703
+2026,clustered,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),52,0.2215843671481219,0.2294443019041568
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),1,0.9940460000560917,0.3159457446764589
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2,0.3297727167566264,0.3023791997864332
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),3,0.3024445202037956,0.27601832960480993
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),4,0.2910963808579347,0.27785520627025967
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),5,0.2826295039368282,0.2729065987380919
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),6,0.2744259052086963,0.26610029181126615
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),7,0.2676477206976013,0.25715020911383624
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),8,0.2589194505051222,0.24988316762452756
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),9,0.2511695505766042,0.24587986200359424
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),10,0.24464792585581197,0.2472477250097022
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),11,0.24261428759930623,0.24281293410252683
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),12,0.23999057317618014,0.23959290914695355
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),13,0.23529455289529022,0.23753852043629917
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),14,0.23418437512345222,0.23604569571194253
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),15,0.23302611083024852,0.23547420878974076
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),16,0.23249191484863743,0.2392792250299029
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),17,0.23183054032301054,0.23491502474140188
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),18,0.23140370746778025,0.23879574512618196
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),19,0.23079842778367676,0.2333658556194441
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),20,0.22910239278546143,0.2345360201974299
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),21,0.22812967357680475,0.23617208354983935
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),22,0.22789516825952746,0.23605108570696165
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),23,0.22746174263009206,0.23233256857686402
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),24,0.2270052251035796,0.23451920281395386
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),25,0.22680193400889767,0.23558048465434436
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),26,0.22529368463442062,0.23349808962633473
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),27,0.22522443120020127,0.23281864498598634
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),28,0.22528866518365195,0.23222551168712194
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),29,0.22469601981596565,0.23102382387474873
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),30,0.22428056128298263,0.23336337315753636
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),31,0.22447189368520656,0.23095446930323305
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),32,0.22415300041296352,0.23105841246001152
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),33,0.22379493603639472,0.23113183112693808
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),34,0.22361948302291323,0.23040326138772435
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),35,0.22320602143849191,0.23190862744052154
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),36,0.22348234817560403,0.23278732795145116
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),37,0.22341205039292944,0.2315429878724444
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),38,0.22298647456426746,0.23087001952019123
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),39,0.22293483186701105,0.23134805298312344
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),40,0.22243348946056696,0.23117022576980786
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),41,0.22225609514105335,0.23103927619216413
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),42,0.22197776378907547,0.23023199570713565
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),43,0.22212771719139981,0.23062168002110603
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),44,0.222008558837948,0.2301457143164682
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),45,0.2221070325138026,0.23006786062478768
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),46,0.22195834454625102,0.23016460061019306
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),47,0.2220256027630096,0.23037363772627703
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),48,0.2214841225560258,0.22991083194963632
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),49,0.22192459525000785,0.23216177058979479
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),50,0.2222471344680893,0.23073667157331695
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),51,0.22170076958890853,0.2307883920256292
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),52,0.22171932748537504,0.23025555317628318
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),53,0.22185038171705143,0.23014507728563988
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),54,0.22127629943913438,0.23041825868311955
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),55,0.22171078400773278,0.23013184939232834
+2026,clustered,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),56,0.22168246319667573,0.23045084171562996

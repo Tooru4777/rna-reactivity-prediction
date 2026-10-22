@@ -10,6 +10,41 @@ row-random validation.
 The reportable experiment uses real competition measurements only. Competition
 data and model checkpoints are not redistributed.
 
+## Current V18 development evidence
+
+The completed convergence study is archived in
+[`results/kaggle-v18-df2d87b`](results/kaggle-v18-df2d87b/README.md).
+It uses the same current-data 1,000-sequence cohort and fixed similarity split
+as V17: 1,781 eligible profiles, 176,351 measured positions, three training seeds,
+four models and three split strategies. All 36 CV evaluations were replayed
+from the downloaded checkpoints on CPU against the independently downloaded
+source CSV; the maximum difference from GPU CV MAE was 1.45e-8.
+
+| Model / baseline | Clustered CV MAE, mean ± sample SD |
+|---|---:|
+| Bi-LSTM | 0.220151 ± 0.001382 |
+| Real ViennaRNA | 0.204259 ± 0.000647 |
+| Zero structure channels | 0.228237 ± 0.002627 |
+| Position-shuffled structure | 0.230184 ± 0.000237 |
+| Train-only assay mean | 0.293335 |
+| Train-only assay median | 0.279594 |
+
+These are exploratory model-selection CV results. The three clustered runs
+share one CV membership; SD reflects optimization variability, not three
+independent cohorts. Twenty-five runs triggered early stopping; eleven reached
+the 60-epoch budget without triggering it. This does not establish convergence
+for every model. The original archived training plot averages surviving seeds
+at late epochs and must not be interpreted as a fixed-three-seed trajectory;
+see the reviewed replacement in the comprehensive review.
+
+**Final evaluation is disabled while the protocol is a draft.** All V17/V18
+sequences have development exposure. An audited similarity manifest alone does
+not make its test partition independent. A future reviewed protocol must exclude
+the entire development cohort and qualifying neighbours before test access.
+
+The [comprehensive review](docs/comprehensive_review_2026-10-22.md) explains the
+pipeline, verified repairs, reproducibility evidence and PhD application wording.
+
 ## Archived V10 benchmark
 
 Current-data CV development evidence is archived in
@@ -186,9 +221,9 @@ test discipline:
   targets or checkpoints;
 - `development`: trains and evaluates CV only and does not evaluate test
   targets or checkpoints; and
-- `final-eval`: requires one frozen similarity manifest, selects the variant by
-  mean CV MAE, then and only then evaluates that selected variant on the fixed
-  test membership across training seeds.
+- `final-eval`: currently fails before data access because the independent-test
+  protocol and exposure controls have not been frozen. The retained downstream
+  implementation is dormant and is not permission to evaluate test targets.
 
 > **Version 13 protocol correction.** Version 13 contained a smoke branch that
 > would have evaluated test, but its downloaded execution log confirms that
@@ -213,7 +248,7 @@ The archive contains error summaries by:
 - ViennaRNA paired versus unpaired position.
 
 Schema v3 runs also fit one constant reactivity value per experiment type using
-training targets only, then score that trivial baseline on CV and test. It is a
+training targets only, then score that trivial baseline on CV (historical final runs also used test). It is a
 sanity reference and is never included in neural-model selection.
 
 The short 101–150 nt stratum contains few unique sequences in each grouped test
@@ -260,6 +295,8 @@ python -m pip install -r requirements.txt
 python -m compileall -q src experiments kaggle tests
 python -m pytest -q
 python experiments/validate_archive.py results/kaggle-v10-fec86dc
+python experiments/validate_development_archive.py results/kaggle-v17-9d904ff
+python experiments/validate_development_archive.py results/kaggle-v18-df2d87b
 ```
 
 ### Kaggle GPU run
@@ -273,11 +310,11 @@ python experiments/validate_archive.py results/kaggle-v10-fec86dc
    The helper pins the runner in a temporary staging directory and leaves the
    repository placeholder unchanged.
 
-The next submitted run is deliberately a non-reportable smoke test: 256 current-
+The default submission mode is a non-reportable smoke test: 256 current-
 data sequences, one epoch, seed 42, all three split strategies, and four
 Transformer controls (sequence-only, real ViennaRNA, shuffled ViennaRNA, and
-zero structure channels). Only after this passes should a full development run
-consume substantial GPU time.
+zero structure channels). V17 and V18 have already completed development runs; inspect their evidence
+before scheduling another GPU run.
 
 The archived run used Python 3.12.13, PyTorch 2.7.1 + CUDA 11.8, ViennaRNA
 features, and one Tesla P100 16 GB. New runs pin ViennaRNA 2.7.2, record exact
@@ -294,7 +331,8 @@ experiments/build_similarity_manifest.py  frozen MMseqs2 split preprocessing
 experiments/run_ablation.py  repeated ablation and held-out evaluation
 experiments/validate_archive.py independent compact-result validator
 kaggle/                      private Kaggle GPU entrypoint and metadata
-results/kaggle-v10-fec86dc/  versioned reportable artifacts
+results/kaggle-v18-df2d87b/  current exploratory convergence artifacts
+results/kaggle-v10-fec86dc/  historical OLD-data benchmark
 tests/                       data, model, padding, training, and archive tests
 docs/                        development journal
 ```
@@ -302,7 +340,8 @@ docs/                        development journal
 ## Limitations
 
 - The archived V10 experiment samples 1,000 quality-eligible sequences rather
-  than the full Ribonanza corpus; the current-data full run is not yet complete.
+  than the full Ribonanza corpus; the V17/V18 current-data development subset is complete, but full-corpus
+  training and an independent final test have not been performed.
 - Three repeated holdouts quantify seed sensitivity but do not replace an
   external test set or RNA-family-aware benchmark.
 - MMseqs2 similarity clustering is an operational threshold definition, not a

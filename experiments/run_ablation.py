@@ -106,6 +106,8 @@ DEFAULT_VARIANTS = (
 def set_seed(seed):
     """Fix all random seeds for reproducible experiments."""
     torch.manual_seed(seed)
+    import random
+    random.seed(seed)
     torch.cuda.manual_seed_all(seed)
     np.random.seed(seed)
     torch.backends.cudnn.deterministic = True
@@ -345,7 +347,7 @@ def write_sequence_length_artifacts(frame, results_dir):
 
 
 def write_training_curves_figure(epoch_df, output_path):
-    """Plot mean validation curves with seed-to-seed sample SD bands."""
+    """Plot individual seeds and means only while every seed is present."""
     if epoch_df.empty:
         raise ValueError("Cannot plot empty per-epoch results")
     mean_curves = (
@@ -356,10 +358,17 @@ def write_training_curves_figure(epoch_df, output_path):
             seeds=("seed", "nunique"),
         )
     )
-    fig, ax = plt.subplots(figsize=(10, 6))
+    expected = epoch_df.groupby(["split_method", "variant"])["seed"].nunique()
+    mean_curves["expected_seeds"] = [expected.loc[(s, v)] for s, v in
+                                     zip(mean_curves.split_method, mean_curves.variant)]
+    mean_curves["complete_seed_set"] = mean_curves.seeds.eq(mean_curves.expected_seeds)
+    splits = sorted(epoch_df.split_method.unique())
+    fig, axes = plt.subplots(len(splits), 1, figsize=(11, 4.5 * len(splits)), squeeze=False)
     for (split_method, name), curve in mean_curves.groupby(
         ["split_method", "variant"]
     ):
+        ax = axes[splits.index(split_method), 0]
+        curve = curve[curve.complete_seed_set]
         line, = ax.plot(
             curve["epoch"], curve["mean_cv_loss"],
             label=f"{name} [{split_method}]",
@@ -371,14 +380,21 @@ def write_training_curves_figure(epoch_df, output_path):
             (curve["mean_cv_loss"] + spread).to_numpy(dtype=float),
             color=line.get_color(), alpha=0.10, linewidth=0,
         )
+        individual = epoch_df[(epoch_df.split_method == split_method) & (epoch_df.variant == name)]
+        for seed, run in individual.groupby("seed"):
+            run = run.sort_values("epoch")
+            ax.plot(run.epoch, run.cv_loss, color=line.get_color(), alpha=0.35,
+                    linewidth=0.8, linestyle="--")
+            ax.plot(run.epoch.iloc[-1], run.cv_loss.iloc[-1], "x", color=line.get_color())
     seed_count = int(epoch_df["seed"].nunique())
-    ax.set(
-        xlabel="Epoch",
-        ylabel="Validation clipped MAE (mean ± SD)",
-        title=f"RNA reactivity validation curves across {seed_count} seeds",
-    )
-    ax.grid(alpha=0.25)
-    ax.legend(fontsize=8)
+    for split_method, ax in zip(splits, axes[:, 0]):
+        ax.set(xlabel="Epoch", ylabel="CV clipped MAE")
+        ax.set_title(f"{split_method}: {seed_count} seeds; mean ± SD only with all seeds present",
+                     pad=24, fontsize=12)
+        ax.text(0.0, 1.01, "Dashed: individual runs; x: last epoch (stopping or budget cap)",
+                transform=ax.transAxes, fontsize=8)
+        ax.grid(alpha=0.25)
+        ax.legend(fontsize=8)
     fig.tight_layout()
     fig.savefig(output_path, dpi=160)
     plt.close(fig)
@@ -517,14 +533,18 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
             if nt_count > 0:
                 final_loss = masked_loss.sum() / nt_count
             else:
-                final_loss = torch.tensor(0.0, requires_grad=True, device=device)
+                continue
+            if not torch.isfinite(final_loss):
+                raise RuntimeError("Non-finite training loss at measured positions")
 
             final_loss.backward()
             optimizer.step()
             total_train_abs += masked_loss.sum().item()
             total_train_nt += nt_count.item()
 
-        avg_train = total_train_abs / max(total_train_nt, 1.0)
+        if total_train_nt <= 0:
+            raise ValueError("Training requires measured positions")
+        avg_train = total_train_abs / total_train_nt
 
         # --- Cross-Validation (Clipped MAE — Kaggle metric) ---
         model.eval()
@@ -536,6 +556,8 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
                 reactivities = reactivities.to(device)
                 masks = masks.to(device)
                 predictions = forward_padding_safe(model, features)
+                if not torch.isfinite(predictions[masks.bool()]).all():
+                    raise RuntimeError("Non-finite CV prediction at a measured position")
 
                 preds_clipped = torch.clamp(predictions, 0.0, 1.0)
                 reacts_clipped = torch.clamp(reactivities, 0.0, 1.0)
@@ -550,7 +572,9 @@ def train_variant(model, train_loader, cv_loader, device, num_epochs=15,
                 total_cv_abs += masked_loss.sum().item()
                 total_cv_nt += nt_count.item()
 
-        avg_cv = total_cv_abs / max(total_cv_nt, 1.0)
+        if total_cv_nt <= 0:
+            raise ValueError("CV requires measured positions")
+        avg_cv = total_cv_abs / total_cv_nt
 
         train_losses.append(avg_train)
         cv_losses.append(avg_cv)
@@ -698,7 +722,11 @@ def evaluate_checkpoint(model_factory, checkpoint_path, data_loader, device,
                             ).sum().item(),
                         })
 
-    return total_abs / max(total_valid, 1.0), per_row, structure_rows
+    if total_valid <= 0:
+        raise ValueError("Evaluation requires measured positions")
+    if cursor != len(row_indices):
+        raise ValueError("Evaluation loader does not cover the requested row indices")
+    return total_abs / total_valid, per_row, structure_rows
 
 
 # =====================================================================
@@ -788,12 +816,22 @@ def main():
         )
     if args.run_mode == "final-eval" and args.split_method != "clustered":
         raise ValueError("final-eval requires the locked clustered split only")
+    if args.run_mode == "final-eval":
+        raise ValueError(
+            "final-eval is disabled while docs/final_test_protocol.md is DRAFT. "
+            "The entire development cohort is exposed. A reviewed frozen protocol, "
+            "development-neighbour exclusion audit and test-exposure gate are required."
+        )
     # Load config
     config_path = os.path.join(PROJECT_ROOT, "configs", "ablation_config.yaml")
     with open(config_path, "r") as f:
         config = yaml.safe_load(f)
 
     seeds = args.seeds or [config.get("seed", 42)]
+    if len(set(seeds)) != len(seeds) or len(set(args.variants)) != len(args.variants):
+        raise ValueError("Seeds and variants must be unique")
+    if os.path.isdir(args.output_dir) and os.listdir(args.output_dir):
+        raise ValueError("Output directory must be empty to avoid mixing experiment artifacts")
     batch_size = config.get("batch_size", 64)
     num_epochs = args.epochs or config.get("num_epochs", 15)
     lr = config.get("learning_rate", 0.001)
@@ -1016,6 +1054,11 @@ def main():
         ] if torch.cuda.is_available() else [],
         "data_parallel": torch.cuda.is_available() and torch.cuda.device_count() > 1,
         "vienna_features": dataset_7dim.feature_dim == 7,
+        "vienna_model_details": dataset_7dim.vienna_model_details,
+        "vienna_folding": "sequence-only fold_compound with OPTION_MFE; no constraints or probing data",
+        "vienna_structure_sha256": hashlib.sha256("\n".join(
+            f"{sequence}\t{structure_map[sequence]}" for sequence in sorted(structure_map)
+        ).encode("utf-8")).hexdigest(),
         "dependencies": dependency_versions(),
     }
     with open(os.path.join(results_dir, "environment.json"), "w") as f:
@@ -1247,6 +1290,8 @@ def main():
                     cluster_by_digest=cluster_by_digest,
                 )
                 result["cv_checkpoint_mae"] = cv_eval_mae
+                if not np.isclose(cv_eval_mae, result["best_cv_loss"], atol=1e-6, rtol=0):
+                    raise RuntimeError("Reloaded checkpoint CV differs from selected epoch")
                 result["test_mae"] = np.nan
                 for record in row_errors:
                     error_records.append({

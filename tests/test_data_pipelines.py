@@ -189,9 +189,9 @@ class TestReactivityDataset:
             },
         })
         monkeypatch.setattr(
-            reactivity_pipeline.RNA,
-            "fold",
-            lambda sequence: ("((..))..", 0.0),
+            reactivity_pipeline,
+            "fold_structure",
+            lambda sequence, model_details: "((..))..",
         )
         real = RNAReactivityDataset(dataframe=frame, structure_mode="real")
         shuffled = RNAReactivityDataset(
@@ -232,9 +232,9 @@ class TestReactivityDataset:
             },
         })
         monkeypatch.setattr(
-            reactivity_pipeline.RNA,
-            "fold",
-            lambda sequence: ("((..))..", 0.0),
+            reactivity_pipeline,
+            "fold_structure",
+            lambda sequence, model_details: "((..))..",
         )
         first = RNAReactivityDataset(
             dataframe=frame,

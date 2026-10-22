@@ -48,7 +48,7 @@ class RNAReactivityCNNOnly(nn.Module):
 
     Two 1D convolution layers capture local sequence motifs (kernel=5 ≈ 5nt
     sliding window), but cannot model long-range base-pairing interactions.
-    This establishes the lower bound of what local features alone can achieve.
+    This supplies a local-feature reference, not a theoretical performance bound.
     """
 
     def __init__(self, input_dim=7, cnn_out_dim=128, output_dim=2, dropout=0.3):
