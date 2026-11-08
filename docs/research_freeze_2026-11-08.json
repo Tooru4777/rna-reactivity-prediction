@@ -1,0 +1,202 @@
+{
+  "baseline_train_partition": "V18 frozen clustered train only; no refit on CV, old test, or new test",
+  "baselines": {
+    "mean": {
+      "2A3_MaP": 0.33299498290901597,
+      "DMS_MaP": 0.28064647409281696
+    },
+    "median": {
+      "2A3_MaP": 0.2029999941587448,
+      "DMS_MaP": 0.10899999737739563
+    }
+  },
+  "bootstrap": {
+    "cluster_order": "ascending canonical cluster ID",
+    "confidence_level": 0.95,
+    "draw": "sample K cluster indices uniformly with replacement per replicate, K = observed cluster count",
+    "interval": "two-sided percentile",
+    "quantile_method": "numpy.quantile(..., [0.025, 0.975], method=\"linear\")",
+    "replicates": 10000,
+    "rng": "numpy.random.Generator(numpy.random.PCG64(17029))",
+    "seed": 17029,
+    "seed_handling": "average error sums over fixed checkpoints per sequence before resampling; use same cluster draw for model and median baseline",
+    "support_rule": "primary contrast ci_lower > 0; otherwise superiority is not established",
+    "unit": "new_test_similarity_cluster"
+  },
+  "checkpoint_policy": "Reuse exactly these three V18 clustered checkpoints; no refit, seed selection, ensembling or test-driven changes.",
+  "checkpoints": [
+    {
+      "best_epoch": 33,
+      "epochs_trained": 41,
+      "filename": "seed_42_clustered_transformer_vienna_real7_best.pth",
+      "seed": 42,
+      "sha256": "c981bb62c752750d10b7bd33b45578af211c221ba6e83e0d3f0d04243a3f952e",
+      "size_bytes": 9149602
+    },
+    {
+      "best_epoch": 35,
+      "epochs_trained": 43,
+      "filename": "seed_123_clustered_transformer_vienna_real7_best.pth",
+      "seed": 123,
+      "sha256": "c5d2b0c0fb68c4506e42e364cdd61a52f023a0f389202f8ff875ac758bcbdd72",
+      "size_bytes": 9149643
+    },
+    {
+      "best_epoch": 48,
+      "epochs_trained": 49,
+      "filename": "seed_2026_clustered_transformer_vienna_real7_best.pth",
+      "seed": 2026,
+      "sha256": "320116c847b472b49c8d5fa5e59606487fbcbd9a39ae3ab07ad514d10ae7d66b",
+      "size_bytes": 9149684
+    }
+  ],
+  "cohort_design": {
+    "alphabet": "ACGU",
+    "assays": [
+      "2A3_MaP",
+      "DMS_MaP"
+    ],
+    "max_length": 206,
+    "metadata_only_before_lock": true,
+    "min_length": 1,
+    "min_test_similarity_clusters": 100,
+    "min_unique_sequences_per_assay": 100,
+    "power_claim": false,
+    "profile_key": "source SHA-256 plus zero-based data row ordinal, excluding header",
+    "profiles": "all eligible rows for selected sequences, including legitimate repeated assay profiles",
+    "quality_filter": "SN_filter == 1",
+    "replacement_after_lock": false,
+    "sampling_seed_label": 20261108,
+    "sequence_ranking": "ascending (sha256(UTF8(sequence_ranking_prefix + sequence)), sha256(UTF8(sequence))) using lowercase hexadecimal digests",
+    "sequence_ranking_prefix": "rna-final-2026-11-08-v1\n20261108\n",
+    "take": "first 1000 after complete development and qualifying-neighbour exclusion",
+    "unique_sequences": 1000
+  },
+  "confirmatory_structural_controls": false,
+  "decision_status": "DESIGN_FROZEN",
+  "evidence_sha256": {
+    "results/kaggle-v10-fec86dc/run_manifest.json": "4820e5360fe8f919686ca876b6e829a52b07df70f5419e93c981bdba10d100db",
+    "results/kaggle-v17-9d904ff/run_manifest.json": "bc48e82d335b91c6e5bcad668c6412f176ac850219f046b4fa9c801135f7ee1e",
+    "results/kaggle-v18-df2d87b/ablation_aggregate.csv": "7cc6fbed101c6e5642ff385221f133bbd2c40d403724f9dad850f33eecb12ec9",
+    "results/kaggle-v18-df2d87b/ablation_summary.csv": "9f1518c15da417ead9640c7d71513ef13cd43c5600ed9017d5b465015ed67038",
+    "results/kaggle-v18-df2d87b/baseline_results.csv": "f017f4647c3c148e2d875aa8d5546101bd5324e92fd891da6aab867f9248d49f",
+    "results/kaggle-v18-df2d87b/environment.json": "7cd80cfdd407c0958ea5594aaaa1ae8f60c9108fd3b24adc50a55e74c588f7b9",
+    "results/kaggle-v18-df2d87b/model_selection.json": "ef52eb8ae314582530832ca08ff6c4b7af8fe450ee61343c831330c4cb08d778",
+    "results/kaggle-v18-df2d87b/run_manifest.json": "43066419f997178929e92a99791775972aa4ff77b0d6f3fca987a97813b884cd",
+    "results/kaggle-v18-df2d87b/similarity_split_manifest.json": "10fee861eb545bfb987b8331f878def188e5abe27e5908fed455c65bdc476fd2",
+    "results/kaggle-v9-bff599f/run_manifest.json": "0b6bc18880bf06cf9b6fb0d1ad28a97364aacc381abca4d08790a3435aabf4cb",
+    "src/data_pipeline_reactivity.py": "3dd775703d826d4ba3297432e6a4abcda43068818ce69b609c0ce3fad2f7a815",
+    "src/evaluation_statistics.py": "11e57769ab09508b0df20c065e5db91ad8238813b229891eb6fc94f8f2fcb4a2",
+    "src/model_reactivity.py": "9961f80d6f3e439ea6e3a80490b5be2bff228665ff448826410360e693792aeb"
+  },
+  "execution_status": "LOCKED_PENDING_COHORT_AND_GATE",
+  "exposure_registry": {
+    "required_scope": "all sequences ever used for fitting, validation, testing or inspected prediction/error during development; includes all V17/V18 1000 sequences, V9/V10 OLD cohorts and earlier runs",
+    "sha256": null,
+    "status": "PENDING_COMPLETE_HISTORY"
+  },
+  "failure_policy": "Any missing required artifact, hash/version mismatch, incomplete exposure history, command/search failure, incomplete direction, qualifying cross-boundary hit, sample-size/coverage floor failure, invalid target after lock, or prior test exposure blocks evaluation. Never relax thresholds, silently replace sequences, or fill in missing metrics.",
+  "feature_policy": "ViennaRNA 2.7.2 RNA.md() defaults and RNA.OPTION_MFE, no constraints; capture all scalar model details and structure outputs before target access; use reviewed feature implementation",
+  "freeze_date": "2026-11-08",
+  "metric_definition": {
+    "clipping": "both predictions and finite targets clipped to [0, 1]",
+    "inference": "model.eval(), no gradient, padding-safe forward as in reviewed code; non-finite measured predictions fail evaluation",
+    "mask": "finite observed targets within sequence length in the profile assay channel; missing positions and other assay channel excluded"
+  },
+  "pending_execution_artifacts": {
+    "audit_receipt_sha256": null,
+    "candidate_fasta_sha256": null,
+    "candidate_metadata_sha256": null,
+    "exclusion_ledger_sha256": null,
+    "exposure_fasta_sha256": null,
+    "selected_profile_membership_sha256": null,
+    "selected_sequence_set_sha256": null,
+    "target_access_log_sha256": null,
+    "test_cluster_assignment_sha256": null
+  },
+  "primary_contrast": "train-only assay-median MAE minus primary model MAE; positive favours model",
+  "primary_metric": "Arithmetic mean of three seed-specific nucleotide-weighted clipped test MAEs; not MAE of averaged predictions",
+  "protocol_id": "rna-final-2026-11-08-v1",
+  "research_question": "Does the frozen V18 real-ViennaRNA predictor outperform the frozen train-only assay-median baseline on new, development-excluded RNA sequences?",
+  "reviewed_code_base": "c6f0fd7ff50eea4b0cf0949d1358125f7ef2f396",
+  "schema_version": 1,
+  "secondary_metrics": [
+    "macro_sequence_mae",
+    "2A3_MaP_mae",
+    "DMS_MaP_mae",
+    "train_only_assay_mean_reference",
+    "per_seed_scores_and_sample_SD"
+  ],
+  "selected_variant_id": "transformer_vienna_real7",
+  "selection_metric": "mean across seeds of nucleotide-weighted clipped CV MAE",
+  "selection_split": "clustered",
+  "similarity": {
+    "alignment_mode": 3,
+    "backend": "MMseqs2",
+    "binary": "mmseqs-avx2",
+    "binary_sha256": "01d0d7ea577d111743cca75740ee7c0200aebeaa64161e12a37ca9f1a4bdc73f",
+    "bootstrap_cluster_definition": "connected components of qualifying selected-test all-vs-all nucleotide hits; include singleton sequences; canonical sorted-member digest ID",
+    "claim_limit": "no detected qualifying forward-strand hit under the recorded procedure; not universally homology-free",
+    "cluster_id": "sha256(UTF8(concatenation of sorted member sequence digests, each followed by one LF))",
+    "cov_mode": 0,
+    "coverage": 0.8,
+    "kmer_length": 8,
+    "mask": 0,
+    "max_seqs_rule": "max(300, number of target sequences) in each directed search",
+    "min_seq_id": 0.8,
+    "required_searches": [
+      "all_eligible_candidates_to_all_development",
+      "all_development_to_all_eligible_candidates",
+      "selected_test_to_all_development",
+      "all_development_to_selected_test",
+      "six directions among frozen V18 train, CV and new test"
+    ],
+    "search_type": 3,
+    "sensitivity": 7.5,
+    "seq_id_mode": 0,
+    "split_memory_limit": "4G",
+    "strand": 1,
+    "threads": 1,
+    "version": "18-8cc5c+ds-1"
+  },
+  "source": {
+    "competition": "stanford-ribonanza-rna-folding",
+    "filename": "train_data.csv",
+    "old_snapshot_allowed_for_test": false,
+    "provider": "Kaggle",
+    "sha256": "527fbcd94ea474054a08346df356ed29381cf2ecb41a84149d8f62c4865a1684",
+    "size_bytes": 2364840039,
+    "snapshot_observed_on": "2026-10-22",
+    "url": "https://www.kaggle.com/competitions/stanford-ribonanza-rna-folding/data",
+    "version_identity": "SHA256-pinned corrected current snapshot; no invented upstream version number"
+  },
+  "test_access_authorized": false,
+  "timezone": "Asia/Taipei",
+  "training_artifact_source": {
+    "currentVersionNumber": 18,
+    "dockerImage": "gcr.io/kaggle-private-byod/python@sha256:37c64f7dd9c54116ecd1bcc88817c5469b88387388fade02bfa8bf3fc647d461",
+    "kernel": "tooru4777/rna-reactivity-grouped-ablation",
+    "lastRunTime": "2026-10-19T08:22:58.631Z",
+    "machineShape": "NvidiaTeslaT4",
+    "status": "COMPLETE",
+    "url": "https://www.kaggle.com/code/tooru4777/rna-reactivity-grouped-ablation",
+    "verified_on": "2026-10-22 Asia/Taipei"
+  },
+  "training_commit": "df2d87bd98ce8ad5b4e27766a98ad73cd5085ada",
+  "training_seeds": [
+    42,
+    123,
+    2026
+  ],
+  "training_settings": {
+    "batch_size": 64,
+    "early_stopping_min_delta": 0.0001,
+    "early_stopping_patience": 8,
+    "epochs": 60,
+    "learning_rate": 0.001,
+    "scheduler_factor": 0.5,
+    "scheduler_patience": 2,
+    "structure_control_seed": 314159,
+    "weight_decay": 1e-05
+  }
+}

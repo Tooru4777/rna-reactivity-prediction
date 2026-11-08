@@ -37,13 +37,69 @@ for every model. The original archived training plot averages surviving seeds
 at late epochs and must not be interpreted as a fixed-three-seed trajectory;
 see the reviewed replacement in the comprehensive review.
 
-**Final evaluation is disabled while the protocol is a draft.** All V17/V18
-sequences have development exposure. An audited similarity manifest alone does
-not make its test partition independent. A future reviewed protocol must exclude
-the entire development cohort and qualifying neighbours before test access.
+**Research design and model selection were frozen on 2026-11-08; final
+evaluation remains locked pending the new cohort and exposure gate.** All
+V17/V18 sequences have development exposure. An audited similarity manifest
+alone does not make its test partition independent. The full development
+history and qualifying neighbours must be excluded before test access.
 
 The [comprehensive review](docs/comprehensive_review_2026-10-22.md) explains the
 pipeline, verified repairs, reproducibility evidence and PhD application wording.
+
+## Frozen research decision and rationale — 2026-11-08
+
+**Decision: select `transformer_vienna_real7` and reuse the three existing V18
+clustered checkpoints (seeds 42, 123, 2026; best epochs 33, 35, 48).** No refit,
+seed cherry-picking, or prediction ensemble is part of this protocol.
+
+The confirmatory question is whether this frozen predictor outperforms the
+frozen train-only per-assay **median** baseline on new RNA sequences excluded
+from all development exposure and qualifying similarity neighbours. The
+primary model score is the arithmetic mean of the three seed-specific
+nucleotide-weighted clipped test MAEs, not MAE of averaged predictions.
+
+Rationale:
+
+- **Use clustered CV for selection:** the fixed similarity-audited split is
+  the declared development criterion. Random/grouped scores remain diagnostic
+  and are not averaged into the selection objective.
+- **Choose real ViennaRNA:** its mean clustered CV MAE is 0.204259, compared
+  with Bi-LSTM 0.220151, zero channels 0.228237 and shuffled channels 0.230184.
+  The same-width structure controls and checkpoint replay strengthen the
+  development evidence, but do not establish a confirmatory structural effect.
+- **Use assay median as the primary reference:** it is the constant reference
+  aligned with L1 loss, fitted only on the original V18 clustered train rows.
+  Assay mean remains a secondary sanity reference. Neither baseline is refit
+  using the new cohort.
+- **Reuse the verified checkpoints:** this freezes actual model bytes and
+  avoids adding training or epoch-selection choices before confirmation.
+  Real-vs-zero/shuffled comparisons stay exploratory; they are not additional
+  confirmatory tests on the new cohort.
+
+The new cohort design is fixed at 1,000 unique quality-eligible sequences from
+the SHA-pinned corrected-current snapshot, with all eligible profiles retained.
+Selection uses deterministic sequence-hash ranking after excluding the complete
+development exposure registry (including V9/V10 and earlier runs, not merely
+V17/V18) and neighbours found in both search directions. Minimum feasibility
+requirements are 100 test similarity clusters and 100 unique RNAs per assay;
+these are operational floors, not a statistical-power claim. Failure stops the
+protocol instead of changing thresholds, sampling seeds or replacing members.
+
+The primary contrast is median-baseline MAE minus model MAE. A paired,
+10,000-replicate test-cluster bootstrap uses the same draws for all fixed seeds
+and the baseline; a two-sided 95% interval strictly above zero is the sole
+confirmatory superiority criterion. Macro-sequence and assay-specific MAE,
+individual seed scores and sample SD are secondary. Training seeds are not
+independent biological observations.
+
+See the [frozen protocol](docs/final_test_protocol.md),
+[machine-readable decisions and actual checkpoint hashes](docs/research_freeze_2026-11-08.json),
+and [protocol checksums](docs/research_freeze_2026-11-08.sha256).
+They specify source/version/hash lineage, metadata-only selection, nucleotide
+search parameters, both development-exclusion directions, six train/CV/new-test
+audit directions, bootstrap cluster construction, and fail-closed conditions.
+The complete exposure registry, cohort membership and audit hashes are still
+pending: **design frozen does not mean cohort instantiated or test unlocked**.
 
 ## Archived V10 benchmark
 
@@ -96,7 +152,8 @@ CSV, JSON, and PNG artifact.
 
 ## Research question
 
-The study asks two scoped questions:
+The exploratory development study asked two scoped questions (the separate
+confirmatory question is frozen above):
 
 1. How do local, recurrent, attention-based, and predicted-structure features
    compare under the same training and evaluation protocol?
@@ -221,8 +278,8 @@ test discipline:
   targets or checkpoints;
 - `development`: trains and evaluates CV only and does not evaluate test
   targets or checkpoints; and
-- `final-eval`: currently fails before data access because the independent-test
-  protocol and exposure controls have not been frozen. The retained downstream
+- `final-eval`: currently fails before data access until the frozen independent-test
+  design has a complete cohort, exposure audit and validated access gate. The retained downstream
   implementation is dormant and is not permission to evaluate test targets.
 
 > **Version 13 protocol correction.** Version 13 contained a smoke branch that
@@ -268,9 +325,10 @@ not reset patience. Per-assay train-only median baselines supplement the mean
 reference; both use the same measured CV positions.
 
 Submit with `python kaggle/submit_gpu.py --commit <pushed-SHA> --mode convergence`.
-The actual epoch count and stopping flag are recorded per model. The final-test
-protocol remains a [draft](docs/final_test_protocol.md) until the model and
-hyperparameters are determined. The entire development cohort is exposed by
+The actual epoch count and stopping flag are recorded per model. Research
+design and model selection are now [frozen](docs/final_test_protocol.md); no
+additional convergence run is required by that decision. Cohort construction
+and test access remain locked. The entire development cohort is exposed by
 the random/grouped runs and cannot supply an independent final test.
 
 ### Prediction health and development

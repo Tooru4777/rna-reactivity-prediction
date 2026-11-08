@@ -818,8 +818,8 @@ def main():
         raise ValueError("final-eval requires the locked clustered split only")
     if args.run_mode == "final-eval":
         raise ValueError(
-            "final-eval is disabled while docs/final_test_protocol.md is DRAFT. "
-            "The entire development cohort is exposed. A reviewed frozen protocol, "
+            "final-eval is disabled pending a complete independent cohort and validated test-access gate. "
+            "Design freeze alone does not authorize test access. A complete exposure registry, "
             "development-neighbour exclusion audit and test-exposure gate are required."
         )
     # Load config
