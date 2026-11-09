@@ -1,0 +1,13 @@
+{
+  "python": "3.12.13",
+  "torch": "2.7.1+cu118",
+  "cuda_available": true,
+  "cuda_version": "11.8",
+  "device": "cuda",
+  "gpu_count": 1,
+  "gpu_names": [
+    "Tesla P100-PCIE-16GB"
+  ],
+  "data_parallel": false,
+  "vienna_features": true
+}

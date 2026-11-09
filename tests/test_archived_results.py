@@ -5,7 +5,7 @@ from pathlib import Path
 from experiments.validate_archive import validate_archive
 
 
-ARCHIVE = Path(__file__).resolve().parents[1] / "results" / "kaggle-v9-bff599f"
+ARCHIVE = Path(__file__).resolve().parents[1] / "results" / "kaggle-v10-fec86dc"
 
 
 def test_reportable_archive_is_internally_consistent():

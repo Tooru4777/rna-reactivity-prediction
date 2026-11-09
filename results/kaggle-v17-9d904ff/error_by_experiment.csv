@@ -1,0 +1,109 @@
+seed,split_method,partition,variant_id,variant,experiment_type,rows,valid_positions,absolute_error_sum,weighted_mae
+42,clustered,cv,cnn_bilstm,CNN + Bi-LSTM,2A3_MaP,136,13143,3133.9692068099976,0.2384515869139464
+42,clustered,cv,cnn_bilstm,CNN + Bi-LSTM,DMS_MaP,138,13349,2804.589861869812,0.2100973752243473
+42,clustered,cv,cnn_only,CNN Only,2A3_MaP,136,13143,3243.7516870498657,0.24680451092215366
+42,clustered,cv,cnn_only,CNN Only,DMS_MaP,138,13349,2881.281759262085,0.21584251698719642
+42,clustered,cv,transformer_seq4,CNN + LSTM + Transformer,2A3_MaP,136,13143,3257.5556840896606,0.2478548036285217
+42,clustered,cv,transformer_seq4,CNN + LSTM + Transformer,DMS_MaP,138,13349,2897.6847915649414,0.2170713005891783
+42,clustered,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2A3_MaP,136,13143,2995.6540508270264,0.22792772204420805
+42,clustered,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),DMS_MaP,138,13349,2517.1199254989624,0.1885624335529974
+42,clustered,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2A3_MaP,136,13143,3306.311222076416,0.2515644238055555
+42,clustered,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),DMS_MaP,138,13349,2875.4779024124146,0.2154077385880901
+42,clustered,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2A3_MaP,136,13143,3277.0987787246704,0.2493417620577243
+42,clustered,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),DMS_MaP,138,13349,2880.0887203216553,0.21575314407983034
+42,grouped,cv,cnn_bilstm,CNN + Bi-LSTM,2A3_MaP,124,12457,2987.637987136841,0.23983607506918525
+42,grouped,cv,cnn_bilstm,CNN + Bi-LSTM,DMS_MaP,135,13557,2455.021153450012,0.181088821527625
+42,grouped,cv,cnn_only,CNN Only,2A3_MaP,124,12457,3107.6340351104736,0.24946889581042575
+42,grouped,cv,cnn_only,CNN Only,DMS_MaP,135,13557,2584.1408157348633,0.19061302764142976
+42,grouped,cv,transformer_seq4,CNN + LSTM + Transformer,2A3_MaP,124,12457,3135.2254581451416,0.251683829023452
+42,grouped,cv,transformer_seq4,CNN + LSTM + Transformer,DMS_MaP,135,13557,2612.3779373168945,0.19269587204520872
+42,grouped,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2A3_MaP,124,12457,2784.719648361206,0.2235465720768408
+42,grouped,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),DMS_MaP,135,13557,2066.180419445038,0.1524069056166584
+42,grouped,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2A3_MaP,124,12457,3188.0421504974365,0.2559237497388967
+42,grouped,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),DMS_MaP,135,13557,2588.9446392059326,0.19096737030360203
+42,grouped,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2A3_MaP,124,12457,3144.744129180908,0.25244795128689956
+42,grouped,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),DMS_MaP,135,13557,2568.339324951172,0.18944746809406005
+42,random,cv,cnn_bilstm,CNN + Bi-LSTM,2A3_MaP,139,13702,3273.6045808792114,0.2389143614712605
+42,random,cv,cnn_bilstm,CNN + Bi-LSTM,DMS_MaP,128,12797,2321.890823364258,0.18144024563290284
+42,random,cv,cnn_only,CNN Only,2A3_MaP,139,13702,3419.616928100586,0.24957064137356488
+42,random,cv,cnn_only,CNN Only,DMS_MaP,128,12797,2455.7357988357544,0.19189933569084586
+42,random,cv,transformer_seq4,CNN + LSTM + Transformer,2A3_MaP,139,13702,3447.0822315216064,0.2515751154226833
+42,random,cv,transformer_seq4,CNN + LSTM + Transformer,DMS_MaP,128,12797,2453.489193916321,0.19172377853530678
+42,random,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2A3_MaP,139,13702,3065.2612171173096,0.22370903642660264
+42,random,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),DMS_MaP,128,12797,1969.8406629562378,0.1539298791088722
+42,random,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2A3_MaP,139,13702,3496.580753326416,0.2551876188385941
+42,random,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),DMS_MaP,128,12797,2472.6082134246826,0.19321780209616962
+42,random,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2A3_MaP,139,13702,3467.065975189209,0.2530335699306093
+42,random,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),DMS_MaP,128,12797,2441.9242763519287,0.1908200575409806
+123,clustered,cv,cnn_bilstm,CNN + Bi-LSTM,2A3_MaP,136,13143,3101.1431016921997,0.23595397562901924
+123,clustered,cv,cnn_bilstm,CNN + Bi-LSTM,DMS_MaP,138,13349,2797.019937515259,0.20953029721441746
+123,clustered,cv,cnn_only,CNN Only,2A3_MaP,136,13143,3233.493058204651,0.24602397155935865
+123,clustered,cv,cnn_only,CNN Only,DMS_MaP,138,13349,2876.9652643203735,0.2155191598112498
+123,clustered,cv,transformer_seq4,CNN + LSTM + Transformer,2A3_MaP,136,13143,3234.071541786194,0.24606798613605674
+123,clustered,cv,transformer_seq4,CNN + LSTM + Transformer,DMS_MaP,138,13349,2894.9211111068726,0.2168642678183289
+123,clustered,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2A3_MaP,136,13143,2973.3493242263794,0.2262306417276405
+123,clustered,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),DMS_MaP,138,13349,2547.8321390151978,0.19086314622932038
+123,clustered,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2A3_MaP,136,13143,3263.606716156006,0.24831520323792178
+123,clustered,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),DMS_MaP,138,13349,2899.006055831909,0.2171702791094396
+123,clustered,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2A3_MaP,136,13143,3217.056450843811,0.24477337372318428
+123,clustered,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),DMS_MaP,138,13349,2884.542378425598,0.21608677641962679
+123,grouped,cv,cnn_bilstm,CNN + Bi-LSTM,2A3_MaP,128,12587,2992.8017778396606,0.23776926812105034
+123,grouped,cv,cnn_bilstm,CNN + Bi-LSTM,DMS_MaP,143,14087,2639.167739868164,0.18734774897907036
+123,grouped,cv,cnn_only,CNN Only,2A3_MaP,128,12587,3174.355938911438,0.25219321036874853
+123,grouped,cv,cnn_only,CNN Only,DMS_MaP,143,14087,2787.298152923584,0.1978631470805412
+123,grouped,cv,transformer_seq4,CNN + LSTM + Transformer,2A3_MaP,128,12587,3162.0320501327515,0.2512141137787202
+123,grouped,cv,transformer_seq4,CNN + LSTM + Transformer,DMS_MaP,143,14087,2792.1103086471558,0.19820474967325588
+123,grouped,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2A3_MaP,128,12587,2848.1599588394165,0.22627790250571356
+123,grouped,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),DMS_MaP,143,14087,2303.6318554878235,0.163528917121305
+123,grouped,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2A3_MaP,128,12587,3152.0177869796753,0.25041851012788396
+123,grouped,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),DMS_MaP,143,14087,2802.9994611740112,0.19897774268289992
+123,grouped,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2A3_MaP,128,12587,3136.417776107788,0.24917913530688712
+123,grouped,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),DMS_MaP,143,14087,2767.0886278152466,0.196428524726006
+123,random,cv,cnn_bilstm,CNN + Bi-LSTM,2A3_MaP,112,10978,2664.995740890503,0.2427578557925399
+123,random,cv,cnn_bilstm,CNN + Bi-LSTM,DMS_MaP,155,15392,2829.3624839782715,0.18382032770129103
+123,random,cv,cnn_only,CNN Only,2A3_MaP,112,10978,2790.062873840332,0.25415038020043107
+123,random,cv,cnn_only,CNN Only,DMS_MaP,155,15392,2986.550413131714,0.19403264118579222
+123,random,cv,transformer_seq4,CNN + LSTM + Transformer,2A3_MaP,112,10978,2786.007632255554,0.2537809830803019
+123,random,cv,transformer_seq4,CNN + LSTM + Transformer,DMS_MaP,155,15392,2966.682879447937,0.1927418710660042
+123,random,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2A3_MaP,112,10978,2462.325619697571,0.22429637636159325
+123,random,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),DMS_MaP,155,15392,2428.162030696869,0.15775480968664687
+123,random,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2A3_MaP,112,10978,2807.1227073669434,0.25570438216131747
+123,random,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),DMS_MaP,155,15392,3025.2251529693604,0.19654529320227132
+123,random,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2A3_MaP,112,10978,2752.4056510925293,0.25072013582551733
+123,random,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),DMS_MaP,155,15392,2971.599326133728,0.19306128678103743
+2026,clustered,cv,cnn_bilstm,CNN + Bi-LSTM,2A3_MaP,136,13143,3114.4580211639404,0.23696705631620943
+2026,clustered,cv,cnn_bilstm,CNN + Bi-LSTM,DMS_MaP,138,13349,2811.4281616210938,0.21060964578778138
+2026,clustered,cv,cnn_only,CNN Only,2A3_MaP,136,13143,3265.0797157287598,0.2484272780741657
+2026,clustered,cv,cnn_only,CNN Only,DMS_MaP,138,13349,2905.412142753601,0.2176501717547083
+2026,clustered,cv,transformer_seq4,CNN + LSTM + Transformer,2A3_MaP,136,13143,3257.0808992385864,0.2478186790868589
+2026,clustered,cv,transformer_seq4,CNN + LSTM + Transformer,DMS_MaP,138,13349,2884.835524559021,0.21610873657644925
+2026,clustered,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2A3_MaP,136,13143,2998.2515382766724,0.22812535481067278
+2026,clustered,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),DMS_MaP,138,13349,2546.2349185943604,0.19074349528761408
+2026,clustered,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2A3_MaP,136,13143,3306.708352088928,0.2515946398911153
+2026,clustered,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),DMS_MaP,138,13349,2875.6189823150635,0.21541830716271357
+2026,clustered,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2A3_MaP,136,13143,3263.2644567489624,0.24828916204435536
+2026,clustered,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),DMS_MaP,138,13349,2872.2620706558228,0.21516683426892072
+2026,grouped,cv,cnn_bilstm,CNN + Bi-LSTM,2A3_MaP,122,12183,2958.788110733032,0.24286202993786687
+2026,grouped,cv,cnn_bilstm,CNN + Bi-LSTM,DMS_MaP,131,13080,2457.9854555130005,0.1879193773327982
+2026,grouped,cv,cnn_only,CNN Only,2A3_MaP,122,12183,3124.056254386902,0.2564275017965117
+2026,grouped,cv,cnn_only,CNN Only,DMS_MaP,131,13080,2597.7086277008057,0.198601577041346
+2026,grouped,cv,transformer_seq4,CNN + LSTM + Transformer,2A3_MaP,122,12183,3153.020323753357,0.25880491863690036
+2026,grouped,cv,transformer_seq4,CNN + LSTM + Transformer,DMS_MaP,131,13080,2610.1125917434692,0.19954989233512763
+2026,grouped,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2A3_MaP,122,12183,2733.7672967910767,0.22439196394903363
+2026,grouped,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),DMS_MaP,131,13080,2132.6852264404297,0.16304932923856497
+2026,grouped,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2A3_MaP,122,12183,3180.4187240600586,0.26105382287286044
+2026,grouped,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),DMS_MaP,131,13080,2622.1950302124023,0.2004736261630277
+2026,grouped,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2A3_MaP,122,12183,3139.317714691162,0.2576801867102653
+2026,grouped,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),DMS_MaP,131,13080,2628.7540140151978,0.20097507752409768
+2026,random,cv,cnn_bilstm,CNN + Bi-LSTM,2A3_MaP,132,13170,3158.963656425476,0.23986056616746212
+2026,random,cv,cnn_bilstm,CNN + Bi-LSTM,DMS_MaP,135,13486,2488.678773880005,0.18453794853032812
+2026,random,cv,cnn_only,CNN Only,2A3_MaP,132,13170,3330.8058738708496,0.2529085705292976
+2026,random,cv,cnn_only,CNN Only,DMS_MaP,135,13486,2651.8761825561523,0.19663919490999202
+2026,random,cv,transformer_seq4,CNN + LSTM + Transformer,2A3_MaP,132,13170,3325.7094049453735,0.25252159490853254
+2026,random,cv,transformer_seq4,CNN + LSTM + Transformer,DMS_MaP,135,13486,2622.616618156433,0.19446956978766372
+2026,random,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),2A3_MaP,132,13170,2947.180347442627,0.2237798289629937
+2026,random,cv,transformer_vienna_real7,Full Model (+ViennaRNA 7d),DMS_MaP,135,13486,2153.5090866088867,0.15968479064280638
+2026,random,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),2A3_MaP,132,13170,3398.4094047546387,0.25804171638228085
+2026,random,cv,transformer_vienna_shuffled7,Transformer (+Shuffled ViennaRNA 7d),DMS_MaP,135,13486,2666.8338413238525,0.19774831983715352
+2026,random,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),2A3_MaP,132,13170,3367.8044662475586,0.2557178789861472
+2026,random,cv,transformer_vienna_zero7,Transformer (+Zero ViennaRNA 7d),DMS_MaP,135,13486,2633.4419536590576,0.19527227893067312

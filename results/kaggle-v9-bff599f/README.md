@@ -1,3 +1,6 @@
+> Historical OLD-data benchmark. This is not the current-data final result;
+> see V17/V18 for exploratory current-data CV evidence.
+
 # Kaggle Version 9 — validated P100 run
 
 This directory is the compact evidence package for the reportable RNA

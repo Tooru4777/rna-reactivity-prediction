@@ -20,7 +20,8 @@ by structural context. It is informative about folding but is not a direct 3D
 structure label.
 
 ### Challenge
-The competition dataset is massive (~1.6 GB). I needed to learn how to handle data that doesn't fit in memory, which led me to understand PyTorch's `Dataset` and `DataLoader` abstraction.
+The competition uses a large, wide CSV. I needed to learn memory-bounded loading,
+which led me to understand PyTorch's `Dataset` and `DataLoader` abstractions.
 
 ## Week 2: Building the Pipeline
 
@@ -30,9 +31,9 @@ The competition dataset is massive (~1.6 GB). I needed to learn how to handle da
 - This was tricky: I initially forgot to mask the loss, and the model learned to predict zeros everywhere (because that minimises loss at padded positions)
 
 ### Model architecture decisions
-1. **Why CNN first?** RNA has local structural motifs (hairpins, bulges) that span 3-7 nucleotides. A 1D CNN with kernel_size=5 is perfect for detecting these.
-2. **Why Bi-LSTM?** RNA folding involves long-range base-pairing (e.g., position 10 pairs with position 150). A bidirectional LSTM can capture these dependencies.
-3. **Why Transformer on top?** Self-attention can directly model position-to-position interactions without the sequential bottleneck of LSTM.
+1. **Why CNN first?** A 1D CNN with `kernel_size=5` is a reasonable way to learn short sequence patterns; the ablation tests whether this local representation is useful.
+2. **Why Bi-LSTM?** Bidirectional recurrence gives each position sequence context from both directions, although it does not explicitly encode base pairs.
+3. **Why Transformer on top?** Self-attention provides direct position-to-position interactions; its value still has to be established experimentally.
 
 ### What didn't work
 - A pure Transformer performed poorly in an early exploratory run. Adding an

@@ -1,0 +1,28 @@
+{
+  "grain": "one quality-eligible experiment profile per retained CSV row",
+  "rows": 1820,
+  "columns": 419,
+  "unique_sequences": 1000,
+  "experiment_type_rows": {
+    "2A3_MaP": 864,
+    "DMS_MaP": 956
+  },
+  "sequences_with_both_experiments": 691,
+  "sequences_with_one_experiment": 309,
+  "duplicate_full_rows": 0,
+  "duplicate_sequence_experiment_pairs": 129,
+  "reactivity_columns": 206,
+  "valid_reactivity_targets": 178937,
+  "reactivity_targets_below_zero": 27187,
+  "reactivity_targets_above_one": 20063,
+  "sequence_length": {
+    "grain": "unique exact sequence",
+    "min": 115,
+    "median": 177.0,
+    "max": 206
+  },
+  "notes": [
+    "Out-of-range targets are retained in source data and clipped only for the competition MAE.",
+    "Duplicate sequence/experiment pairs are reported rather than dropped because distinct experimental profiles may be legitimate."
+  ]
+}

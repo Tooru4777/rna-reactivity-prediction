@@ -1,0 +1,22 @@
+{
+  "python": "3.12.13",
+  "torch": "2.10.0+cu128",
+  "cuda_available": true,
+  "cuda_version": "12.8",
+  "device": "cuda",
+  "gpu_count": 2,
+  "gpu_names": [
+    "Tesla T4",
+    "Tesla T4"
+  ],
+  "data_parallel": true,
+  "vienna_features": true,
+  "dependencies": {
+    "torch": "2.10.0+cu128",
+    "pandas": "2.3.3",
+    "numpy": "2.2.5",
+    "matplotlib": "3.10.9",
+    "PyYAML": "6.0.3",
+    "ViennaRNA": "2.7.2"
+  }
+}

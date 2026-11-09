@@ -1,7 +1,7 @@
 """
 Unit Tests — RNA Model Architectures
 ======================================
-Tests all 5 model variants (4 reactivity + 1 3D) for:
+Tests all four reportable RNA-reactivity model variants for:
   - Correct output shapes
   - Expected parameter counts
   - Edge cases (single-sample batch, max-length sequence)
@@ -26,7 +26,6 @@ from src.model_reactivity import (
     RNAReactivityCNN_LSTM_Transformer,
     RNAReactivityPredictor,
 )
-from src.model_3d import RNAPredictor3D
 
 
 # =====================================================================
@@ -53,11 +52,6 @@ def reactivity_model_spec(request):
 @pytest.fixture
 def full_model():
     return RNAReactivityPredictor(input_dim=7)
-
-
-@pytest.fixture
-def model_3d():
-    return RNAPredictor3D()
 
 
 # =====================================================================
@@ -189,57 +183,4 @@ class TestFullModelSpecifics:
         # Allow ±5% tolerance for minor architecture tweaks
         assert 2_100_000 < params < 2_500_000, (
             f"Parameter count {params:,} outside expected range [2.1M, 2.5M]"
-        )
-
-
-# =====================================================================
-# 3D Model Tests
-# =====================================================================
-
-class TestModel3D:
-    """Tests for the RNAPredictor3D model."""
-
-    def test_output_shape(self, model_3d, device):
-        """Output must be (batch, seq_len, 3) for x, y, z coordinates."""
-        model = model_3d.to(device)
-        x = torch.randn(4, 200, 4, device=device)
-        out = model(x)
-
-        assert out.shape == (4, 200, 3)
-
-    def test_single_sample(self, model_3d, device):
-        """Handle batch_size=1."""
-        model = model_3d.to(device)
-        x = torch.randn(1, 200, 4, device=device)
-        out = model(x)
-
-        assert out.shape == (1, 200, 3)
-
-    def test_short_sequence(self, model_3d, device):
-        """Handle short sequences."""
-        model = model_3d.to(device)
-        x = torch.randn(2, 20, 4, device=device)
-        out = model(x)
-
-        assert out.shape == (2, 20, 3)
-
-    def test_gradient_flow(self, model_3d, device):
-        """All parameters receive gradients."""
-        model = model_3d.to(device)
-        model.train()
-
-        x = torch.randn(2, 50, 4, device=device)
-        out = model(x)
-        loss = out.sum()
-        loss.backward()
-
-        for name, param in model.named_parameters():
-            assert param.grad is not None, f"'{name}' has no gradient"
-
-    def test_parameter_count(self, model_3d):
-        """3D model should have a reasonable parameter count (~596K)."""
-        params = sum(p.numel() for p in model_3d.parameters())
-        # 2-layer Bi-LSTM (hidden=128) + CNN (64 filters) ≈ 596K params
-        assert 400_000 < params < 700_000, (
-            f"Parameter count {params:,} outside expected range [400K, 700K]"
         )

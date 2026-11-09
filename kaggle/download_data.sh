@@ -11,7 +11,7 @@
 # Usage:
 #   bash download_data.sh
 
-set -e
+set -euo pipefail
 
 echo "Checking Kaggle API installation..."
 pip install kaggle kagglehub -q
@@ -28,6 +28,7 @@ import os
 import json
 import sys
 import zipfile
+from pathlib import Path
 
 # Fallback: load KGAT token from kaggle.json if not in environment or is empty
 if not os.environ.get('KAGGLE_API_TOKEN'):
@@ -57,9 +58,28 @@ try:
     else:
         raise RuntimeError(f'Unexpected Kaggle download format: {path}')
 
-    train_csv = os.path.join('dataset', 'train_data.csv')
-    if not os.path.isfile(train_csv):
-        raise FileNotFoundError(f'Expected file was not downloaded: {train_csv}')
+    candidates = sorted(Path('dataset').rglob('train_data.csv'))
+    current_candidates = [
+        candidate for candidate in candidates
+        if not any(part.casefold() == 'old' for part in candidate.parts)
+    ]
+    competition_candidates = [
+        candidate for candidate in current_candidates
+        if 'stanford-ribonanza-rna-folding' in candidate.parts
+    ]
+    if len(competition_candidates) == 1:
+        train_csv = competition_candidates[0]
+    elif len(current_candidates) == 1:
+        train_csv = current_candidates[0]
+    elif not current_candidates and candidates:
+        raise FileNotFoundError(
+            'Only superseded OLD/train_data.csv was downloaded; current file required'
+        )
+    else:
+        found = ', '.join(map(str, candidates)) or 'none'
+        raise FileNotFoundError(
+            f'Could not uniquely resolve downloaded train_data.csv; found: {found}'
+        )
     print(f'Dataset ready: {train_csv}')
 except Exception as e:
     print(f'Download failed: {e}')
