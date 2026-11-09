@@ -6,7 +6,7 @@
 
 ## 1. 審查結論與使用範圍
 
-**這個專案已具備可核查的探索性研究與工程實作證據，可以作為 PhD 申請的研究經驗；尚不能宣稱已完成獨立最終測試或證明跨 RNA 家族泛化。** 本次直接修正已確認的程式與文件問題，保留 V17／V18 的原始數值和封存圖片，沒有為取得較佳分數變更 cohort、切分或模型，也沒有啟動新的 Kaggle GPU run、推送或合併 main。
+**這個專案已具備可核查的探索性研究與工程實作證據；尚未完成獨立最終測試，也尚未建立跨 RNA 家族泛化的證據。** 本次直接修正已確認的程式與文件問題，保留 V17／V18 的原始數值和封存圖片，沒有為取得較佳分數變更 cohort、切分或模型，也沒有啟動新的 Kaggle GPU run、推送或合併 main。
 
 V18 有 26 個 checksum-listed compact artifacts，比 V17 少兩個是因為未訓練 sequence-only Transformer，故沒有對應的 `vienna_comparison.csv`／`vienna_aggregate.csv`；real-vs-zero／shuffled 仍在 paired bootstrap 表中。
 
@@ -272,19 +272,13 @@ cd /mnt/c/Users/user/Documents/Codex/2026-08-03/new-chat/work/rna-reactivity-pre
 
 未來如確定需要新 development GPU run，需先將審查後 commit 推送到已授權分支，再以 `submit_gpu.py --commit <完整已推送 SHA> --mode ...` 提交；這是操作說明，不是本次已執行的動作。不要直接以未釘選的 placeholder runner 提交，也不要用覆寫舊輸出目錄混合兩次實驗。
 
-## 11. PhD 申請可用的表述
+## 11. 研究摘要與證據範圍
 
-可放在 CV 的精簡英文描述：
+本研究比較序列模型與預測結構特徵在 RNA 化學反應性預測中的表現，並檢查資料切分、量測位置與相似序列重用對評估的影響。流程採用真實 Ribonanza 量測資料、padding-safe 神經網路、相似序列切分稽核、ViennaRNA 特徵控制組與配對 cluster bootstrap。
 
-> Developed and audited a reproducible PyTorch pipeline for RNA chemical-reactivity prediction using measured Ribonanza data, including padding-safe models, sequence-similarity split audits, controlled ViennaRNA feature ablations, and paired cluster-bootstrap evaluation. On a 1,000-sequence development cohort, the structure-augmented model achieved clustered-validation MAE of 0.2043 versus a train-only assay-median baseline of 0.2796; independent final-test evaluation remains pending.
+在 1,000 條序列的開發 cohort 上，結構特徵模型的 clustered validation MAE 為 0.2043，train-only assay median baseline 為 0.2796。這些結果支持在現有開發設定下進一步研究結構特徵的預測效益；獨立最終測試尚待完成。
 
-中文說明：建立並檢驗 RNA 化學反應性預測流程，使用真實量測資料、padding-safe 神經網路、相似序列切分稽核、ViennaRNA 特徵控制組與 cluster bootstrap；在 1,000 條序列的開發 cohort 上取得 clustered CV MAE 0.2043，優於 train-only assay median 0.2796，獨立最終測試尚待完成。
-
-應依實際個人貢獻調整「developed」與「audited」，能說明 AI 工具協助了哪些部分，避免把不熟悉或非本人負責的工作寫成獨立完成。學習日誌中的第一人稱時間線是作者自述，本審查不能驗證當時由誰完成或花費多久。
-
-面試時應能回答：為何一個 RNA 有多筆 profiles？為何 random split 會重複序列？為何 training 不裁切 prediction？為何 median 比 mean 更適合 L1 reference？為何三個 seeds 不能當三個獨立資料集？為何 zero／shuffled 控制比只比較兩種不同架構更有解釋力？為何 CV 最佳分數不等於新資料的無偏性能？
-
-不可寫成：完成獨立測試 MAE 0.2043、證明 homology-free、證明 ViennaRNA 發現真實生物機制、預測三維結構、達到競賽領先水準、所有模型充分收斂，或把 V10 OLD-data test 0.1919 當成本次 current-data final result。
+現有證據不支持獨立測試 MAE 為 0.2043、普遍 homology-free、ViennaRNA 特徵揭示真實生物機制、三維結構預測、競賽領先水準或所有模型充分收斂等結論。V10 OLD-data test 0.1919 亦不能視為本次 current-data final result。
 
 ## 12. 優先順序與尚待決定事項
 

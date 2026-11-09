@@ -44,7 +44,7 @@ alone does not make its test partition independent. The full development
 history and qualifying neighbours must be excluded before test access.
 
 The [comprehensive review](docs/comprehensive_review_2026-10-22.md) explains the
-pipeline, verified repairs, reproducibility evidence and PhD application wording.
+pipeline, verified repairs, reproducibility evidence and limits of the findings.
 
 ## Frozen research decision and rationale — 2026-11-08
 
